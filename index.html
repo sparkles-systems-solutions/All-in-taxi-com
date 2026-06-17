@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Advance Meeter Taxi">
+    <meta name="theme-color" content="#1a4a9e">
+    <title>ADVANCE MEETER TAXI - Premium</title>
+    
+    <!-- Free Leaflet Map Library (100% Free, No 404, No API Keys) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- External Essential Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #1a4a9e;
+            --primary-dark: #0e3a7d;
+            --primary-light: #3b6cb0;
+            --primary-gradient: linear-gradient(135deg, #1a4a9e, #2563eb);
+            --secondary: #2ecc71;
+            --secondary-dark: #27ae60;
+            --secondary-gradient: linear-gradient(135deg, #2ecc71, #27ae60);
+            --accent: #e74c3c;
+            --accent-dark: #c0392b;
+            --accent-gradient: linear-gradient(135deg, #e74c3c, #c0392b);
+            --dark: #1e293b;
+            --gray: #64748b;
+            --gray-bg: #f1f5f9;
+            --white: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --shadow-xl: 0 25px 50px -12px rgba(0,0,0,0.25);
+            --radius: 20px;
+            --radius-lg: 28px;
+            --radius-xl: 40px;
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif; background: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 100%); min-height: 100vh; padding: 16px; display: flex; justify-content: center; align-items: center; }
+        
+        .app-container { background: var(--white); width: 100%; max-width: 480px; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); padding: 20px; position: relative; transition: var(--transition); }
+        body.ride-active .app-container { box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3), var(--shadow-xl); }
+        
+        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .logo-area { width: 52px; height: 52px; background: var(--primary-gradient); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; box-shadow: var(--shadow); }
+        .brand-name { font-size: 14px; font-weight: 800; text-transform: uppercase; line-height: 1.3; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .settings-icon { width: 44px; height: 44px; background: rgba(26, 74, 158, 0.08); border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; transition: var(--transition); }
+        .settings-icon:active { transform: scale(0.95); background: rgba(26, 74, 158, 0.15); }
+        
+        .action-buttons { display: flex; gap: 12px; margin-bottom: 20px; }
+        .action-btn { flex: 1; background: var(--gray-bg); border: none; padding: 12px; border-radius: 32px; font-size: 13px; font-weight: 600; color: var(--dark); cursor: pointer; text-align: center; transition: var(--transition); }
+        .action-btn:active { transform: scale(0.96); background: #e2e8f0; }
+        .night-btn { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        .night-active { background: linear-gradient(135deg, #e74c3c, #c0392b) !important; }
+        
+        input, select { width: 100%; padding: 14px 16px; margin: 0; border: 1.5px solid #e2e8f0; border-radius: 20px; background: var(--white); font-size: 14px; transition: var(--transition); color: var(--dark); }
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26, 74, 158, 0.1); }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .mode-selector { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .mode-btn { flex: 1; padding: 10px 8px; border-radius: 32px; border: 1.5px solid #e2e8f0; background: white; cursor: pointer; font-weight: 600; font-size: 11px; text-align: center; transition: var(--transition); color: var(--dark); }
+        .mode-btn.active { background: var(--primary-gradient); color: white; border-color: transparent; box-shadow: var(--shadow); }
+        
+        /* Modern Collapsible Accordion Cards for Billing & Delivery to save screen space (image_94c01c.png & image_94bba7.png Fix) */
+        .collapsible-card { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 28px; margin: 16px 0; overflow: hidden; transition: var(--transition); }
+        .collapsible-header { padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: var(--transition); }
+        .collapsible-header:active { background: #cbd5e122; }
+        .collapsible-title { font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .collapsible-icon { font-size: 12px; color: var(--gray); transition: transform 0.25s ease; }
+        .collapsible-content { max-height: 0; opacity: 0; padding: 0 20px; overflow: hidden; transition: max-height 0.25s ease-out, opacity 0.2s ease, padding 0.25s ease; display: flex; flex-direction: column; gap: 14px; }
+        
+        /* Open States for Collapsible Accordions */
+        .collapsible-card.open { border-color: var(--primary-light); box-shadow: var(--shadow); }
+        .collapsible-card.open .collapsible-header { border-bottom: 1.5px solid #e2e8f0; }
+        .collapsible-card.open .collapsible-icon { transform: rotate(180deg); color: var(--primary); }
+        .collapsible-card.open .collapsible-content { max-height: 500px; opacity: 1; padding: 20px; }
+        
+        .input-group { display: flex; flex-direction: column; gap: 6px; }
+        .input-group label { font-size: 11px; font-weight: 600; color: var(--gray); margin-left: 4px; }
+        
+        .wait-select-wrapper { display: flex; align-items: center; background: var(--white); border: 1.5px solid #e2e8f0; border-radius: 20px; padding: 0 12px; height: 48px; transition: var(--transition); }
+        .wait-select-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26, 74, 158, 0.1); }
+        .wait-select-wrapper select { border: none; background: transparent; padding: 0; margin: 0; height: 100%; width: 100%; outline: none; font-size: 14px; color: var(--dark); }
+        
+        /* Visual alignment for Sri Lanka layout */
+        .fare-card { background: linear-gradient(145deg, #ffffff, #f8fafc); border-radius: var(--radius-lg); padding: 20px; margin: 16px 0; border: 1.5px solid #e2e8f0; box-shadow: var(--shadow); text-align: center; }
+        .fare-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+        .fare-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .fare-item small { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .fare-item .display-value { font-size: 42px; font-weight: 800; color: #1e293b; line-height: 1; margin-bottom: 4px; }
+        
+        .display-fare-currency { font-size: 24px; font-weight: 800; color: #2563eb; line-height: 1; margin-bottom: 2px; }
+        .display-fare-value { font-size: 40px; font-weight: 800; color: #2563eb; line-height: 1; }
+        
+        .gps-status { display: inline-flex; align-items: center; justify-content: center; background: #eafaf1; color: #27ae60; border: 1px solid #c2f0d5; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-top: 14px; width: 100%; gap: 6px; }
+        .gps-status.gps-error { background: #fdf2f2; color: #e74c3c; border-color: #fde8e8; }
+        
+        .manual-control { display: flex; gap: 10px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 15px; }
+        .manual-btn { background: var(--primary-gradient); color: white; border: none; width: 52px; height: 52px; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow); }
+        .manual-btn:active { transform: scale(0.94); }
+        .manual-input { width: 110px; text-align: center; font-size: 20px; font-weight: 600; padding: 12px; border-radius: 24px; border: 1.5px solid #e2e8f0; background: var(--white); color: var(--dark); }
+        
+        .set-distance-btn { background: var(--secondary-gradient); color: white; border: none; padding: 12px 28px; border-radius: 32px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 12px; display: inline-block; box-shadow: var(--shadow); transition: var(--transition); }
+        .set-distance-btn:active { transform: scale(0.96); }
+        
+        .location-card { background: var(--gray-bg); border-radius: 24px; padding: 14px; margin: 12px 0; border: 1px solid rgba(26, 74, 158, 0.08); }
+        .location-title { font-size: 10px; font-weight: 600; color: var(--gray); text-transform: uppercase; margin-bottom: 6px; }
+        .location-address { font-size: 13px; font-weight: 500; color: var(--dark); word-break: break-word; }
+        .refresh-location { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 25px; font-size: 10px; cursor: pointer; transition: var(--transition); }
+        
+        .map-picker-btn { background: var(--primary-gradient); color: white; border: none; padding: 12px; border-radius: 24px; font-size: 12px; font-weight: 600; cursor: pointer; width: 100%; transition: var(--transition); }
+        .map-picker-btn:active { transform: scale(0.97); }
+        
+        .btn-main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+        .btn-start { background: #2ecc71; border: none; border-radius: 34px; font-size: 14px; font-weight: 700; color: white; cursor: pointer; padding: 16px; transition: var(--transition); box-shadow: var(--shadow); text-align: center; }
+        .btn-end { background: #e74c3c; border: none; border-radius: 34px; font-size: 14px; font-weight: 700; color: white; cursor: pointer; padding: 16px; transition: var(--transition); box-shadow: var(--shadow); text-align: center; }
+        .btn-start:active, .btn-end:active { transform: scale(0.97); }
+        .btn-active-anim { animation: pulse-btn 1.5s infinite; background: #27ae60 !important; }
+        
+        @keyframes countSpring { 0% { transform: scale(1); } 30% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .count-animation { animation: countSpring 0.25s ease-out; }
+        @keyframes pulse-btn { 0% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(46, 204, 113, 0); } 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); } }
+        
+        .voice-container { text-align: center; margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .voice-btn { background: #5c59f2; color: white; border: none; border-radius: 40px; padding: 10px 24px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: var(--transition); box-shadow: var(--shadow); text-transform: uppercase; }
+        .voice-btn.listening { animation: pulse-voice 1.5s infinite; background: #e74c3c; }
+        @keyframes pulse-voice { 0% { box-shadow: 0 0 0 0 rgba(92, 89, 242, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(92, 89, 242, 0); } 100% { box-shadow: 0 0 0 0 rgba(92, 89, 242, 0); } }
+        .voice-status { font-size: 11px; text-align: center; color: var(--gray); font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .voice-commands-guide { font-size: 10px; color: #a0aec0; margin-top: 4px; line-height: 1.4; }
+        
+        /* Modals and Forms Overlay CSS styling */
+        .modal { display: none; position: fixed; z-index: 2000; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 16px; }
+        .modal-content { background: var(--white); width: 100%; max-width: 440px; border-radius: 48px; padding: 24px; position: relative; max-height: 85vh; overflow-y: auto; box-shadow: var(--shadow-xl); }
+        .close-circle { position: absolute; top: 18px; right: 18px; background: var(--gray-bg); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: var(--transition); }
+        .back-btn { position: absolute; top: 18px; left: 18px; background: var(--gray-bg); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: var(--transition); }
+        
+        .settings-card-group { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 28px; padding: 18px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .settings-card-title { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+        
+        .settings-menu { display: flex; flex-direction: column; gap: 12px; }
+        .settings-menu-btn { background: var(--primary-gradient); color: white; border: none; padding: 16px 20px; border-radius: 40px; font-size: 15px; font-weight: 600; cursor: pointer; text-align: center; transition: var(--transition); box-shadow: var(--shadow); }
+        .settings-menu-btn:active { transform: scale(0.97); }
+        .settings-menu-btn.secondary { background: linear-gradient(135deg, #2c3e50, #34495e); }
+        .settings-menu-btn.warning { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        
+        .payment-methods { display: flex; flex-direction: column; gap: 10px; margin: 15px 0; }
+        .payment-method-btn { background: var(--gray-bg); border: 1.5px solid #e2e8f0; border-radius: 28px; padding: 14px 18px; cursor: pointer; text-align: left; font-weight: 600; transition: var(--transition); color: var(--dark); }
+        .payment-method-btn.selected { background: var(--primary-gradient); color: white; border-color: transparent; }
+        .payment-detail-fields { margin-top: 15px; padding: 18px; background: var(--gray-bg); border-radius: 28px; }
+        
+        .confirm-payment-btn { background: var(--secondary-gradient); color: white; padding: 16px; border: none; border-radius: 40px; font-size: 16px; font-weight: 700; width: 100%; margin-top: 20px; cursor: pointer; transition: var(--transition); }
+        .confirm-payment-btn:active { transform: scale(0.97); }
+        
+        .history-item { background: var(--gray-bg); padding: 16px; margin-bottom: 12px; border-radius: 28px; border-left: 4px solid var(--primary); transition: var(--transition); cursor: pointer; }
+        .history-item:active { transform: scale(0.98); }
+        .btn-reprint { background: var(--primary-gradient); padding: 6px 14px; font-size: 11px; font-weight: 600; color: white; border: none; border-radius: 25px; cursor: pointer; transition: var(--transition); }
+        
+        .receipt-print { width: 72mm; max-width: 72mm; margin: 0 auto; padding: 3mm; font-family: 'Courier New', monospace; font-size: 9pt; background: white; position: relative; border-radius: 16px; }
+        .r-header { background: linear-gradient(135deg, #000, #1a1a2e); color: white; padding: 8px; text-align: center; font-weight: 800; border-radius: 12px 12px 0 0; }
+        .r-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dotted #ccc; }
+        .r-row-full { display: block; padding: 4px 0; border-bottom: 1px dotted #ccc; }
+        .r-label { font-weight: 800; display: block; }
+        .r-address { word-break: break-all; }
+        .r-total { background: linear-gradient(135deg, #1a4a9e, #2563eb); color: white; padding: 8px; text-align: center; margin: 8px 0; border-radius: 12px; font-weight: 800; }
+        
+        .receipt-seal { position: absolute; bottom: 5px; right: 5px; width: 32px; height: 32px; border-radius: 50%; border: 2px solid #e74c3c; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.95); transform: rotate(-15deg); }
+        .receipt-seal:before { content: "✓ PAID"; font-size: 7px; font-weight: bold; color: #e74c3c; }
+        
+        .receipt-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .btn-wa { background: #25D366; color: white; padding: 12px; border-radius: 24px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-gm { background: #EA4335; color: white; padding: 12px; border-radius: 24px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-pdf { background: #34495e; color: white; padding: 12px; border-radius: 24px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-print { background: #9b59b6; color: white; padding: 12px; border-radius: 24px; border: none; font-weight: bold; cursor: pointer; }
+        
+        .report-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .report-tab { flex: 1; padding: 10px; border: none; border-radius: 30px; background: var(--gray-bg); cursor: pointer; font-weight: 600; transition: var(--transition); color: var(--dark); }
+        .report-tab.active { background: var(--primary-gradient); color: white; }
+        
+        .stat-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .profit-card { background: linear-gradient(145deg, #f0fdf4, #dcfce7); border-radius: 28px; padding: 20px; margin: 15px 0; border: 1px solid rgba(46, 204, 113, 0.2); }
+        .profit-row { display: flex; justify-content: space-between; margin: 10px 0; }
+        .profit-positive { color: #27ae60; font-weight: 700; }
+        .profit-negative { color: #e74c3c; font-weight: 700; }
+        
+        .date-filter { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+        .date-filter-btn { flex: 1; padding: 8px; border: none; border-radius: 30px; background: var(--gray-bg); cursor: pointer; font-weight: 600; font-size: 12px; transition: var(--transition); color: var(--dark); }
+        .date-filter-btn.active { background: var(--primary-gradient); color: white; }
+        
+        .system-log-entry { background: rgba(0, 0, 0, 0.03); padding: 12px; margin-bottom: 8px; border-radius: 20px; font-size: 11px; border-left: 3px solid #e74c3c; }
+        
+        /* Autocomplete dropdown list placement */
+        .autocomplete-container { position: relative; width: 100%; }
+        .autocomplete-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 20px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: var(--shadow-md); }
+        .autocomplete-item { padding: 12px; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .autocomplete-item:hover { background: var(--gray-bg); }
+        
+        .restore-banner { background: #fef3c7; color: #b45309; padding: 12px; border-radius: 28px; margin-bottom: 16px; text-align: center; font-size: 12px; font-weight: 600; display: none; cursor: pointer; }
+        
+        .toast-container { position: fixed; bottom: 20px; left: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .toast { background: var(--white); border-radius: 16px; padding: 12px 16px; box-shadow: var(--shadow-xl); display: flex; align-items: center; gap: 12px; animation: slideUp 0.3s ease; pointer-events: auto; border-left: 4px solid; color: var(--dark); }
+        .toast.success { border-left-color: #2ecc71; }
+        .toast.error { border-left-color: #e74c3c; }
+        .toast.warning { border-left-color: #f39c12; }
+        .toast.info { border-left-color: #3498db; }
+        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .spinner-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 10001; }
+        .spinner { width: 50px; height: 50px; border: 4px solid var(--gray-bg); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Auto Backup Control Section */
+        .toggle-container { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-top: 1px solid #e2e8f0; margin-top: 10px; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; transition: .3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--secondary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Dynamic Map Canvas Styling */
+        .map-container {
+            height: 280px;
+            width: 100%;
+            border-radius: 20px;
+            border: 1.5px solid #e2e8f0;
+            margin-bottom: 12px;
+            z-index: 1;
+        }
+
+        /* Floating autocomplete search dropdown placement inside Map Modal (Fixes "nikan okkoma ekagode wage") */
+        .floating-search-wrapper { position: relative; width: 100%; margin-bottom: 12px; z-index: 1005; }
+        .floating-results-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1.5px solid #e2e8f0; border-radius: 16px; max-height: 180px; overflow-y: auto; z-index: 1010; box-shadow: var(--shadow-md); margin-top: 4px; display: none; }
+
+        /* Resilient Print Rules for Receipts - NO CUTOFFS, FULL DETAILS */
+        @media print {
+            body { background: white !important; color: black !important; }
+            body * { visibility: hidden !important; }
+            #receiptModal, #receiptModal * { visibility: visible !important; }
+            #receiptModal { display: flex !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; background: white !important; justify-content: center !important; align-items: flex-start !important; }
+            .modal-content { border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; max-width: 100% !important; height: auto !important; overflow: visible !important; }
+            .close-circle, .receipt-btns, .btn-pdf, .btn-print, .no-print { display: none !important; }
+            .receipt-print { width: 100% !important; max-width: 72mm !important; margin: 0 auto !important; padding: 10px !important; border: none !important; box-shadow: none !important; }
+        }
+        
+        /* Live Tracking View styling - Hidden on load by default */
+        .tracking-view-container { background: white; width: 100%; max-width: 600px; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); overflow: hidden; }
+        .tracking-header { background: var(--primary-gradient); color: white; padding: 20px; text-align: center; }
+        .tracking-map { height: 350px; width: 100%; background: #e2e8f0; }
+        .tracking-info { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .tracking-row { display: flex; justify-content: space-between; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 8px; font-size: 14px; }
+        
+        .tracking-link { word-break: break-all; padding: 10px; background: #f1f5f9; border-radius: 12px; margin-bottom: 12px; font-size: 11px; text-align: center; font-weight: bold; color: var(--primary); }
+        .share-buttons { display: flex; gap: 10px; }
+        .share-btn { flex: 1; color: white; padding: 12px; border-radius: 24px; border: none; font-weight: bold; cursor: pointer; text-align: center; }
+        .share-wa { background: #25D366; }
+        .share-copy { background: #3b6cb0; }
+    </style>
+</head>
+<body>
+
+<!-- Main Driver Interface Container -->
+<div id="main-driver-view" class="app-container">
+    <div id="restore-banner" class="restore-banner" onclick="restorePreviousRide()">🔄 කලින් ගිය ගමනක් හමු විය! යළි පිහිටුවන්න ක්ලික් කරන්න</div>
+    
+    <div class="header-section">
+        <div class="header-left">
+            <div id="main-logo-area" class="logo-area">🚕</div>
+            <div class="brand-name" id="display-app-name">ADVANCE<br>MEETER TAXI</div>
+        </div>
+        <div class="settings-icon" onclick="openLogin()">⚙️</div>
+    </div>
+
+    <div class="action-buttons">
+        <button id="nightBtn" class="action-btn night-btn" onclick="toggleNightCharge()">🌙 NIGHT OFF</button>
+        <button class="action-btn" onclick="resetToNew()">🔄 නවතම RIDE (RESET)</button>
+    </div>
+
+    <!-- Navigation & Ride Modes -->
+    <div class="mode-selector">
+        <button id="mode-auto" class="mode-btn active" onclick="setMode('auto')">🎯 Auto</button>
+        <button id="mode-gps" class="mode-btn" onclick="setMode('gps')">📍 GPS Mode</button>
+        <button id="mode-manual" class="mode-btn" onclick="setMode('manual')">✏️ Manual</button>
+        <button id="mode-delivery" class="mode-btn" onclick="setMode('delivery')">📦 Delivery</button>
+    </div>
+
+    <!-- Auto tracking card panel -->
+    <div id="auto-location-card" class="location-card">
+        <div style="display: flex; justify-content: space-between;">
+            <div style="flex:1;">
+                <div class="location-title">📍 වත්මන් ස්ථානය (CURRENT LOCATION)</div>
+                <div id="current-location-address" class="location-address">GPS සංඥා ලැබෙන තෙක් රැඳී සිටින්න...</div>
+            </div>
+            <button class="refresh-location" onclick="refreshCurrentLocation()">⟳</button>
+        </div>
+    </div>
+
+    <!-- Manual coordinate entry fields -->
+    <div id="location-fields" style="display: none;">
+        <div class="grid-2">
+            <div class="autocomplete-container">
+                <input id="start-loc" type="text" placeholder="පිටත්වන ස්ථානය (Pickup)" autocomplete="off">
+                <div id="start-loc-suggestions" class="autocomplete-dropdown" style="display: none;"></div>
+            </div>
+            <div class="autocomplete-container">
+                <input id="end-loc" type="text" placeholder="ගමනාන්තය (Drop)" autocomplete="off">
+                <div id="end-loc-suggestions" class="autocomplete-dropdown" style="display: none;"></div>
+            </div>
+        </div>
+        <div class="grid-2" style="margin-top: 10px;">
+            <button class="map-picker-btn" onclick="openMapPicker('start')">🗺️ Pickup සිතියම</button>
+            <button class="map-picker-btn" onclick="openMapPicker('end')">🗺️ Drop සිතියම</button>
+        </div>
+    </div>
+
+    <!-- Delivery details configured inside an Accordion Panel to save screen space (image_94bba7.png Fix) -->
+    <div id="delivery-accordion" class="collapsible-card" style="display: none;">
+        <div class="collapsible-header" onclick="toggleAccordion('delivery-accordion')">
+            <div class="collapsible-title">📦 Delivery & Pickup Details</div>
+            <span class="collapsible-icon">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <h4 style="font-size: 11px; font-weight: bold; color: var(--primary);">📦 Pickup භාරගන්නාගේ විස්තර</h4>
+                <div class="grid-2">
+                    <input type="text" id="pickup-name" placeholder="නම (Name)">
+                    <input type="tel" id="pickup-phone" placeholder="දුරකථන අංකය (Phone)">
+                </div>
+                
+                <h4 style="font-size: 11px; font-weight: bold; color: var(--primary); margin-top: 8px;">📍 Delivery භාරදෙන්නාගේ විස්තර</h4>
+                <div class="grid-2">
+                    <input type="text" id="delivery-name" placeholder="නම (Name)">
+                    <input type="tel" id="delivery-phone" placeholder="දුරකථන අංකය (Phone)">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Odometer Card Dashboard -->
+    <div class="fare-card">
+        <div class="fare-row">
+            <div class="fare-item">
+                <small>DISTANCE / දුර</small>
+                <div class="display-value" id="disp-km">0.00</div>
+                <small>KM</small>
+            </div>
+            <div class="fare-item">
+                <small>TOTAL FARE / මුදල</small>
+                <div class="display-fare-currency">LKR</div>
+                <div class="display-fare-value" id="disp-fare">100.00</div>
+                <small id="night-indicator" style="display:none; color: var(--accent); margin-top: 4px; font-weight: bold;">🌙 රාත්‍රී ගාස්තු ක්‍රියාත්මකයි</small>
+            </div>
+        </div>
+        <div id="gps-status" class="gps-status">📍 GPS සම්බන්ධතාවය පරීක්ෂා කරමින්...</div>
+        
+        <!-- Manual odometer adjustment system with realtime sync calculation -->
+        <div id="manual-controls" style="display:none;">
+            <div class="manual-control">
+                <button class="manual-btn" onclick="manualAddDistance(-1)">-1</button>
+                <button class="manual-btn" onclick="manualAddDistance(-0.5)">-0.5</button>
+                <input type="number" id="manual-km-input" class="manual-input" value="0.00" step="0.1" oninput="manualKmInputChanged()">
+                <button class="manual-btn" onclick="manualAddDistance(0.5)">+0.5</button>
+                <button class="manual-btn" onclick="manualAddDistance(1)">+1</button>
+            </div>
+            <div style="text-align:center;">
+                <button class="set-distance-btn" onclick="setManualDistance()">✓ දුර ප්‍රමාණය තහවුරු කරන්න</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dynamic Odometer Maps Redirection Trigger -->
+    <div id="nav-container" style="display:none; margin-bottom:15px;">
+        <button class="map-picker-btn" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);" onclick="openPhoneNavigation()">🧭 සිතියම පෙන්වන්න (NAVIGATE)</button>
+    </div>
+
+    <!-- Billing Details & Adjustments inside a beautifully structured collapsible Accordion Card (image_94c01c.png Fix) -->
+    <div id="billing-accordion" class="collapsible-card">
+        <div class="collapsible-header" onclick="toggleAccordion('billing-accordion')">
+            <div class="collapsible-title">💳 Billing Details & Adjustments</div>
+            <span class="collapsible-icon">▼</span>
+        </div>
+        <div class="collapsible-content">
+            <div class="input-group">
+                <input type="tel" id="mobile" placeholder="පාරිභෝගික දුරකථන අංකය (අත්‍යවශ්‍ය නොවේ)">
+            </div>
+            
+            <div class="grid-2">
+                <div class="input-group">
+                    <input type="number" id="manual-fare" placeholder="Manual Fare (LKR)" oninput="updateDisplay()">
+                </div>
+                <div class="wait-select-wrapper">
+                    <select id="wait-select" onchange="updateDisplay()">
+                        <option value="0">⏱️ පොරොත්තු කාලය: 0 min</option>
+                        <script>for(let i=1;i<=120;i++) document.write(`<option value="${i}">⏱️ පොරොත්තු කාලය: ${i} min</option>`);</script>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <input type="number" id="discount-input" placeholder="වට්ටම් / Discount (LKR)" oninput="updateDisplay()">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Trip Control Triggers -->
+    <div class="btn-main-grid">
+        <button class="btn-start" id="startBtn" onclick="startRide()">ගමන අරඹන්න (START)</button>
+        <button class="btn-end" onclick="endRide()">ගමන අවසන් කරන්න (END)</button>
+    </div>
+
+    <!-- Interactive Voice command panel -->
+    <div class="voice-container">
+        <button id="voiceBtn" class="voice-btn" onclick="toggleVoiceCommand()">🎤 VOICE CONTROL (OFF)</button>
+        <div id="voiceStatus" class="voice-status" onclick="toggleVoiceCommand()">
+            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+            සක්‍රීය කිරීමට ක්ලික් කරන්න
+        </div>
+        <div class="voice-commands-guide">Commands: SR (Start) | ER (End) | NAV (Navigate) | RP (Reports) | FL (Fuel) | RPL (Repair)</div>
+    </div>
+</div>
+
+<!-- Dynamic Independent Passenger Tracking Screen Layout (Specifically forced display:none inline to prevent clumping on layout initialization) -->
+<div id="passenger-tracking-view" class="tracking-view-container" style="display: none; margin: 0 auto;">
+    <div class="tracking-header">
+        <h2 style="font-size:20px; font-weight:800; letter-spacing:1px;">🚕 LIVE PASSENGER PORTAL</h2>
+        <p style="font-size:12px; margin-top:4px; opacity:0.9;">Advance Meeter Taxi - Real-time Navigation Stream</p>
+    </div>
+    <div id="tracking-map-canvas" class="tracking-map"></div>
+    <div class="tracking-info">
+        <h3 style="color:var(--primary); font-weight:800; border-bottom:2px solid #e2e8f0; padding-bottom:6px;">📊 සක්‍රීය ගමනේ විස්තර</h3>
+        <div class="tracking-row">
+            <span>Tracking Trip ID:</span>
+            <strong id="track-trip-id" style="color:var(--primary);">N/A</strong>
+        </div>
+        <div class="tracking-row">
+            <span>ගමනේ තත්ත්වය:</span>
+            <strong id="track-status" style="color:var(--secondary-dark);">🟢 Active Odometer Track</strong>
+        </div>
+        <div class="tracking-row">
+            <span>ගමනාන්තය:</span>
+            <strong id="track-destination">Colombo</strong>
+        </div>
+        <div class="tracking-row">
+            <span>වත්මන් ආසන්න ගාස්තුව:</span>
+            <strong id="track-est-fare" style="font-size:18px; color:var(--accent-dark);">LKR 0.00</strong>
+        </div>
+        <div class="tracking-row">
+            <span>ගමන් කළ දුර ප්‍රමාණය:</span>
+            <strong id="track-est-distance">0.00 km</strong>
+        </div>
+        <div class="tracking-row">
+            <span>අවසන් වරට යාවත්කාලීන වූයේ:</span>
+            <span id="track-last-update" style="font-weight:600; color:var(--gray);">Just Now</span>
+        </div>
+        <button class="confirm-payment-btn" style="background:var(--primary-gradient); margin-top:10px;" onclick="location.reload()">⟳ REFRESH STREAM</button>
+    </div>
+</div>
+
+<!-- Modal Overlays System Section -->
+<div class="toast-container" id="toastContainer"></div>
+<div class="spinner-overlay" id="spinnerOverlay"><div class="spinner"></div></div>
+
+<!-- Live Tracking URL Generation Popup -->
+<div id="trackingPopupModal" class="modal">
+    <div class="modal-content tracking-popup">
+        <div class="close-circle" onclick="closeTrackingPopup()">✕</div>
+        <h3 style="text-align:center; font-weight:800; color:var(--primary);">📍 LIVE TRACKING STREAM</h3>
+        <p style="text-align:center; margin:10px 0; font-size:13px; color:var(--gray);">Share this live link with your passenger to track coordinates without server-side 404 redirects</p>
+        <div class="tracking-link" id="trackingLinkDisplay">...</div>
+        <div id="trackingQR" style="display: flex; justify-content: center; margin: 15px 0;"></div>
+        <div class="share-buttons">
+            <button class="share-btn share-wa" onclick="shareTrackingWhatsApp()">📱 WhatsApp</button>
+            <button class="share-btn share-copy" onclick="copyTrackingLink()">📋 Copy Link</button>
+        </div>
+        <button class="confirm-payment-btn" style="margin-top:15px;" onclick="closeTrackingPopup()">Close Stream Window</button>
+    </div>
+</div>
+
+<!-- Payment Processing Popup -->
+<div id="payment-popup" class="modal">
+    <div class="modal-content payment-popup">
+        <div class="close-circle" onclick="closePaymentPopup()">✕</div>
+        <h3 style="text-align:center; margin-bottom:20px; font-weight:800; color:var(--primary);">💳 TRIP PAYMENT CHANNEL</h3>
+        <div class="payment-methods">
+            <div class="payment-method-btn" data-method="cash" onclick="selectPaymentMethod('cash')">💰 මුදලින් ගෙවීම් (Cash)</div>
+            <div class="payment-method-btn" data-method="card" onclick="selectPaymentMethod('card')">💳 කාඩ්පත් ගෙවීම් (Card)</div>
+            <div class="payment-method-btn" data-method="mobile" onclick="selectPaymentMethod('mobile')">📱 Mobile wallet</div>
+            <div class="payment-method-btn" data-method="bank" onclick="selectPaymentMethod('bank')">🏦 බැංකු ගෙවීම්</div>
+            <div class="payment-method-btn" data-method="other" onclick="selectPaymentMethod('other')">📝 වෙනත් ක්‍රමවේද</div>
+        </div>
+        <div id="payment-detail-fields" class="payment-detail-fields" style="display: none;">
+            <div id="cash-fields" style="display: none;"><p style="font-weight:600; text-align:center; color:var(--secondary-dark);">💰 මුදල් ගෙවීම තහවුරුයි! පාරිභෝගිකයාගෙන් මුදල් ලබා ගන්න.</p></div>
+            <div id="card-fields" style="display: none;">
+                <input type="text" id="card-number" placeholder="Last 4 Card Digits" maxlength="4">
+                <div class="grid-2" style="margin-top:8px; margin-bottom:8px;">
+                    <input type="text" id="card-expiry" placeholder="MM/YY">
+                    <input type="text" id="card-cvv" placeholder="CVV">
+                </div>
+                <input type="text" id="card-name" placeholder="Cardholder Full Name">
+            </div>
+            <div id="mobile-fields" style="display: none;">
+                <select id="mobile-provider" style="margin-bottom:8px;">
+                    <option>Select Mobile Wallet</option>
+                    <option>Frimi</option>
+                    <option>mCash</option>
+                    <option>Genie</option>
+                    <option>eZ Cash</option>
+                </select>
+                <input type="text" id="mobile-number" placeholder="Mobile Account Number">
+            </div>
+            <div id="bank-fields" style="display: none;">
+                <select id="bank-name" style="margin-bottom:8px;">
+                    <option>Select Core Bank</option>
+                    <option>Commercial Bank</option>
+                    <option>HNB</option>
+                    <option>Sampath Bank</option>
+                    <option>BOC</option>
+                </select>
+                <input type="text" id="bank-ref" placeholder="Reference Tracking Number">
+            </div>
+            <div id="other-fields" style="display: none;">
+                <input type="text" id="other-method" placeholder="Custom Payment Channel Name" style="margin-bottom:8px;">
+                <input type="text" id="other-ref" placeholder="Internal Reference Notes">
+            </div>
+        </div>
+        <button class="confirm-payment-btn" id="confirmPaymentBtn" onclick="confirmPaymentAndShowReceipt()">✅ PROCESS PAYMENT & GET RECEIPT</button>
+    </div>
+</div>
+
+<!-- Admin settings systems menu modal -->
+<div id="settings-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-circle" onclick="closeSettingsAndLogout()">✕</div>
+        <h3 style="text-align:center; margin-bottom:24px; font-weight:800; color:var(--primary);">⚙️ SYSTEM DIAGNOSTICS</h3>
+        
+        <div class="settings-menu">
+            <!-- Grid Card 1: Operations -->
+            <div class="settings-card-group">
+                <div class="settings-card-title">🛠️ CORE OPERATIONS</div>
+                <button class="settings-menu-btn" onclick="openAppSettings()">📱 APPLICATION CONFIGURATION</button>
+                <button class="settings-menu-btn secondary" onclick="openFuelLogModal()">⛽ FUEL REGISTRY LOGS</button>
+                <button class="settings-menu-btn secondary" onclick="openRepairLogModal()">🔧 REPAIR LOG</button>
+            </div>
+            
+            <!-- Grid Card 2: Analytics -->
+            <div class="settings-card-group">
+                <div class="settings-card-title">📊 ANALYTICAL DATA ENGINE</div>
+                <button class="settings-menu-btn secondary" onclick="openReportsMenu()">📊 ANALYSIS & REPORTS</button>
+                <button class="settings-menu-btn" onclick="openDriverApp()">👨‍✈️ DRIVER PERFORMANCE PANEL</button>
+            </div>
+            
+            <!-- Grid Card 3: Security & Database Backup -->
+            <div class="settings-card-group">
+                <div class="settings-card-title">💾 SYSTEM RECOVERY BACKUPS</div>
+                <button class="settings-menu-btn secondary" onclick="openDatabaseBackupModal()">📤 DATA BACKUP & RESTORE</button>
+                <button class="settings-menu-btn warning" onclick="openSystemLogModal()">📋 SYSTEM EVENT LOGS</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- App operational parameters configure -->
+<div id="app-settings-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToSettingsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('app-settings-modal')">✕</div>
+        <h3 style="text-align:center; margin-bottom: 20px; font-weight:800;">📱 APP CONFIGURATION</h3>
+        
+        <div class="settings-card-group">
+            <div class="settings-card-title">Brand Identity Settings</div>
+            <label style="font-size:11px; font-weight:bold; color:var(--gray);">App Display Name:</label>
+            <input id="set-app-name" style="margin-bottom:10px;">
+            <label style="font-size:11px; font-weight:bold; color:var(--gray);">Receipt Header Name:</label>
+            <input id="set-receipt-header" style="margin-bottom:10px;">
+            <label style="font-size:11px; font-weight:bold; color:var(--gray);">Upload Company Logo Image:</label>
+            <input type="file" id="logo-upload" accept="image/*">
+        </div>
+
+        <div class="settings-card-group">
+            <div class="settings-card-title">Dynamic Tariff Parameters</div>
+            <div class="grid-2">
+                <div>
+                    <label style="font-size:11px; font-weight:bold; color:var(--gray);">Base Fare (Rs):</label>
+                    <input id="set-base" type="number">
+                </div>
+                <div>
+                    <label style="font-size:11px; font-weight:bold; color:var(--gray);">Rate Per KM (Rs):</label>
+                    <input id="set-rate" type="number">
+                </div>
+            </div>
+            <div class="grid-2" style="margin-top:10px;">
+                <div>
+                    <label style="font-size:11px; font-weight:bold; color:var(--gray);">Wait Charge/Min:</label>
+                    <input id="set-wait" type="number">
+                </div>
+                <div>
+                    <label style="font-size:11px; font-weight:bold; color:var(--gray);">Night Premium (%):</label>
+                    <input id="set-night" type="number">
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-card-group">
+            <div class="settings-card-title">Security Settings</div>
+            <label style="font-size:11px; font-weight:bold; color:var(--gray);">Update Admin Passcode:</label>
+            <input id="set-pwd" type="password">
+        </div>
+
+        <button class="confirm-payment-btn" onclick="saveSettings()">💾 SAVE CONFIGURATIONS</button>
+    </div>
+</div>
+
+<!-- Database recovery backup / restore panel -->
+<div id="db-backup-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToSettingsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('db-backup-modal')">✕</div>
+        <h3 style="text-align:center; font-weight:800; margin-bottom:15px;">📤 SYSTEM DATA BACKUPS</h3>
+        
+        <div class="settings-card-group">
+            <div class="settings-card-title">Manual Backups</div>
+            <p style="font-size:11px; color:var(--gray); margin-bottom:10px;">Save settings, rides registry, fuel entries and system configs to a JSON backup file</p>
+            <button class="settings-menu-btn" style="background:var(--secondary-gradient); padding:12px; font-size:13px;" onclick="downloadSystemBackupFile()">📥 DOWNLOAD MANUAL BACKUP</button>
+        </div>
+
+        <div class="settings-card-group">
+            <div class="settings-card-title">Automatic Backup Configuration</div>
+            <p style="font-size:11px; color:var(--gray); margin-bottom:10px;">Auto downloads a timestamped JSON file after each trip ends</p>
+            <div class="toggle-container">
+                <span style="font-size:13px; font-weight:600; color:var(--dark);">Download Backup on Transaction:</span>
+                <label class="switch">
+                    <input type="checkbox" id="auto-backup-toggle" checked onchange="toggleAutoBackupPref()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-card-group">
+            <div class="settings-card-title">Upload & Restore System</div>
+            <p style="font-size:11px; color:var(--gray); margin-bottom:10px;">Import a previously downloaded .json file to restore all taxi records instantly</p>
+            <input type="file" id="backup-file-picker" accept=".json" style="padding:10px; margin-bottom:10px; background:white;">
+            <button class="settings-menu-btn secondary" style="padding:12px; font-size:13px;" onclick="restoreSystemFromFile()">🔄 IMPORT & RESTORE FILE</button>
+        </div>
+
+        <div class="settings-card-group" id="local-backups-container">
+            <div class="settings-card-title">Browser Rolling Backups (History)</div>
+            <div id="local-backups-list" style="max-height:120px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Fuel Log Modal Form -->
+<div id="fuel-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToSettingsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('fuel-modal')">✕</div>
+        <h3 style="text-align:center; margin-bottom: 15px; font-weight:800;">⛽ FUEL ENTRY LOGGER</h3>
+        <div class="grid-2" style="margin-bottom:10px;">
+            <input type="date" id="fuel-date">
+            <input type="number" id="fuel-liters" placeholder="Liters Dispensed">
+        </div>
+        <div class="grid-2" style="margin-bottom:10px;">
+            <input type="number" id="fuel-price" placeholder="Price/Liter (Rs)">
+            <input type="number" id="fuel-total" placeholder="Total Cost LKR" readonly style="background:#e0f2fe; color:var(--primary); font-weight:bold;">
+        </div>
+        <input type="text" id="fuel-notes" placeholder="Optional comments/logs" style="margin-bottom:12px;">
+        <button class="confirm-payment-btn" onclick="addFuelLog()">➕ ADD ENTRY</button>
+        <button class="settings-menu-btn secondary" style="margin-top:10px; width: 100%;" onclick="openFuelReport()">📊 LOG ANALYSIS</button>
+        <div id="fuel-list" style="margin-top:15px; max-height:150px; overflow-y:auto;"></div>
+    </div>
+</div>
+
+<!-- Repair Log Modal Form -->
+<div id="repair-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToSettingsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('repair-modal')">✕</div>
+        <h3 style="text-align:center; margin-bottom: 15px; font-weight:800;">🔧 REPAIR SERVICE RECORDER</h3>
+        <div class="grid-2" style="margin-bottom:10px;">
+            <input type="date" id="repair-date">
+            <input type="text" id="repair-desc" placeholder="Repair description details">
+        </div>
+        <div class="grid-2" style="margin-bottom:10px;">
+            <input type="number" id="repair-cost" placeholder="Repairs cost LKR">
+            <input type="text" id="repair-garage" placeholder="Garage address/name">
+        </div>
+        <input type="text" id="repair-notes" placeholder="Service notes" style="margin-bottom:12px;">
+        <button class="confirm-payment-btn" onclick="addRepairLog()">➕ RECORD ENTRY</button>
+        <button class="settings-menu-btn secondary" style="margin-top:10px; width: 100%;" onclick="openRepairReport()">📊 REPORT SUMMARY</button>
+        <div id="repair-list" style="margin-top:15px; max-height:150px; overflow-y:auto;"></div>
+    </div>
+</div>
+
+<!-- Reports Menu Modal -->
+<div id="reports-menu-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToSettingsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('reports-menu-modal')">✕</div>
+        <h3 style="text-align:center; margin-bottom: 20px; font-weight:800; color:var(--primary);">📊 REPORT CENTRE ENGINE</h3>
+        <div class="settings-menu">
+            <button class="settings-menu-btn" onclick="openPanel('report-modal')">📊 TRANSACTIONS & PAYMENTS REPORT</button>
+            <button class="settings-menu-btn secondary" onclick="openPanel('income-modal')">📈 REVENUE CHARTING</button>
+            <button class="settings-menu-btn secondary" onclick="openPanel('history-modal')">📜 RIDE HISTORY LOG</button>
+            <button class="settings-menu-btn secondary" onclick="openTravelReport()">📍 TRAVEL LOG ANALYTICS</button>
+            <button class="settings-menu-btn secondary" onclick="openProfitReport()">💰 PROFIT & EXPENSES REPORT</button>
+            <button class="settings-menu-btn secondary" onclick="showPeakHoursReport()">🕒 PEAK HOURS DENSITY</button>
+            <button class="settings-menu-btn secondary" onclick="showDriverPerformanceReport()">👨‍✈️ DRIVER PERFORMANCE</button>
+        </div>
+    </div>
+</div>
+
+<!-- Analytical Panels windows -->
+<div id="fuel-report-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToFuelLog()">←</div>
+        <div class="close-circle" onclick="closeM('fuel-report-modal')">✕</div>
+        <h3>⛽ FUEL COMPILATION GRAPH</h3>
+        <div class="report-tabs">
+            <button class="report-tab active" onclick="showFuelReportTab('daily')">Daily</button>
+            <button class="report-tab" onclick="showFuelReportTab('monthly')">Monthly</button>
+            <button class="report-tab" onclick="showFuelReportTab('yearly')">Yearly</button>
+            <button class="report-tab" onclick="showFuelReportTab('range')">Range</button>
+        </div>
+        <div id="fuel-date-range-panel" style="display:none; margin-bottom:10px;">
+            <div class="grid-2">
+                <input type="date" id="fuel-start-date">
+                <input type="date" id="fuel-end-date">
+            </div>
+            <button class="map-picker-btn" style="margin-top:8px;" onclick="updateFuelReport()">Apply Range</button>
+        </div>
+        <div id="fuel-report-container" style="margin: 15px 0;"></div>
+        <button class="btn-reprint" onclick="exportFuelCSV()">📥 EXPORT CSV</button>
+    </div>
+</div>
+
+<div id="repair-report-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToRepairLog()">←</div>
+        <div class="close-circle" onclick="closeM('repair-report-modal')">✕</div>
+        <h3>🔧 REPAIR LOG COMPILATION</h3>
+        <div class="report-tabs">
+            <button class="report-tab active" onclick="showRepairReportTab('daily')">Daily</button>
+            <button class="report-tab" onclick="showRepairReportTab('monthly')">Monthly</button>
+            <button class="report-tab" onclick="showRepairReportTab('yearly')">Yearly</button>
+            <button class="report-tab" onclick="showRepairReportTab('range')">Range</button>
+        </div>
+        <div id="repair-date-range-panel" style="display:none; margin-bottom:10px;">
+            <div class="grid-2">
+                <input type="date" id="repair-start-date">
+                <input type="date" id="repair-end-date">
+            </div>
+            <button class="map-picker-btn" style="margin-top:8px;" onclick="updateRepairReport()">Apply Range</button>
+        </div>
+        <div id="repair-report-container" style="margin: 15px 0;"></div>
+        <button class="btn-reprint" onclick="exportRepairCSV()">📥 EXPORT CSV</button>
+    </div>
+</div>
+
+<div id="travel-report-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToReportsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('travel-report-modal')">✕</div>
+        <h3>📍 MILEAGE & TRAVEL METRICS</h3>
+        <div class="report-tabs">
+            <button class="report-tab active" onclick="showTravelReportTab('daily')">Daily</button>
+            <button class="report-tab" onclick="showTravelReportTab('monthly')">Monthly</button>
+            <button class="report-tab" onclick="showTravelReportTab('yearly')">Yearly</button>
+            <button class="report-tab" onclick="showTravelReportTab('range')">Range</button>
+        </div>
+        <div id="travel-date-range-panel" style="display:none; margin-bottom:10px;">
+            <div class="grid-2">
+                <input type="date" id="travel-start-date">
+                <input type="date" id="travel-end-date">
+            </div>
+            <button class="map-picker-btn" style="margin-top:8px;" onclick="updateTravelReport()">Apply Range</button>
+        </div>
+        <div id="travel-report-container" style="margin: 15px 0; max-height:220px; overflow-y:auto;"></div>
+        <button class="btn-reprint" onclick="exportTravelCSV()">📥 EXPORT CSV</button>
+        <button class="btn-pdf" style="margin-top: 10px;" onclick="printTravelReceipt()">🖨️ PRINT SUMMARY REPORT</button>
+    </div>
+</div>
+
+<div id="report-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToReportsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('report-modal')">✕</div>
+        <h3>📊 PAYMENTS PROFILE AUDIT</h3>
+        <div class="report-tabs">
+            <button class="report-tab active" onclick="showReportTab('daily')">Daily</button>
+            <button class="report-tab" onclick="showReportTab('monthly')">Monthly</button>
+            <button class="report-tab" onclick="showReportTab('yearly')">Yearly</button>
+        </div>
+        <div id="report-container" style="margin: 15px 0;"></div>
+        <button class="btn-reprint" onclick="exportReportCSV()">📥 EXPORT CSV</button>
+    </div>
+</div>
+
+<div id="income-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToReportsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('income-modal')">✕</div>
+        <h3>📈 CUMULATIVE REVENUE DATA</h3>
+        <canvas id="earningsChart" style="max-height:250px;"></canvas>
+        <div class="grid-2" style="margin:15px 0;">
+            <div>Today:<br><b id="stat-today">Rs.0.00</b></div>
+            <div>Cumulative Net:<br><b id="stat-total">Rs.0.00</b></div>
+        </div>
+        <button class="btn-reprint" onclick="downloadCSV()">📥 EXPORT DATA CSV</button>
+    </div>
+</div>
+
+<div id="history-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToReportsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('history-modal')">✕</div>
+        <h3 style="text-align:center; margin-bottom:15px; font-weight:800;">📜 TRAVEL LOG HISTORY</h3>
+        <div class="date-filter">
+            <button class="date-filter-btn active" onclick="filterHistory('today')">Today</button>
+            <button class="date-filter-btn" onclick="filterHistory('week')">This Week</button>
+            <button class="date-filter-btn" onclick="filterHistory('month')">This Month</button>
+            <button class="date-filter-btn" onclick="filterHistory('custom')">Custom Range</button>
+        </div>
+        <div id="custom-date-range" style="display:none; margin-bottom:15px;">
+            <div class="grid-2">
+                <input type="date" id="history-start-date">
+                <input type="date" id="history-end-date">
+            </div>
+            <button class="map-picker-btn" style="margin-top:8px;" onclick="applyCustomHistoryFilter()">Apply Filter</button>
+        </div>
+        <div id="history-list" style="max-height:250px; overflow-y:auto;"></div>
+    </div>
+</div>
+
+<div id="profit-report-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToReportsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('profit-report-modal')">✕</div>
+        <h3 style="text-align:center; margin-bottom:15px; font-weight:800;">💰 FINANCIAL BALANCE SHEET</h3>
+        <div class="report-tabs">
+            <button class="report-tab active" onclick="showProfitReportTab('daily')">Daily</button>
+            <button class="report-tab" onclick="showProfitReportTab('monthly')">Monthly</button>
+            <button class="report-tab" onclick="showProfitReportTab('yearly')">Yearly</button>
+            <button class="report-tab" onclick="showProfitReportTab('range')">Range</button>
+        </div>
+        <div id="profit-date-range-panel" style="display:none; margin-bottom:10px;">
+            <div class="grid-2">
+                <input type="date" id="profit-start-date">
+                <input type="date" id="profit-end-date">
+            </div>
+            <button class="map-picker-btn" onclick="updateProfitReport()">Apply Range</button>
+        </div>
+        <div id="profit-report-container" style="margin: 15px 0;"></div>
+        <div>
+            <canvas id="profitChart" style="max-height:200px; width:100%;"></canvas>
+        </div>
+        <button class="btn-reprint" style="margin-top:15px; width:100%;" onclick="exportProfitCSV()">📥 EXPORT FINANCIALS CSV</button>
+    </div>
+</div>
+
+<div id="peak-hours-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToReportsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('peak-hours-modal')">✕</div>
+        <h3>🕒 PEAK HOURS LOG</h3>
+        <canvas id="peakHoursChart" style="max-height:220px;"></canvas>
+        <div id="peak-hours-stats" style="margin-top: 15px;"></div>
+        <button class="btn-reprint" style="margin-top:10px; width:100%;" onclick="exportPeakHoursCSV()">📥 EXPORT CHART CSV</button>
+    </div>
+</div>
+
+<div id="driver-performance-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToReportsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('driver-performance-modal')">✕</div>
+        <h3>👨‍✈️ PERFORMANCE ANALYTICS</h3>
+        <div id="driver-performance-stats"></div>
+        <canvas id="driverPerformanceChart" style="max-height: 200px; margin-top: 15px;"></canvas>
+        <button class="btn-reprint" style="margin-top:10px; width:100%;" onclick="exportDriverPerformanceCSV()">📥 EXPORT METRICS CSV</button>
+    </div>
+</div>
+
+<div id="driver-app-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-circle" onclick="closeM('driver-app-modal')">✕</div>
+        <h3 style="text-align:center; margin-bottom:15px;">👨‍✈️ ACTIVE DRIVER STATUS PANEL</h3>
+        <div id="driver-app-stats"></div>
+        <div id="driver-app-rides" style="max-height:200px; overflow-y:auto; margin:10px 0;"></div>
+        <button class="confirm-payment-btn" onclick="closeM('driver-app-modal')">CLOSE CONSOLE</button>
+    </div>
+</div>
+
+<!-- Receipt Window - FIXED FOR FULL MEDIA PRINT & SHARING DETAIL VALIDATION -->
+<div id="receiptModal" class="modal">
+    <div class="modal-content">
+        <div class="close-circle no-print" onclick="closeM('receiptModal')">✕</div>
+        <div id="receipt-view" class="receipt-print">
+            <div class="r-header" id="receipt-header">TAXI OFFICIAL RECEIPT</div>
+            <div id="receipt-body" style="margin: 12px 0;"></div>
+            <div class="r-total">TOTAL RECEIVABLE: Rs. <span id="receipt-total">0.00</span></div>
+            <div class="r-words" id="receipt-words" style="font-size: 8.5pt; text-align:center; margin: 8px 0; font-weight:bold; color:var(--dark);"></div>
+            <div id="receipt-qr" style="display:flex; justify-content:center; margin:15px 0;"></div>
+            <div class="r-divider" style="text-align:center; font-weight:bold; font-size: 8.5pt; border-top: 1.5px dashed #ccc; padding-top: 5px;">Advance Meeter Taxi sobat pravas kelyabaddal dhanyawad! 🚕</div>
+            <div class="receipt-seal"></div>
+        </div>
+        <div class="receipt-btns no-print">
+            <button class="btn-wa" onclick="shareWA()">📱 WHATSAPP</button>
+            <button class="btn-gm" onclick="sendEmailWithAttachment()">📧 EMAIL</button>
+        </div>
+        <button class="btn-pdf no-print" onclick="downloadReceiptPDF()">📄 SAVE AS PDF</button>
+        <button class="btn-print no-print" onclick="printReceiptDirectly()">🖨️ BLUETOOTH THERMAL PRINT</button>
+    </div>
+</div>
+
+<div id="system-log-modal" class="modal">
+    <div class="modal-content">
+        <div class="back-btn" onclick="goBackToSettingsMenu()">←</div>
+        <div class="close-circle" onclick="closeM('system-log-modal')">✕</div>
+        <h3>📋 CRITICAL SYSTEM RUNTIME LOGS</h3>
+        <div id="system-log-list" style="max-height:350px; overflow-y:auto; margin: 15px 0;"></div>
+        <button class="btn-reprint" onclick="exportSystemLogCSV()">📥 EXPORT LOG CSV</button>
+        <button class="settings-menu-btn warning" style="margin-top:10px; width: 100%;" onclick="clearSystemLog()">🗑️ PURGE EVENTS</button>
+    </div>
+</div>
+
+<!-- Map coordinates selection modals - FLOATING AUTOCOMPLETE OVER MAP LAYER (Prevents shifting map clumping) -->
+<div id="map-modal" class="modal">
+    <div class="modal-content" style="max-width: 480px; border-radius: 28px; padding: 20px;">
+        <div class="close-circle" onclick="closeMapModal()">✕</div>
+        <h4 id="map-title" style="text-align:center; margin-bottom: 12px; font-weight:800; color:var(--primary);">Nasheyavarun jaga noda (Select Location)</h4>
+        
+        <!-- Floating Autocomplete search container (image_de649c.png Layout Standard) -->
+        <div class="floating-search-wrapper">
+            <input type="text" id="map-search" placeholder="Jaga Shodha (Search Sri Lanka)..." style="width:100%; padding:14px; border-radius:20px; border: 1.5px solid #e2e8f0;">
+            <div id="search-results" class="floating-results-dropdown"></div>
+        </div>
+
+        <!-- Controlled Map Canvas -->
+        <div id="map" class="map-container"></div>
+        
+        <input id="selected-address" readonly placeholder="Nivadeli Jaga (Selected Address)" style="width:100%; margin-top:10px; padding:12px; border-radius:20px; background:var(--gray-bg); border: 1.5px solid #e2e8f0;">
+        <div class="grid-2" style="margin-top:12px;">
+            <button style="background:var(--secondary-gradient); color:white; border:none; padding:14px; border-radius:25px; font-weight:bold; cursor:pointer;" onclick="useMapLocation()">✓ Jaga nischit kara</button>
+            <button style="background:var(--primary-gradient); color:white; border:none; padding:14px; border-radius:25px; font-weight:bold; cursor:pointer;" onclick="getCurrentMapLocation()">📍 Majhi Jaga</button>
+        </div>
+    </div>
+</div>
+
+<!-- System Login Password Verification Modal -->
+<div id="login-modal" class="modal">
+    <div class="modal-content">
+        <div class="close-circle" onclick="closeM('login-modal')">✕</div>
+        <div style="text-align:center;">
+            <div class="logo-area" style="margin:0 auto 15px; width:60px; height:60px; font-size:32px;">🚕</div>
+            <h3>ADMIN LOGIN PANEL</h3>
+            <p style="color:#64748b;">Settings sathi password taka</p>
+        </div>
+        <input type="password" id="admin-pass" placeholder="Password taka" style="text-align:center; margin-top:15px;">
+        <button class="login-btn" style="background:var(--primary-gradient); color:white; width:100%; margin-top:15px; padding:14px; border:none; border-radius:30px; font-weight:bold; cursor:pointer;" onclick="checkLogin()">LOGIN</button>
+        <button class="settings-menu-btn secondary" style="margin-top:10px; width: 100%;" onclick="closeM('login-modal')">Cancel kara (CANCEL)</button>
+    </div>
+</div>
+
+<!-- System Scripts Section -->
+<script>
+    // ========== SYSTEM LOG (SYSTEM LOGS) ==========
+    let systemLogs = JSON.parse(localStorage.getItem('system_logs') || '[]');
+    function addSystemLog(type, message, details) {
+        let log = { id: Date.now(), date: new Date().toISOString(), type, message, details: details || '' };
+        systemLogs.unshift(log);
+        if (systemLogs.length > 200) systemLogs = systemLogs.slice(0, 200);
+        localStorage.setItem('system_logs', JSON.stringify(systemLogs));
+    }
+    
+    function openSystemLogModal() {
+        let container = document.getElementById('system-log-list');
+        if (container) {
+            container.innerHTML = systemLogs.map(log => `
+                <div class="system-log-entry">
+                    <small>${new Date(log.date).toLocaleString()}</small><br>
+                    <strong>${log.type}</strong>: ${log.message}<br>
+                    <small>${log.details}</small>
+                </div>
+            `).join('') || '<div style="text-align:center;padding:20px;">No administrative events recorded.</div>';
+            closeM('settings-modal');
+            document.getElementById('system-log-modal').style.display = 'flex';
+        }
+    }
+    
+    function clearSystemLog() {
+        systemLogs = [];
+        localStorage.setItem('system_logs', JSON.stringify(systemLogs));
+        showToast('Administrative Logs Purged', 'success');
+        openSystemLogModal();
+    }
+    
+    function exportSystemLogCSV() {
+        let csv = "Date,Type,Message,Details\n" + systemLogs.map(l => `"${l.date}","${l.type}","${l.message}","${l.details}"`).join("\n");
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'}));
+        a.download = 'system_logs.csv';
+        a.click();
+        showToast('Administrative Log CSV Downloaded', 'success');
+    }
+    
+    // ========== WAKE LOCK (WAKELOCK) ==========
+    let wakeLock = null;
+    async function requestWakeLock() {
+        if ('wakeLock' in navigator) {
+            try {
+                wakeLock = await navigator.wakeLock.request('screen');
+                return true;
+            } catch(e) { return false; }
+        }
+        return false;
+    }
+    function releaseWakeLock() {
+        if (wakeLock) {
+            wakeLock.release();
+            wakeLock = null;
+        }
+    }
+
+    // ========== NUMBER TO WORDS (AKSHARI COGGU) ==========
+    function numberToWords(num) {
+        if (num === 0) return "Zero Rupees Only";
+        const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+        const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+        function convert(n) {
+            if (n < 20) return ones[n];
+            if (n < 100) return tens[Math.floor(n/10)] + (n%10 ? " " + ones[n%10] : "");
+            if (n < 1000) return ones[Math.floor(n/100)] + " Hundred" + (n%100 ? " " + convert(n%100) : "");
+            if (n < 100000) return convert(Math.floor(n/1000)) + " Thousand" + (n%1000 ? " " + convert(n%1000) : "");
+            return convert(Math.floor(n/100000)) + " Lakh" + (n%100000 ? " " + convert(n%100000) : "");
+        }
+        return convert(Math.floor(num)) + " Rupees Only";
+    }
+
+    // ========== TOAST NOTIFICATIONS (TOASTS) ==========
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+    
+    function showLoading(show) {
+        document.getElementById('spinnerOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    // ========== VOICE COMMANDS (AWAZ COMMANDS) ==========
+    let voiceActive = false, recognition = null;
+    function initVoiceRecognition() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            document.getElementById('voiceStatus').innerHTML = '❌ Voice engine not supported';
+            return false;
+        }
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+        
+        recognition.onresult = function(event) {
+            let transcript = '';
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                transcript += event.results[i][0].transcript;
+            }
+            transcript = transcript.toLowerCase().trim();
+            document.getElementById('voiceStatus').innerHTML = `🗣️ Recognized: "${transcript}"`;
+            processVoiceCommand(transcript);
+        };
+        recognition.onerror = function() {
+            if (voiceActive) setTimeout(() => { try { recognition.start(); } catch(e) {} }, 2500);
+        };
+        recognition.onend = function() {
+            if (voiceActive) {
+                try { recognition.start(); } catch(e) {
+                    voiceActive = false;
+                    document.getElementById('voiceBtn').innerHTML = '🎤 AWAZ CONTROL (OFF)';
+                    document.getElementById('voiceBtn').classList.remove('listening');
+                }
+            }
+        };
+        return true;
+    }
+    
+    function toggleVoiceCommand() {
+        if (!voiceActive) {
+            if (!recognition && !initVoiceRecognition()) return;
+            try {
+                recognition.start();
+                voiceActive = true;
+                document.getElementById('voiceBtn').innerHTML = '🎤 LISTENING...';
+                document.getElementById('voiceBtn').classList.add('listening');
+                document.getElementById('voiceStatus').innerHTML = '🔴 සක්‍රීය හඬ හඳුනාගැනීම...';
+                showToast('Voice Command Engine Activated', 'success');
+            } catch(e) {
+                showToast('Mic Access Authorization Failed', 'error');
+            }
+        } else {
+            if (recognition) recognition.stop();
+            voiceActive = false;
+            document.getElementById('voiceBtn').innerHTML = '🎤 AWAZ CONTROL (OFF)';
+            document.getElementById('voiceBtn').classList.remove('listening');
+            document.getElementById('voiceStatus').innerHTML = '⚪ සක්‍රීය කිරීමට ක්ලික් කරන්න';
+            showToast('Voice Commands Deactivated', 'info');
+        }
+    }
+    
+    function processVoiceCommand(cmd) {
+        if (cmd === 'sr' || cmd.includes('start ride') || cmd.includes('start')) {
+            if (!sTime) startRide(); else showToast('Active Ride Running', 'warning');
+        } else if (cmd === 'er' || cmd.includes('end ride') || cmd.includes('end')) {
+            if (sTime) endRide(); else showToast('No Active Trip', 'warning');
+        } else if (cmd === 'nav' || cmd.includes('navigate')) {
+            if (currentDestinationAddress) openPhoneNavigation(); else showToast('No Target Destination Set', 'warning');
+        } else if (cmd === 'rp' || cmd.includes('report')) {
+            openReportsMenu();
+        } else if (cmd === 'fl' || cmd.includes('fuel')) {
+            openFuelLogModal();
+        } else if (cmd === 'rpl' || cmd.includes('repair')) {
+            openRepairLogModal();
+        }
+    }
+
+    let sTime = null, watchId = null, totalMeters = 0, lastLat = null, lastLon = null, currentLat = null, currentLng = null, currentRID = "", nightActive = false, gpsReady = false, currentMode = "auto", pendingRideData = null, selectedMethod = "cash", currentLocationAddress = "", currentLocationLat = null, currentLocationLon = null, startLocationAddress = "", currentDestinationAddress = "", mapObj = null, mapMarker = null, mapPickerField = null, currentTrackingId = null;
+    let deliveryPickupName="", deliveryPickupPhone="", deliveryDeliveryName="", deliveryDeliveryPhone="";
+    let SETTINGS = { base: 100, rate: 80, waitRate: 5, nightPercent: 10, appName: "ADVANCE MEETER TAXI", receiptName: "AMT OFFICIAL RECEIPT", password: "1234", logo: null };
+    let currentReportType = "daily";
+
+    // Modals Navigation Management
+    function goBackToSettingsMenu() {
+        closeM('app-settings-modal'); closeM('fuel-modal'); closeM('repair-modal'); closeM('reports-menu-modal'); closeM('system-log-modal'); closeM('db-backup-modal');
+        document.getElementById('settings-modal').style.display = 'flex';
+    }
+    function goBackToFuelLog() { closeM('fuel-report-modal'); document.getElementById('fuel-modal').style.display = 'flex'; }
+    function goBackToRepairLog() { closeM('repair-report-modal'); document.getElementById('repair-modal').style.display = 'flex'; }
+    function goBackToReportsMenu() {
+        closeM('report-modal'); closeM('income-modal'); closeM('history-modal'); closeM('travel-report-modal'); closeM('profit-report-modal'); closeM('peak-hours-modal'); closeM('driver-performance-modal');
+        document.getElementById('reports-menu-modal').style.display = 'flex';
+    }
+
+    function saveRideState() {
+        if (sTime) {
+            localStorage.setItem('amt_ride_state', JSON.stringify({
+                isRideActive: true, startTime: sTime, totalMeters, lastLat, lastLon, currentMode, nightActive, startLocationAddress, currentLocationAddress, gpsReady: true, destinationAddress: currentDestinationAddress, trackingId: currentTrackingId,
+                deliveryPickupName, deliveryPickupPhone, deliveryDeliveryName, deliveryDeliveryPhone
+            }));
+        } else {
+            localStorage.removeItem('amt_ride_state');
+        }
+    }
+    
+    function loadRideState() {
+        let saved = localStorage.getItem('amt_ride_state');
+        if (saved) {
+            try {
+                let state = JSON.parse(saved);
+                if (state.isRideActive && state.startTime) {
+                    document.getElementById('restore-banner').style.display = 'block';
+                    return true;
+                }
+            } catch(e){}
+        }
+        return false;
+    }
+    
+    function restorePreviousRide() {
+        let saved = localStorage.getItem('amt_ride_state');
+        if (!saved) return;
+        try {
+            let state = JSON.parse(saved);
+            sTime = new Date(state.startTime);
+            totalMeters = state.totalMeters || 0;
+            lastLat = state.lastLat;
+            lastLon = state.lastLon;
+            currentLat = state.lastLat;
+            currentLng = state.lastLon;
+            currentMode = state.currentMode || "auto";
+            nightActive = state.nightActive || false;
+            startLocationAddress = state.startLocationAddress || "";
+            currentLocationAddress = state.currentLocationAddress || "";
+            currentDestinationAddress = state.destinationAddress || "";
+            currentTrackingId = state.trackingId || null;
+            deliveryPickupName = state.deliveryPickupName || "";
+            deliveryPickupPhone = state.deliveryPickupPhone || "";
+            deliveryDeliveryName = state.deliveryDeliveryName || "";
+            deliveryDeliveryPhone = state.deliveryDeliveryPhone || "";
+            gpsReady = true;
+            
+            setMode(currentMode);
+            let nightBtn = document.getElementById('nightBtn');
+            if (nightActive) {
+                nightBtn.innerHTML = '🌙 NIGHT ON';
+                nightBtn.classList.add('night-active');
+            } else {
+                nightBtn.innerHTML = '🌙 NIGHT OFF';
+                nightBtn.classList.remove('night-active');
+            }
+            
+            updateDisplay();
+            if (currentMode === 'auto' && currentLocationAddress) document.getElementById('current-location-address').innerHTML = currentLocationAddress;
+            if (currentMode === 'manual') document.getElementById('manual-km-input').value = (totalMeters/1000).toFixed(2);
+            if (currentMode === 'delivery') {
+                document.getElementById('pickup-name').value = deliveryPickupName;
+                document.getElementById('pickup-phone').value = deliveryPickupPhone;
+                document.getElementById('delivery-name').value = deliveryDeliveryName;
+                document.getElementById('delivery-phone').value = deliveryDeliveryPhone;
+                document.getElementById('delivery-accordion').style.display = 'block';
+            }
+            
+            if (sTime) {
+                document.getElementById('startBtn').innerHTML = "⏵ ACTIVE";
+                document.getElementById('startBtn').classList.add('btn-active-anim');
+                document.getElementById('startBtn').disabled = true;
+                document.body.classList.add('ride-active');
+                requestWakeLock();
+                trackRide();
+                if (currentMode !== 'auto') document.getElementById('nav-container').style.display = 'block';
+                startTrackingUpdates();
+            }
+            
+            document.getElementById('restore-banner').style.display = 'none';
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.style.pointerEvents = 'none');
+            showToast(`Ride Restored: ${(totalMeters/1000).toFixed(2)} km`, 'success');
+        } catch(e){}
+    }
+
+    // ========== GEOLOCATION LOGIC (GPS LOGIC) ==========
+    function startGPS() {
+        if (!navigator.geolocation) return;
+        showLoading(true);
+        navigator.geolocation.getCurrentPosition(pos => {
+            let acc = pos.coords.accuracy;
+            lastLat = pos.coords.latitude;
+            lastLon = pos.coords.longitude;
+            currentLat = pos.coords.latitude;
+            currentLng = pos.coords.longitude;
+            if (acc < 200) {
+                gpsReady = true;
+                document.getElementById('gps-status').innerHTML = `✅ GPS Ready (${acc.toFixed(0)}m)`;
+                document.getElementById('gps-status').className = 'gps-status gps-ready';
+                document.getElementById('startBtn').disabled = false;
+                if (currentMode === 'auto') {
+                    currentLocationLat = lastLat;
+                    currentLocationLon = lastLon;
+                    reverseGeocode(lastLat, lastLon);
+                }
+                showLoading(false);
+                showToast('GPS Connectivity Stabilized', 'success');
+            } else {
+                showLoading(false);
+                setTimeout(startGPS, 3000);
+            }
+        }, err => {
+            showLoading(false);
+            document.getElementById('gps-status').innerHTML = '❌ GPS Permissions Required';
+            document.getElementById('gps-status').className = 'gps-status gps-error';
+            document.getElementById('startBtn').disabled = true;
+            showToast('GPS Location Permissions Blocked', 'error');
+            setTimeout(startGPS, 5000);
+        }, { enableHighAccuracy: true, timeout: 15000 });
+    }
+
+    function trackRide() {
+        if (watchId) navigator.geolocation.clearWatch(watchId);
+        watchId = navigator.geolocation.watchPosition(pos => {
+            if (!sTime) return;
+            let lat = pos.coords.latitude, lon = pos.coords.longitude, acc = pos.coords.accuracy;
+            currentLat = lat;
+            currentLng = lon;
+            if (acc < 200 && currentMode === 'auto') reverseGeocode(lat, lon);
+            if (lastLat !== null && lastLon !== null && acc < 200) {
+                let d = calculateDistanceMeters(lastLat, lastLon, lat, lon);
+                if (d > 3 && d < 200) {
+                    totalMeters += d;
+                    updateDisplay();
+                    saveRideState();
+                }
+            }
+            lastLat = lat; lastLon = lon;
+        }, null, { enableHighAccuracy: true, timeout: 5000 });
+    }
+
+    async function reverseGeocode(lat, lon) {
+        try {
+            let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=en&countrycodes=lk`);
+            let data = await res.json();
+            currentLocationAddress = data.display_name || `${lat.toFixed(4)},${lon.toFixed(4)}`;
+            document.getElementById('current-location-address').innerHTML = currentLocationAddress.substring(0, 80);
+        } catch(e){}
+    }
+
+    function refreshCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                currentLat = pos.coords.latitude;
+                currentLng = pos.coords.longitude;
+                reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+            });
+        }
+        showToast('Local Coordinates Refreshed', 'info');
+    }
+
+    function setMode(mode) {
+        currentMode = mode;
+        ['auto','gps','manual','delivery'].forEach(m => {
+            const btn = document.getElementById(`mode-${m}`);
+            if (btn) btn.classList.remove('active');
+        });
+        const currentBtn = document.getElementById(`mode-${mode}`);
+        if (currentBtn) currentBtn.classList.add('active');
+        
+        if (mode === 'auto') {
+            document.getElementById('auto-location-card').style.display = 'block';
+            document.getElementById('location-fields').style.display = 'none';
+            document.getElementById('delivery-accordion').style.display = 'none';
+            document.getElementById('manual-controls').style.display = 'none';
+            if (!sTime) startGPS();
+            refreshCurrentLocation();
+        } else if (mode === 'gps') {
+            document.getElementById('auto-location-card').style.display = 'none';
+            document.getElementById('location-fields').style.display = 'block';
+            document.getElementById('delivery-accordion').style.display = 'none';
+            document.getElementById('manual-controls').style.display = 'none';
+            if (!sTime) startGPS();
+            setupAutocomplete('start-loc', 'start-loc-suggestions');
+            setupAutocomplete('end-loc', 'end-loc-suggestions');
+        } else if (mode === 'manual') {
+            document.getElementById('auto-location-card').style.display = 'none';
+            document.getElementById('location-fields').style.display = 'block';
+            document.getElementById('delivery-accordion').style.display = 'none';
+            document.getElementById('manual-controls').style.display = 'block';
+            gpsReady = true;
+            if (watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+            document.getElementById('startBtn').disabled = false;
+            setupAutocomplete('start-loc', 'start-loc-suggestions');
+            setupAutocomplete('end-loc', 'end-loc-suggestions');
+        } else if (mode === 'delivery') {
+            document.getElementById('auto-location-card').style.display = 'none';
+            document.getElementById('location-fields').style.display = 'block';
+            document.getElementById('delivery-accordion').style.display = 'block';
+            document.getElementById('manual-controls').style.display = 'none';
+            if (!sTime) startGPS();
+            setupAutocomplete('start-loc', 'start-loc-suggestions');
+            setupAutocomplete('end-loc', 'end-loc-suggestions');
+        }
+        updateDisplay();
+        showToast(`${mode.toUpperCase()} Navigation Mode Enabled`, 'info');
+    }
+
+    let searchTimeout;
+    function setupAutocomplete(inputId, suggestionsId) {
+        let input = document.getElementById(inputId);
+        let div = document.getElementById(suggestionsId);
+        if (!input || !div) return;
+        
+        input.addEventListener('input', function() {
+            let q = this.value.trim();
+            if (q.length < 2) { div.style.display = 'none'; return; }
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                let results = await searchSriLankaLocations(q);
+                div.innerHTML = '';
+                if (results.length === 0) {
+                    div.innerHTML = '<div class="autocomplete-item">No Sri Lanka Results found.</div>';
+                } else {
+                    results.forEach(p => {
+                        let item = document.createElement('div');
+                        item.className = 'autocomplete-item';
+                        item.textContent = p.display_name.substring(0, 80);
+                        item.onclick = () => {
+                            input.value = p.display_name;
+                            if (inputId === 'end-loc') {
+                                currentDestinationAddress = p.display_name;
+                            }
+                            div.style.display = 'none';
+                        };
+                        div.appendChild(item);
+                    });
+                }
+                div.style.display = 'block';
+            }, 400);
+        });
+        document.addEventListener('click', e => { if (e.target !== input) div.style.display = 'none'; });
+    }
+
+    function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+        const R = 6371000;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    let lastKmValue = 0, lastFareValue = 0;
+    function animateCounter(id) {
+        let el = document.getElementById(id);
+        if (el) {
+            el.classList.remove('count-animation');
+            void el.offsetWidth;
+            el.classList.add('count-animation');
+        }
+    }
+
+    function updateDisplay() {
+        let km = totalMeters / 1000;
+        let fare = calcFare();
+        if (Math.abs(km - lastKmValue) > 0.01) {
+            animateCounter('disp-km');
+            lastKmValue = km;
+        }
+        if (fare !== lastFareValue) {
+            animateCounter('disp-fare');
+            lastFareValue = fare;
+        }
+        document.getElementById('disp-km').innerHTML = km.toFixed(2);
+        document.getElementById('disp-fare').innerHTML = fare.toFixed(2);
+        
+        // Ensure manual km input field remains synced with calculations and responsive to button steps
+        const kmInput = document.getElementById('manual-km-input');
+        if (kmInput && document.activeElement !== kmInput) {
+            kmInput.value = km.toFixed(2);
+        }
+        
+        let ni = document.getElementById('night-indicator');
+        if (ni) ni.style.display = (nightActive && !document.getElementById('manual-fare').value) ? 'inline-block' : 'none';
+    }
+
+    function calcFare() {
+        let manualFare = parseInt(document.getElementById('manual-fare').value) || 0,
+            disc = parseInt(document.getElementById('discount-input').value) || 0,
+            wait = parseInt(document.getElementById('wait-select').value),
+            waitCharge = wait * SETTINGS.waitRate,
+            km = totalMeters / 1000,
+            total = manualFare > 0 ? manualFare + waitCharge - disc : SETTINGS.base + (Math.max(0, km - 1) * SETTINGS.rate) + waitCharge - disc;
+            
+        if (nightActive && manualFare === 0) total = total + (total * SETTINGS.nightPercent / 100);
+        return Math.max(0, Math.round(total));
+    }
+
+    // ========== RIDE CONTROL FLOWS (TRIP FLOWS) ==========
+    async function startRide() {
+        if(sTime) { showToast("Ride already active!", 'warning'); return; }
+        
+        if(currentMode === 'auto') { 
+            if(!currentLocationAddress || currentLocationAddress === "GPS සංඥා ලැබෙන තෙක් රැඳී සිටින්න...") { 
+                showToast("Doya kore GPS er connection thik hoar opekkha korun!", 'warning'); 
+                return; 
+            } 
+            startLocationAddress = currentLocationAddress;
+        } 
+        else if(currentMode === 'gps') { 
+            if(!document.getElementById('start-loc').value.trim() || !document.getElementById('end-loc').value.trim()) { 
+                showToast("Doya kore pickup o drop coordinates thik korun!", 'warning'); 
+                return; 
+            } 
+            if(!gpsReady) { 
+                showToast("GPS ready noy! Opekkha korun.", 'warning'); 
+                return; 
+            } 
+            startLocationAddress = document.getElementById('start-loc').value;
+            currentDestinationAddress = document.getElementById('end-loc').value;
+        } 
+        else if(currentMode === 'manual') { 
+            if(!document.getElementById('start-loc').value.trim() || !document.getElementById('end-loc').value.trim()) { 
+                showToast("Doya kore pickup o drop locations likhun!", 'warning'); 
+                return; 
+            } 
+            startLocationAddress = document.getElementById('start-loc').value;
+            currentDestinationAddress = document.getElementById('end-loc').value;
+        } 
+        else if(currentMode === 'delivery') { 
+            if(!document.getElementById('start-loc').value.trim() || !document.getElementById('end-loc').value.trim()) { 
+                showToast("Doya kore details gulo likhun!", 'warning'); 
+                return; 
+            } 
+            startLocationAddress = document.getElementById('start-loc').value;
+            currentDestinationAddress = document.getElementById('end-loc').value;
+            deliveryPickupName = document.getElementById('pickup-name').value || "";
+            deliveryPickupPhone = document.getElementById('pickup-phone').value || "";
+            deliveryDeliveryName = document.getElementById('delivery-name').value || "";
+            deliveryDeliveryPhone = document.getElementById('delivery-phone').value || "";
+        }
+        
+        sTime = new Date();
+        await requestWakeLock();
+        document.body.classList.add('ride-active');
+        
+        if(currentMode === 'auto') {
+            totalMeters = 0;
+            trackRide();
+        } 
+        else if(currentMode === 'gps') {
+            totalMeters = 0;
+            lastLat = null; 
+            lastLon = null;
+            setTimeout(() => {
+                if(navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(pos) {
+                        lastLat = pos.coords.latitude;
+                        lastLon = pos.coords.longitude;
+                        currentLat = pos.coords.latitude;
+                        currentLng = pos.coords.longitude;
+                    });
+                }
+            }, 100);
+            trackRide();
+            document.getElementById('nav-container').style.display = 'block';
+        } 
+        else if(currentMode === 'manual') {
+            totalMeters = (parseFloat(document.getElementById('manual-km-input').value) || 0) * 1000;
+            document.getElementById('nav-container').style.display = 'block';
+        } 
+        else if(currentMode === 'delivery') {
+            totalMeters = 0;
+            lastLat = null; 
+            lastLon = null;
+            setTimeout(() => {
+                if(navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(pos) {
+                        lastLat = pos.coords.latitude;
+                        lastLon = pos.coords.longitude;
+                        currentLat = pos.coords.latitude;
+                        currentLng = pos.coords.longitude;
+                    });
+                }
+            }, 100);
+            trackRide();
+            document.getElementById('nav-container').style.display = 'block';
+        }
+        
+        document.getElementById('startBtn').innerHTML = "⏵ ACTIVE";
+        document.getElementById('startBtn').classList.add('btn-active-anim');
+        document.getElementById('startBtn').disabled = true;
+        updateDisplay();
+        
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.5';
+        });
+        
+        currentTrackingId = generateTrackingId();
+        saveRideState();
+        showTrackingPopup();
+        startTrackingUpdates();
+        showToast("Ride shofolbhabe shuru hoyeche! 🚕", 'success');
+        sendNotification('Ride Started', 'Your taxi ride has started. Safe journey!');
+    }
+    
+    function endRide() { 
+        if(!sTime) { showToast("Kono active ride cholche na", 'warning'); return; } 
+        releaseWakeLock(); 
+        document.body.classList.remove('ride-active'); 
+        if(watchId) { navigator.geolocation.clearWatch(watchId); watchId=null; } 
+        document.getElementById('startBtn').innerHTML="ගමන අරඹන්න (START)"; 
+        document.getElementById('startBtn').classList.remove('btn-active-anim'); 
+        document.getElementById('startBtn').disabled=false; 
+        if(currentMode==='auto' && currentDestinationAddress) document.getElementById('nav-container').style.display='block'; 
+        else if(currentMode!=='auto') document.getElementById('nav-container').style.display='none'; 
+        document.querySelectorAll('.mode-btn').forEach(btn => { btn.style.pointerEvents='auto'; btn.style.opacity='1'; }); 
+        let from="", to=""; 
+        if(currentMode==='auto') { from=startLocationAddress; to=currentLocationAddress; } 
+        else { from=document.getElementById('start-loc').value; to=document.getElementById('end-loc').value; } 
+        let fare=calcFare(); 
+        currentRID=generateReceiptID(); 
+        let km=totalMeters/1000; 
+        pendingRideData = { id:currentRID, fare, km, from, to, mobile:document.getElementById('mobile').value||"N/A", wait:parseInt(document.getElementById('wait-select').value), disc:parseInt(document.getElementById('discount-input').value)||0, manualFare:parseInt(document.getElementById('manual-fare').value)||0, nightUsed:nightActive, mode:currentMode==='auto'?"Auto":(currentMode==='gps'?"GPS":(currentMode==='manual'?"Manual":"Delivery")), time:Date.now() }; 
+        if(currentMode==='delivery') { pendingRideData.pickupName=deliveryPickupName; pendingRideData.pickupPhone=deliveryPickupPhone; pendingRideData.deliveryName=deliveryDeliveryName; pendingRideData.deliveryPhone=deliveryDeliveryPhone; } 
+        localStorage.removeItem('amt_ride_state'); 
+        stopTrackingUpdates();
+        openPaymentPopup(); 
+    }
+    
+    function generateReceiptID() { let n=new Date(), y=n.getFullYear(), m=n.getMonth(); let fy=(m>=3)?y:y-1; let c=parseInt(localStorage.getItem(`cnt_${fy}`)||"0")+1; localStorage.setItem(`cnt_${fy}`,c); return `${fy.toString().slice(-2)}${n.toLocaleString('en',{month:'short'}).toUpperCase()}-${c.toString().padStart(8,'0')}`; }
+    
+    // ========== PAYMENT FUNCTIONS (PRAYASH CHANNELS) ==========
+    function openPaymentPopup() { 
+        if(!pendingRideData) { showToast("Kono ride data khunje paowa jayni.", 'error'); return; }
+        selectedMethod = "cash"; 
+        document.querySelectorAll('.payment-method-btn').forEach(btn => btn.classList.remove('selected')); 
+        const cashBtn = document.querySelector('.payment-method-btn[data-method="cash"]');
+        if(cashBtn) cashBtn.classList.add('selected');
+        document.getElementById('payment-detail-fields').style.display = 'block'; 
+        document.getElementById('cash-fields').style.display = 'block'; 
+        document.getElementById('card-fields').style.display = 'none'; 
+        document.getElementById('mobile-fields').style.display = 'none'; 
+        document.getElementById('bank-fields').style.display = 'none'; 
+        document.getElementById('other-fields').style.display = 'none'; 
+        document.getElementById('payment-popup').style.display = 'flex'; 
+    }
+    
+    function selectPaymentMethod(method) { 
+        selectedMethod = method; 
+        document.querySelectorAll('.payment-method-btn').forEach(btn => btn.classList.remove('selected')); 
+        const selectedBtn = document.querySelector(`.payment-method-btn[data-method="${method}"]`);
+        if(selectedBtn) selectedBtn.classList.add('selected');
+        document.getElementById('cash-fields').style.display = 'none'; 
+        document.getElementById('card-fields').style.display = 'none'; 
+        document.getElementById('mobile-fields').style.display = 'none'; 
+        document.getElementById('bank-fields').style.display = 'none'; 
+        document.getElementById('other-fields').style.display = 'none'; 
+        if(method === 'cash') document.getElementById('cash-fields').style.display = 'block'; 
+        if(method === 'card') document.getElementById('card-fields').style.display = 'block'; 
+        if(method === 'mobile') document.getElementById('mobile-fields').style.display = 'block'; 
+        if(method === 'bank') document.getElementById('bank-fields').style.display = 'block'; 
+        if(method === 'other') document.getElementById('other-fields').style.display = 'block'; 
+    }
+    
+    function getPaymentInfo() { 
+        switch(selectedMethod) { 
+            case 'cash': return { method: 'Cash', detail: '' }; 
+            case 'card': let cd = ""; if(document.getElementById('card-number')?.value) cd += `****${document.getElementById('card-number').value}`; if(document.getElementById('card-name')?.value) cd += ` - ${document.getElementById('card-name').value}`; return { method: 'Card', detail: cd || 'Card payment' }; 
+            case 'mobile': let md = ""; if(document.getElementById('mobile-provider')?.value) md += document.getElementById('mobile-provider').value; if(document.getElementById('mobile-number')?.value) md += ` ${document.getElementById('mobile-number').value}`; return { method: 'Mobile', detail: md || 'Mobile payment' }; 
+            case 'bank': let bd = ""; if(document.getElementById('bank-name')?.value) bd += document.getElementById('bank-name').value; if(document.getElementById('bank-ref')?.value) bd += ` - Ref: ${document.getElementById('bank-ref').value}`; return { method: 'Bank Transfer', detail: bd || 'Bank transfer' }; 
+            default: return { method: document.getElementById('other-method')?.value || 'Other', detail: document.getElementById('other-ref')?.value || '' }; 
+        } 
+    }
+    
+    function closePaymentPopup() { document.getElementById('payment-popup').style.display = 'none'; }
+    
+    function confirmPaymentAndShowReceipt() { 
+        if(!pendingRideData) { 
+            showToast("Nirbachito data paowa jayni.", 'error'); 
+            return; 
+        }
+        
+        let paymentInfo = getPaymentInfo(); 
+        pendingRideData.payment = paymentInfo; 
+        
+        // Save to Primary Rides Database (Travel History)
+        let list = JSON.parse(localStorage.getItem('rides') || '[]'); 
+        list.push(pendingRideData); 
+        localStorage.setItem('rides', JSON.stringify(list)); 
+        
+        // Execute Odometer Rolling Auto-Backup System on Transaction
+        triggerRollingBackup();
+        
+        closePaymentPopup(); 
+        showReceipt(pendingRideData, false); 
+        
+        sTime = null; 
+        currentDestinationAddress = ""; 
+        if(currentMode !== 'manual') setTimeout(() => startGPS(), 1000); 
+        document.getElementById('nav-container').style.display = 'none'; 
+        
+        addSystemLog('INFO', 'Payment confirmed', `Receipt: ${pendingRideData.id}`); 
+        showToast('Payment confirmed! Rasiid toiri hoyeche', 'success');
+        sendNotification('Payment Received', `Rs.${pendingRideData.fare.toFixed(2)} collected`);
+        
+        pendingRideData = null;
+    }
+    
+    function showReceipt(ride, isDuplicate) { 
+        // Store raw object reference globally to allow stable WhatsApp/Email sharing
+        window.activeReceiptRide = ride;
+
+        let sub = (ride.manualFare > 0) ? ride.manualFare : (SETTINGS.base + (Math.max(0, ride.km - 1) * SETTINGS.rate)); 
+        let waitC = ride.wait * SETTINGS.waitRate; 
+        let dupHtml = isDuplicate ? '<div style="background:#e74c3c; color:white; text-align:center; padding:3px; border-radius:8px; margin-bottom:8px;" class="no-print">📋 COPY / REPRINT</div>' : ''; 
+        let rows = dupHtml; 
+        rows += `<div class="r-row"><span>Receipt No:</span><b>${ride.id}</b></div><div class="r-row"><span>Tarikh / Date:</span><b>${new Date(ride.time).toLocaleString()}</b></div><div class="r-row"><span>Mobile No:</span><b>${ride.mobile || 'N/A'}</b></div>`; 
+        if(ride.mode === 'Delivery') { 
+            rows += `<div class="r-row-full"><span class="r-label">Pickup Recipient:</span><span class="r-address">${ride.pickupName || ''} ${ride.pickupPhone || ''}</span></div><div class="r-row-full"><span class="r-label">Delivery Recipient:</span><span class="r-address">${ride.deliveryName || ''} ${ride.deliveryPhone || ''}</span></div>`; 
+        } 
+        rows += `<div class="r-row-full"><span class="r-label">Pickup Location:</span><span class="r-address">${ride.from}</span></div><div class="r-row-full"><span class="r-label">Drop Location:</span><span class="r-address">${ride.to}</span></div><div class="r-row"><span>Durutto / Dist:</span><b>${ride.km.toFixed(2)} km</b></div><div class="r-row"><span>Base Fare:</span><b>Rs.${SETTINGS.base.toFixed(2)}</b></div><div class="r-row"><span>Fare:</span><b>Rs.${sub.toFixed(2)}</b></div>`; 
+        if(waitC > 0) rows += `<div class="r-row"><span>Opekkha (${ride.wait}m):</span><b>+Rs.${waitC.toFixed(2)}</b></div>`; 
+        if(ride.nightUsed && ride.manualFare === 0) rows += `<div class="r-row"><span>Night Rate (${SETTINGS.nightPercent}%):</span><b>+${Math.round(ride.fare - (sub + waitC - ride.disc))}</b></div>`; 
+        if(ride.disc > 0) rows += `<div class="r-row"><span>Char / Discount:</span><b>-Rs.${ride.disc}</b></div>`; 
+        rows += `<div class="r-row"><span>Mode:</span><b>${ride.mode}</b></div><div class="r-row"><span>Payment:</span><b>${ride.payment.method} ${ride.payment.detail || ''}</b></div>`; 
+        
+        document.getElementById('receipt-body').innerHTML = rows; 
+        document.getElementById('receipt-total').innerHTML = ride.fare.toFixed(2); 
+        document.getElementById('receipt-header').innerText = SETTINGS.receiptName; 
+        
+        let wordsEl = document.getElementById('receipt-words');
+        if(wordsEl) wordsEl.innerHTML = numberToWords(ride.fare);
+        
+        let qr = document.getElementById('receipt-qr'); 
+        if(qr) {
+            qr.innerHTML = ""; 
+            try {
+                new QRCode(qr, { text: `${ride.id}|Rs.${ride.fare.toFixed(2)}|${ride.payment.method}`, width: 85, height: 85 });
+            } catch(e) { console.error('QR error:', e); }
+        }
+        
+        document.getElementById('receiptModal').style.display = "flex"; 
+    }
+    
+    function shareWA() { 
+        const ride = window.activeReceiptRide;
+        if (!ride) { showToast("Receipt data not found for sharing!", "error"); return; }
+        
+        let sub = (ride.manualFare > 0) ? ride.manualFare : (SETTINGS.base + (Math.max(0, ride.km - 1) * SETTINGS.rate));
+        let waitC = ride.wait * SETTINGS.waitRate;
+        let rTotal = ride.fare.toFixed(2);
+        let rWords = numberToWords(ride.fare);
+        
+        let textTemplate = `*🚕 ${SETTINGS.receiptName}*\n` +
+                           `===============================\n` +
+                           `• *Receipt No:* ${ride.id}\n` +
+                           `• *Date/Time:* ${new Date(ride.time).toLocaleString()}\n` +
+                           `• *Mobile:* ${ride.mobile || 'N/A'}\n` +
+                           `• *From:* ${ride.from}\n` +
+                           `• *To:* ${ride.to}\n` +
+                           `• *Distance:* ${ride.km.toFixed(2)} km\n` +
+                           `• *Base Fare:* Rs.${SETTINGS.base.toFixed(2)}\n` +
+                           `• *Fare:* Rs.${sub.toFixed(2)}\n`;
+        if (waitC > 0) textTemplate += `• *Waiting (${ride.wait}m):* +Rs.${waitC.toFixed(2)}\n`;
+        if (ride.nightUsed && ride.manualFare === 0) textTemplate += `• *Night Surcharge:* Active\n`;
+        if (ride.disc > 0) textTemplate += `• *Discount:* -Rs.${ride.disc}\n`;
+        textTemplate += `• *Mode:* ${ride.mode}\n` +
+                        `• *Payment Method:* ${ride.payment.method} ${ride.payment.detail || ''}\n` +
+                        `===============================\n` +
+                        `*TOTAL PAYABLE: Rs. ${rTotal}*\n` +
+                        `_In Words: ${rWords}_\n` +
+                        `-------------------------------\n` +
+                        `Thank you for choosing Advance Meeter Taxi! 🚕`;
+                           
+        let cleanText = textTemplate.replace(/➔/g, '->').replace(/→/g, '->');
+        let encoded = encodeURIComponent(cleanText);
+        let phoneNo = ride.mobile && ride.mobile !== 'N/A' ? ride.mobile : "";
+        
+        if (phoneNo && phoneNo.trim() !== "") {
+            window.open(`https://api.whatsapp.com/send?phone=${phoneNo}&text=${encoded}`, '_blank');
+        } else {
+            window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
+        }
+        showToast('Receipt details sent to WhatsApp!', 'success');
+    }
+    
+    function sendEmailWithAttachment() { 
+        const ride = window.activeReceiptRide;
+        if (!ride) { showToast("Receipt data not found for email draft!", "error"); return; }
+        
+        let detailsText = `TAXICAB BILL SUMMARY:\n` +
+                          `===============================\n` +
+                          `Receipt No: ${ride.id}\n` +
+                          `Date/Time: ${new Date(ride.time).toLocaleString()}\n` +
+                          `From: ${ride.from}\n` +
+                          `To: ${ride.to}\n` +
+                          `Distance: ${ride.km.toFixed(2)} km\n` +
+                          `Payment Method: ${ride.payment.method} ${ride.payment.detail || ''}\n` +
+                          `===============================\n` +
+                          `TOTAL PAYABLE: Rs. ${ride.fare.toFixed(2)}\n\n` +
+                          `Thank you for traveling with us!`;
+                          
+        let subjectText = `Odometer Receipt - ${ride.id}`;
+        window.location.href = `mailto:?subject=${encodeURIComponent(subjectText)}&body=${encodeURIComponent(detailsText)}`;
+        showToast('Email draft generated!', 'success');
+    }
+    
+    async function downloadReceiptPDF() { 
+        let canvas = await html2canvas(document.getElementById('receipt-view'),{scale:2}); 
+        let {jsPDF} = window.jspdf; 
+        let pdf = new jsPDF({unit:'mm', format:'a6'}); 
+        pdf.addImage(canvas.toDataURL(),'PNG',2.5,5,100,(canvas.height*100)/canvas.width); 
+        pdf.save(`${currentRID}.pdf`); 
+        showToast('PDF downloaded successfully', 'success'); 
+    }
+    
+    function printReceiptDirectly() {
+        window.print();
+    }
+    
+    function toggleNightCharge() { nightActive=!nightActive; let btn=document.getElementById('nightBtn'); if(nightActive) { btn.innerHTML='🌙 NIGHT ON'; btn.classList.add('night-active'); showToast('Night charge enabled', 'info'); } else { btn.innerHTML='🌙 NIGHT OFF'; btn.classList.remove('night-active'); showToast('Night charge disabled', 'info'); } updateDisplay(); if(sTime) saveRideState(); }
+    
+    function resetToNew() { if(sTime && !confirm("Reset ride?")) return; if(watchId) navigator.geolocation.clearWatch(watchId); releaseWakeLock(); document.body.classList.remove('ride-active'); document.querySelectorAll('.mode-btn').forEach(btn => { btn.style.pointerEvents='auto'; btn.style.opacity='1'; }); sTime=null; totalMeters=0; lastLat=null; lastLon=null; currentDestinationAddress=""; currentTrackingId=null; deliveryPickupName=""; deliveryPickupPhone=""; deliveryDeliveryName=""; deliveryDeliveryPhone=""; document.getElementById('startBtn').innerHTML="ගමන අරඹන්න (START)"; document.getElementById('startBtn').classList.remove('btn-active-anim'); document.getElementById('startBtn').disabled=false; document.getElementById('start-loc').value=''; document.getElementById('end-loc').value=''; document.getElementById('mobile').value=''; document.getElementById('manual-fare').value=''; document.getElementById('discount-input').value=''; document.getElementById('wait-select').value='0'; document.getElementById('manual-km-input').value='0'; document.getElementById('nav-container').style.display='none'; document.getElementById('pickup-name').value=''; document.getElementById('pickup-phone').value=''; document.getElementById('delivery-name').value=''; document.getElementById('delivery-phone').value=''; updateDisplay(); localStorage.removeItem('amt_ride_state'); if(currentMode==='auto') refreshCurrentLocation(); if(currentMode!=='manual') startGPS(); else { gpsReady=true; document.getElementById('startBtn').disabled=false; } showToast('Reset complete', 'info'); stopTrackingUpdates(); }
+    
+    function filterHistory(type) {
+        let now = new Date(), start = '', end = '';
+        if(type === 'today') { start = end = now.toISOString().split('T')[0]; }
+        else if(type === 'week') { let weekAgo = new Date(now); weekAgo.setDate(now.getDate() - 7); start = weekAgo.toISOString().split('T')[0]; end = now.toISOString().split('T')[0]; }
+        else if(type === 'month') { start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]; end = now.toISOString().split('T')[0]; }
+        else if(type === 'custom') { document.getElementById('custom-date-range').style.display = 'block'; return; }
+        document.getElementById('custom-date-range').style.display = 'none';
+        if(start && end) updateHistoryList(start, end);
+        document.querySelectorAll('.date-filter-btn').forEach(btn => btn.classList.remove('active'));
+        if(event && event.target) event.target.classList.add('active');
+    }
+    
+    function applyCustomHistoryFilter() { let start = document.getElementById('history-start-date').value; let end = document.getElementById('history-end-date').value; if(start && end) updateHistoryList(start, end); }
+    
+    function updateHistoryList(startDate, endDate) {
+        let allRides = JSON.parse(localStorage.getItem('rides') || '[]');
+        let rides = allRides;
+        
+        if(startDate && endDate) {
+            rides = allRides.filter(r => { 
+                let d = new Date(r.time).toISOString().split('T')[0]; 
+                return d >= startDate && d <= endDate; 
+            });
+        }
+        
+        let c = document.getElementById('history-list');
+        if(!c) return;
+        
+        if(rides.length === 0) { 
+            c.innerHTML = "<p style='text-align:center;padding:20px;color:var(--gray);'>No rides in this period</p>"; 
+            return; 
+        }
+        
+        let html = '';
+        for(let i = rides.length - 1; i >= 0; i--) {
+            let r = rides[i];
+            html += `<div class="history-item" onclick="viewRideDetails('${r.id}')">`;
+            html += `<div style="display:flex; justify-content:space-between;">`;
+            html += `<b>${r.id}</b>`;
+            html += `<button class="btn-reprint" onclick="event.stopPropagation(); reprintRide('${r.id}')">📄 VIEW</button>`;
+            html += `</div>`;
+            html += `<small>${new Date(r.time).toLocaleString()}</small><br>`;
+            html += `<small>${r.from ? r.from.substring(0,40) : 'N/A'} ➔ ${r.to ? r.to.substring(0,40) : 'N/A'}</small>`;
+            html += `<div style="margin-top:4px;"><strong>Rs.${r.fare ? r.fare.toFixed(2) : '0.00'}</strong> | ${r.km ? r.km.toFixed(2) : '0'} km | ${r.payment?.method || 'Cash'}</div>`;
+            html += `</div>`;
+        }
+        c.innerHTML = html;
+    }
+    
+    function viewRideDetails(rideId) {
+        let rides = JSON.parse(localStorage.getItem('rides') || '[]');
+        let ride = rides.find(r => r.id === rideId);
+        if(ride) {
+            showReceipt(ride, true);
+            closeM('history-modal');
+        } else {
+            showToast('Ride not found', 'error');
+        }
+    }
+    
+    function reprintRide(rideId) { 
+        let rides = JSON.parse(localStorage.getItem('rides') || '[]'); 
+        let ride = rides.find(r => r.id === rideId);
+        if(ride) { 
+            showReceipt(ride, true); 
+            closeM('history-modal'); 
+        } else { 
+            showToast('Ride not found', 'error'); 
+        } 
+    }
+    
+    function updateEarningsChart() { let rides = JSON.parse(localStorage.getItem('rides')||'[]'); let d=[0,0,0,0,0,0,0]; rides.forEach(r=>d[new Date(r.time).getDay()]+=r.fare); if(window.mChart) window.mChart.destroy(); window.mChart=new Chart(document.getElementById('earningsChart'),{ type:'bar', data:{ labels:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], datasets:[{ data:d, backgroundColor:'#667eea' }] } }); let today=rides.filter(r=>new Date(r.time).toDateString()===new Date().toDateString()).reduce((a,b)=>a+b.fare,0); let total=rides.reduce((a,b)=>a+b.fare,0); document.getElementById('stat-today').innerHTML="Rs."+today.toFixed(2); document.getElementById('stat-total').innerHTML="Rs."+total.toFixed(2); }
+    function downloadCSV() { let rides=localStorage.getItem('rides') ? JSON.parse(localStorage.getItem('rides')) : []; let csv="Date,ID,From,To,Distance,Fare,Payment\n"+rides.map(r=>`${new Date(r.time).toLocaleDateString()},${r.id},${r.from},${r.to},${r.km.toFixed(2)},${r.fare.toFixed(2)},${r.payment?.method||'Cash'}`).join("\n"); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download='rides.csv'; a.click(); showToast('CSV exported', 'success'); }
+    
+    function getRidesByDateRange(s,e) { let rides=JSON.parse(localStorage.getItem('rides')||'[]'); return rides.filter(r=>{ let d=new Date(r.time).toISOString().split('T')[0]; return d>=s && d<=e; }); }
+    function showReportTab(t) { currentReportType=t; document.querySelectorAll('#report-modal .report-tab').forEach(tb=>tb.classList.remove('active')); if(event&&event.target) event.target.classList.add('active'); let now=new Date(), s='', e=''; if(t==='daily') { s=e=now.toISOString().split('T')[0]; } else if(t==='monthly') { s=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0]; e=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0]; } else { s=new Date(now.getFullYear(),0,1).toISOString().split('T')[0]; e=new Date(now.getFullYear(),11,31).toISOString().split('T')[0]; } let rides=getRidesByDateRange(s,e); let stats={}; rides.forEach(r=>{ let m=r.payment?.method||'Cash'; stats[m]=(stats[m]||0)+r.fare; }); let total=rides.reduce((a,b)=>a+b.fare,0); let html=`<div style="text-align:center; padding:10px;"><strong>${t.toUpperCase()} PAYMENT</strong><br>Rides:${rides.length} | Total:Rs.${total.toFixed(2)}</div><div class="payment-stats">`; for(let [m,a] of Object.entries(stats)) html+=`<div class="stat-row"><span>${m}</span><span>Rs.${a.toFixed(2)}</span></div>`; html+=`</div>`; document.getElementById('report-container').innerHTML=html; }
+    function exportReportCSV() { let rides=JSON.parse(localStorage.getItem('rides')||'[]'); let csv="Date,ID,From,To,Distance,Fare,Payment\n"+rides.map(r=>`${new Date(r.time).toLocaleDateString()},${r.id},${r.from},${r.to},${r.km.toFixed(2)},${r.fare.toFixed(2)},${r.payment?.method||'Cash'}`).join("\n"); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download=`report_${currentReportType}.csv`; a.click(); showToast('CSV exported', 'success'); }
+    
+    function loadSettings() { 
+        let saved = localStorage.getItem('amt_settings'); 
+        if(saved) {
+            try { 
+                let parsed = JSON.parse(saved); 
+                SETTINGS = {...SETTINGS, ...parsed}; 
+            } catch(e){} 
+        }
+        document.getElementById('display-app-name').innerHTML = SETTINGS.appName.replace(' ','<br>'); 
+        document.getElementById('set-app-name').value = SETTINGS.appName; 
+        document.getElementById('set-receipt-header').value = SETTINGS.receiptName; 
+        document.getElementById('set-base').value = SETTINGS.base; 
+        document.getElementById('set-rate').value = SETTINGS.rate; 
+        document.getElementById('set-wait').value = SETTINGS.waitRate; 
+        document.getElementById('set-night').value = SETTINGS.nightPercent; 
+        if(SETTINGS.logo) document.getElementById('main-logo-area').innerHTML = `<img src="${SETTINGS.logo}" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">`; 
+        
+        let autoBackPref = localStorage.getItem('amt_auto_backup_pref');
+        document.getElementById('auto-backup-toggle').checked = (autoBackPref !== 'false');
+        
+        updateDisplay(); 
+        startGPS(); 
+        loadRideState(); 
+        updateFuelList(); 
+        updateRepairList(); 
+    }
+    
+    function saveSettings() { 
+        SETTINGS.appName = document.getElementById('set-app-name').value; 
+        SETTINGS.receiptName = document.getElementById('set-receipt-header').value; 
+        SETTINGS.base = parseInt(document.getElementById('set-base').value)||100; 
+        SETTINGS.rate = parseInt(document.getElementById('set-rate').value)||80; 
+        SETTINGS.waitRate = parseInt(document.getElementById('set-wait').value)||5; 
+        SETTINGS.nightPercent = parseInt(document.getElementById('set-night').value)||10; 
+        let file = document.getElementById('logo-upload').files[0]; 
+        let np = document.getElementById('set-pwd').value; 
+        if(np) SETTINGS.password = np; 
+        let save = () => { 
+            localStorage.setItem('amt_settings', JSON.stringify(SETTINGS)); 
+            loadSettings(); 
+            closeM('app-settings-modal'); 
+            showToast('Settings save kora hoyeche!', 'success'); 
+        }; 
+        if(file) { 
+            let r = new FileReader(); 
+            r.onload = e => { SETTINGS.logo = e.target.result; save(); }; 
+            r.readAsDataURL(file); 
+        } else save(); 
+    }
+
+    let loginAttempts=0, lockUntil=null;
+    function checkLogin() { 
+        let pwd=document.getElementById('admin-pass').value; 
+        if(lockUntil && Date.now()<lockUntil) { 
+            showToast(`Abar chesta korun ${Math.ceil((lockUntil-Date.now())/60000)} min por`, 'warning'); 
+            return; 
+        } 
+        if(pwd===SETTINGS.password) { 
+            loginAttempts=0; 
+            lockUntil=null; 
+            closeM('login-modal'); 
+            document.getElementById('settings-modal').style.display='flex'; 
+            showToast('Login shofolbhabe hoyeche', 'success'); 
+        } else { 
+            loginAttempts++; 
+            if(loginAttempts>=5) { 
+                lockUntil=Date.now()+5*60*1000; 
+                showToast('Aapnake 5 min er jonno lock kora holo', 'error'); 
+            } else { 
+                showToast(`Bhul password! ${5-loginAttempts} chesta baki`, 'error'); 
+            } 
+        } 
+    }
+    function openLogin() { document.getElementById('admin-pass').value=''; document.getElementById('login-modal').style.display='flex'; }
+    function closeSettingsAndLogout() { closeM('settings-modal'); loginAttempts=0; lockUntil=null; showToast('Logout hoyeche', 'info'); }
+    function openAppSettings() { closeM('settings-modal'); document.getElementById('app-settings-modal').style.display='flex'; }
+    function openFuelLogModal() { closeM('settings-modal'); updateFuelList(); document.getElementById('fuel-modal').style.display='flex'; }
+    function openRepairLogModal() { closeM('settings-modal'); updateRepairList(); document.getElementById('repair-modal').style.display='flex'; }
+    function openReportsMenu() { closeM('settings-modal'); document.getElementById('reports-menu-modal').style.display='flex'; }
+    function openFuelReport() { closeM('fuel-modal'); showFuelReportTab('daily'); document.getElementById('fuel-report-modal').style.display='flex'; }
+    function openRepairReport() { closeM('repair-modal'); showRepairReportTab('daily'); document.getElementById('repair-report-modal').style.display='flex'; }
+    function openTravelReport() { showTravelReportTab('daily'); document.getElementById('travel-report-modal').style.display='flex'; closeM('reports-menu-modal'); }
+    function openProfitReport() { closeM('settings-modal'); showProfitReportTab('daily'); document.getElementById('profit-report-modal').style.display='flex'; }
+    function openDatabaseBackupModal() { closeM('settings-modal'); updateLocalBackupsListDisplay(); document.getElementById('db-backup-modal').style.display='flex'; }
+    function closeM(id) { document.getElementById(id).style.display='none'; }
+    
+    function openPanel(id) { 
+        closeM('settings-modal'); 
+        document.getElementById(id).style.display = 'flex'; 
+        if(id === 'income-modal') updateEarningsChart(); 
+        if(id === 'history-modal') { 
+            let today = new Date().toISOString().split('T')[0]; 
+            updateHistoryList(today, today); 
+            document.querySelectorAll('.date-filter-btn').forEach(btn => btn.classList.remove('active')); 
+            if(document.querySelector('.date-filter-btn:first-child')) { document.querySelector('.date-filter-btn:first-child').classList.add('active'); } 
+            document.getElementById('custom-date-range').style.display = 'none'; 
+        }
+        if(id === 'report-modal') showReportTab('daily'); 
+    }
+    
+    function useAISuggestion() { showToast('AI suggested route lagoo kora hoyeche!', 'success'); document.getElementById('ai-suggestions').style.display = 'none'; }
+    
+    // ========== AUTO TRANSACTION RECORDING & BACKUP MANAGEMENT (BACKUPS) ==========
+    function toggleAutoBackupPref() {
+        const toggleVal = document.getElementById('auto-backup-toggle').checked;
+        localStorage.setItem('amt_auto_backup_pref', toggleVal ? 'true' : 'false');
+        showToast(toggleVal ? 'Automatic Transaction Backup enabled' : 'Automatic Transaction Backup disabled', 'info');
+    }
+
+    function triggerRollingBackup() {
+        const payload = getCompleteSystemDataPayload();
+        const timestamp = new Date().toISOString();
+        const timestampFormatted = new Date().toLocaleString();
+        
+        // Save locally inside a rolling list of up to 10 backups
+        let backups = JSON.parse(localStorage.getItem('amt_rolling_backups') || '[]');
+        backups.unshift({
+            timestamp: timestamp,
+            displayTime: timestampFormatted,
+            data: payload
+        });
+        
+        if (backups.length > 10) {
+            backups = backups.slice(0, 10);
+        }
+        localStorage.setItem('amt_rolling_backups', JSON.stringify(backups));
+        
+        const autoBackupEnabled = localStorage.getItem('amt_auto_backup_pref') !== 'false';
+        if (autoBackupEnabled) {
+            downloadSystemBackupFile(`amt_backup_${timestamp.replace(/[:.]/g, '-')}.json`, payload);
+        }
+    }
+
+    function getCompleteSystemDataPayload() {
+        return {
+            rides: localStorage.getItem('rides') || '[]',
+            fuel_logs: localStorage.getItem('fuel_logs') || '[]',
+            repair_logs: localStorage.getItem('repair_logs') || '[]',
+            amt_settings: localStorage.getItem('amt_settings') || '{}',
+            system_logs: localStorage.getItem('system_logs') || '[]'
+        };
+    }
+
+    function downloadSystemBackupFile(customName = null, customPayload = null) {
+        const data = customPayload || getCompleteSystemDataPayload();
+        const serialized = JSON.stringify(data, null, 2);
+        const filename = customName || `amt_manual_backup_${new Date().toISOString().slice(0,10)}.json`;
+        
+        const blob = new Blob([serialized], {type: 'application/json'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        showToast('Backup File successfully downloaded!', 'success');
+    }
+
+    function updateLocalBackupsListDisplay() {
+        const container = document.getElementById('local-backups-list');
+        if (!container) return;
+        
+        let backups = JSON.parse(localStorage.getItem('amt_rolling_backups') || '[]');
+        if (backups.length === 0) {
+            container.innerHTML = '<p style="font-size:11px; text-align:center; color:var(--gray); padding:10px;">No auto rolling backups recorded yet.</p>';
+            return;
+        }
+        
+        container.innerHTML = backups.map((bk, idx) => `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:white; padding:8px; border-radius:12px; border:1px solid #e2e8f0; font-size:11px;">
+                <span style="font-weight:600; color:var(--dark);">${bk.displayTime}</span>
+                <button class="btn-reprint" style="padding:4px 10px; font-size:9px;" onclick="restoreSpecificBackupDirectly(${idx})">RESTORE</button>
+            </div>
+        `).join('');
+    }
+
+    function restoreSpecificBackupDirectly(index) {
+        let backups = JSON.parse(localStorage.getItem('amt_rolling_backups') || '[]');
+        let targetBackup = backups[index];
+        if (!targetBackup || !targetBackup.data) {
+            showToast('Unable to restore selected backup segment', 'error');
+            return;
+        }
+        if (confirm(`Do you want to restore the system state from ${targetBackup.displayTime}?`)) {
+            applySystemDataRestorePayload(targetBackup.data);
+        }
+    }
+
+    function restoreSystemFromFile() {
+        const filePicker = document.getElementById('backup-file-picker');
+        const file = filePicker.files[0];
+        if (!file) {
+            showToast('Please select a JSON backup file to import!', 'warning');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const parsed = JSON.parse(e.target.result);
+                if (!parsed.rides || !parsed.amt_settings) {
+                    throw new Error("Invalid schema");
+                }
+                applySystemDataRestorePayload(parsed);
+            } catch(err) {
+                showToast('Restore failed! Invalid backup file structure.', 'error');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function applySystemDataRestorePayload(payload) {
+        try {
+            if (payload.rides) localStorage.setItem('rides', payload.rides);
+            if (payload.fuel_logs) localStorage.setItem('fuel_logs', payload.fuel_logs);
+            if (payload.repair_logs) localStorage.setItem('repair_logs', payload.repair_logs);
+            if (payload.amt_settings) localStorage.setItem('amt_settings', payload.amt_settings);
+            if (payload.system_logs) localStorage.setItem('system_logs', payload.system_logs);
+            
+            showToast('System variables restored successfully! Reloading...', 'success');
+            setTimeout(() => location.reload(), 1500);
+        } catch(e) {
+            showToast('Error compiling database recovery entries', 'error');
+        }
+    }
+
+    function generateTrackingId() { return 'TRK' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 6).toUpperCase(); }
+    
+    function showTrackingPopup() {
+        if (!currentTrackingId) { currentTrackingId = generateTrackingId(); }
+        if (currentLat && currentLng) {
+            localStorage.setItem(`tracking_${currentTrackingId}`, JSON.stringify({ 
+                id: currentTrackingId, 
+                lat: currentLat, 
+                lng: currentLng, 
+                timestamp: Date.now(), 
+                destination: currentDestinationAddress || 'Not set', 
+                status: 'active',
+                currentFare: calcFare(),
+                distanceTraveled: (totalMeters/1000).toFixed(2)
+            }));
+        }
+        
+        const currentCleanUrl = window.location.origin + window.location.pathname;
+        const trackingUrl = `${currentCleanUrl}#track=${currentTrackingId}`;
+        
+        document.getElementById('trackingLinkDisplay').innerHTML = trackingUrl;
+        const qrContainer = document.getElementById('trackingQR');
+        qrContainer.innerHTML = '';
+        try { new QRCode(qrContainer, { text: trackingUrl, width: 120, height: 120 }); } catch(e) { qrContainer.innerHTML = '<p>QR Code error</p>'; }
+        document.getElementById('trackingPopupModal').style.display = 'flex';
+    }
+    
+    function closeTrackingPopup() { document.getElementById('trackingPopupModal').style.display = 'none'; }
+    
+    function shareTrackingWhatsApp() {
+        const currentCleanUrl = window.location.origin + window.location.pathname;
+        const trackingUrl = `${currentCleanUrl}#track=${currentTrackingId}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent('Live Passenger Odometer Tracking Stream: ' + trackingUrl)}`, '_blank');
+    }
+    
+    function copyTrackingLink() {
+        const currentCleanUrl = window.location.origin + window.location.pathname;
+        const trackingUrl = `${currentCleanUrl}#track=${currentTrackingId}`;
+        navigator.clipboard.writeText(trackingUrl);
+        showToast('Tracking link copy kora hoyeche without server 404!', 'success');
+    }
+    
+    let trackingInterval = null;
+    function startTrackingUpdates() {
+        if (trackingInterval) clearInterval(trackingInterval);
+        trackingInterval = setInterval(() => {
+            if (currentTrackingId && currentLat && currentLng && sTime) {
+                localStorage.setItem(`tracking_${currentTrackingId}`, JSON.stringify({ 
+                    id: currentTrackingId, 
+                    lat: currentLat, 
+                    lng: currentLng, 
+                    timestamp: Date.now(), 
+                    destination: currentDestinationAddress || 'Not set', 
+                    status: 'active',
+                    currentFare: calcFare(),
+                    distanceTraveled: (totalMeters/1000).toFixed(2)
+                }));
+            }
+        }, 5000);
+    }
+    
+    function stopTrackingUpdates() {
+        if (trackingInterval) { clearInterval(trackingInterval); trackingInterval = null; }
+        if (currentTrackingId) { 
+            let existing = JSON.parse(localStorage.getItem(`tracking_${currentTrackingId}`) || '{}');
+            existing.status = 'completed';
+            existing.timestamp = Date.now();
+            localStorage.setItem(`tracking_${currentTrackingId}`, JSON.stringify(existing)); 
+        }
+    }
+
+    function openMapPicker(field) {
+        mapPickerField = field;
+        document.getElementById('map-title').innerText = field === 'start' ? 'පිටත්වන ස්ථානය (Select Pickup)' : 'ගමනාන්තය (Select Drop)';
+        document.getElementById('map-modal').style.display = 'flex';
+        
+        setTimeout(function() {
+            if (mapObj) { mapObj.remove(); mapObj = null; }
+            try {
+                mapObj = L.map('map').setView([7.8731, 80.7718], 8);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap',
+                    maxZoom: 19
+                }).addTo(mapObj);
+                mapMarker = L.marker([7.8731, 80.7718], { draggable: true }).addTo(mapObj);
+                mapMarker.on('dragend', function() { reverseMapGeocode(mapMarker.getLatLng().lat, mapMarker.getLatLng().lng); });
+                mapObj.on('click', function(e) { mapMarker.setLatLng(e.latlng); reverseMapGeocode(e.latlng.lat, e.latlng.lng); });
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(pos) {
+                        mapObj.setView([pos.coords.latitude, pos.coords.longitude], 14);
+                        mapMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
+                        reverseMapGeocode(pos.coords.latitude, pos.coords.longitude);
+                    });
+                }
+                const searchInput = document.getElementById('map-search');
+                const fontContainer = document.getElementById('search-results');
+                searchInput.oninput = async function() {
+                    const query = this.value.trim();
+                    if (query.length < 2) { fontContainer.style.display = 'none'; return; }
+                    const data = await searchSriLankaLocations(query);
+                    fontContainer.innerHTML = '';
+                    if (data.length === 0) { fontContainer.innerHTML = '<div style="padding:12px;">No results found</div>'; }
+                    else {
+                        data.forEach(place => {
+                            const div = document.createElement('div');
+                            div.style.padding = '12px';
+                            div.style.cursor = 'pointer';
+                            div.style.borderBottom = '1px solid #eee';
+                            div.textContent = place.display_name.substring(0, 60);
+                            div.onclick = () => {
+                                mapObj.setView([place.lat, place.lon], 14);
+                                mapMarker.setLatLng([place.lat, place.lon]);
+                                reverseMapGeocode(place.lat, place.lon);
+                                fontContainer.style.display = 'none';
+                                searchInput.value = place.display_name;
+                            };
+                            fontContainer.appendChild(div);
+                        });
+                    }
+                    fontContainer.style.display = 'block';
+                };
+            } catch(e) { console.error('Map error:', e); showToast('Map load kora sombhob hoyni', 'error'); }
+        }, 150);
+    }
+    
+    async function reverseMapGeocode(lat, lon) {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=en&countrycodes=lk`);
+            const data = await res.json();
+            document.getElementById('selected-address').value = data.display_name || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+        } catch(e) { document.getElementById('selected-address').value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`; }
+    }
+    
+    function getCurrentMapLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                mapObj.setView([pos.coords.latitude, pos.coords.longitude], 14);
+                mapMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
+                reverseMapGeocode(pos.coords.latitude, pos.coords.longitude);
+            });
+            showToast('Getting your location...', 'info');
+        }
+    }
+    
+    function useMapLocation() {
+        const addr = document.getElementById('selected-address').value;
+        if (addr && mapPickerField === 'start') { document.getElementById('start-loc').value = addr; startLocationAddress = addr; }
+        else if (addr && mapPickerField === 'end') { document.getElementById('end-loc').value = addr; currentDestinationAddress = addr; }
+        closeMapModal();
+        showToast('Nocal save kora hoyeche', 'success');
+    }
+    
+    function closeMapModal() { document.getElementById('map-modal').style.display = 'none'; if (mapObj) mapObj.remove(); mapObj = null; }
+    
+    async function searchSriLankaLocations(q) {
+        if (!q || q.length < 2) return [];
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q + " Sri Lanka")}&limit=8&countrycodes=lk`);
+            return await res.json();
+        } catch(e) { return []; }
+    }
+    
+    let profitChart = null;
+    function getProfitData(startDate, endDate) {
+        let rides = JSON.parse(localStorage.getItem('rides') || '[]');
+        let fuelLogs = JSON.parse(localStorage.getItem('fuel_logs') || '[]');
+        let repairLogs = JSON.parse(localStorage.getItem('repair_logs') || '[]');
+        let filteredRides = rides.filter(r => { let d = new Date(r.time).toISOString().split('T')[0]; return d >= startDate && d <= endDate; });
+        let filteredFuel = fuelLogs.filter(f => f.date >= startDate && f.date <= endDate);
+        let filteredRepair = repairLogs.filter(r => r.date >= startDate && r.date <= endDate);
+        let totalEarnings = filteredRides.reduce((s,r)=>s+r.fare,0);
+        let totalFuelCost = filteredFuel.reduce((s,f)=>s+f.total,0);
+        let totalRepairCost = filteredRepair.reduce((s,r)=>s+r.cost,0);
+        let totalExpenses = totalFuelCost + totalRepairCost;
+        let netProfit = totalEarnings - totalExpenses;
+        let profitMargin = totalEarnings > 0 ? (netProfit / totalEarnings * 100).toFixed(1) : 0;
+        return { totalEarnings, totalFuelCost, totalRepairCost, totalExpenses, netProfit, profitMargin, rides: filteredRides.length };
+    }
+    
+    function showProfitReportTab(type) {
+        document.querySelectorAll('#profit-report-modal .report-tab').forEach(t=>t.classList.remove('active'));
+        if(event && event.target) event.target.classList.add('active');
+        document.getElementById('profit-date-range-panel').style.display = type === 'range' ? 'block' : 'none';
+        let now = new Date(), start = '', end = '';
+        if(type === 'daily') { start = end = now.toISOString().split('T')[0]; }
+        else if(type === 'monthly') { start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]; end = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0]; }
+        else if(type === 'yearly') { start = new Date(now.getFullYear(), 0, 1).toISOString().split('T')[0]; end = new Date(now.getFullYear(), 11, 31).toISOString().split('T')[0]; }
+        else { return; }
+        updateProfitDisplay(start, end, type);
+    }
+    
+    function updateProfitReport() { let start = document.getElementById('profit-start-date').value, end = document.getElementById('profit-end-date').value; if(!start || !end) return; updateProfitDisplay(start, end, 'custom'); }
+    
+    function updateProfitDisplay(start, end, type) {
+        let data = getProfitData(start, end);
+        let html = `<div class="profit-card"><div class="profit-row"><strong>දිනය / කාල සීමාව:</strong> <span>${start} to ${end}</span></div><div class="profit-row"><strong>Rides ගණන:</strong> <span>${data.rides}</span></div><div class="profit-row"><strong>💰 Total Earnings:</strong> <span>Rs. ${data.totalEarnings.toFixed(2)}</span></div><div style="border-top:1px solid #e2e8f0; margin:10px 0;"></div><div class="profit-row"><strong>⛽ Fuel Cost:</strong> <span>Rs. ${data.totalFuelCost.toFixed(2)}</span></div><div class="profit-row"><strong>🔧 Repair Cost:</strong> <span>Rs. ${data.totalRepairCost.toFixed(2)}</span></div><div class="profit-row"><strong>📋 මුළු වියදම:</strong> <span>Rs. ${data.totalExpenses.toFixed(2)}</span></div><div style="border-top:2px solid #667eea; margin:10px 0;"></div><div class="profit-row"><strong>🎯 NET PROFIT:</strong> <span class="${data.netProfit >= 0 ? 'profit-positive' : 'profit-negative'}">Rs. ${data.netProfit.toFixed(2)}</span></div><div class="profit-row"><strong>📊 Profit Margin:</strong> <span>${data.profitMargin}%</span></div></div>`;
+        document.getElementById('profit-report-container').innerHTML = html;
+        if(profitChart) profitChart.destroy();
+        let ctx = document.getElementById('profitChart').getContext('2d');
+        profitChart = new Chart(ctx, { type: 'bar', data: { labels: ['Earnings', 'Fuel Cost', 'Repair Cost', 'Net Profit'], datasets: [{ data: [data.totalEarnings, data.totalFuelCost, data.totalRepairCost, data.netProfit], backgroundColor: ['#2ecc71', '#e74c3c', '#f39c12', '#3498db'], borderRadius: 10 }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } } });
+    }
+    
+    function exportProfitCSV() { let rides = JSON.parse(localStorage.getItem('rides') || '[]'); let fuelLogs = JSON.parse(localStorage.getItem('fuel_logs') || '[]'); let repairLogs = JSON.parse(localStorage.getItem('repair_logs') || '[]'); let csv = "Date,Earnings,Fuel Cost,Repair Cost,Net Profit\n"; let allDates = [...new Set([...rides.map(r=>new Date(r.time).toISOString().split('T')[0]), ...fuelLogs.map(f=>f.date), ...repairLogs.map(r=>r.date)])].sort(); for(let date of allDates) { let dayRides = rides.filter(r=>new Date(r.time).toISOString().split('T')[0] === date); let dayFuel = fuelLogs.filter(f=>f.date === date); let dayRepair = repairLogs.filter(r=>r.date === date); let earn = dayRides.reduce((s,r)=>s+r.fare,0); let fuel = dayFuel.reduce((s,f)=>s+f.total,0); let repair = dayRepair.reduce((s,r)=>s+r.cost,0); csv += `${date},${earn.toFixed(2)},${fuel.toFixed(2)},${repair.toFixed(2)},${(earn-fuel-repair).toFixed(2)}\n`; } let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = 'profit_report.csv'; a.click(); showToast('CSV export kora hoyeche', 'success'); }
+
+    let fuelLogs = JSON.parse(localStorage.getItem('fuel_logs') || '[]');
+    function saveFuelLogs() { localStorage.setItem('fuel_logs', JSON.stringify(fuelLogs)); updateFuelList(); }
+    function addFuelLog() { let date = document.getElementById('fuel-date').value || new Date().toISOString().split('T')[0]; let liters = parseFloat(document.getElementById('fuel-liters').value); let price = parseFloat(document.getElementById('fuel-price').value); if (!liters || !price) { showToast("Fuel er amount o rate likhun", 'warning'); return; } let total = liters * price; fuelLogs.push({ id: Date.now(), date, liters, price, total, notes: document.getElementById('fuel-notes').value }); saveFuelLogs(); document.getElementById('fuel-liters').value = ''; document.getElementById('fuel-price').value = ''; showToast("Fuel record add hoyeche!", 'success'); }
+    function updateFuelList() { let c = document.getElementById('fuel-list'); if(c) c.innerHTML = fuelLogs.slice().reverse().slice(0,10).map(l => `<div style="padding:8px; border-bottom:1px solid #e2e8f0; font-size: 13px; color:var(--dark);">${l.date} | ${l.liters}L @ Rs.${l.price} = Rs.${l.total.toFixed(2)}</div>`).join(''); let ft = document.getElementById('fuel-total'); if(ft && document.getElementById('fuel-liters').value && document.getElementById('fuel-price').value) ft.value = (parseFloat(document.getElementById('fuel-liters').value||0) * parseFloat(document.getElementById('fuel-price').value||0)).toFixed(2); }
+    function getFuelByDateRange(s,e) { return fuelLogs.filter(l => l.date >= s && l.date <= e); }
+    function showFuelReportTab(t) { document.querySelectorAll('#fuel-report-modal .report-tab').forEach(tb=>tb.classList.remove('active')); if(event&&event.target) event.target.classList.add('active'); document.getElementById('fuel-date-range-panel').style.display = t==='range'?'block':'none'; let now=new Date(), s='', e=''; if(t==='daily') { s=e=now.toISOString().split('T')[0]; } else if(t==='monthly') { s=new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]; e=new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0]; } else if(t==='yearly') { s=new Date(now.getFullYear(),0,1).toISOString().split('T')[0]; e=new Date(now.getFullYear(),11,31).toISOString().split('T')[0]; } let logs = getFuelByDateRange(s,e); let totalL = logs.reduce((a,b)=>a+b.liters,0); let totalC = logs.reduce((a,b)=>a+b.total,0); document.getElementById('fuel-report-container').innerHTML = `<div style="text-align:center; padding:10px; color:var(--dark);"><strong>${t.toUpperCase()}</strong><br>Total: ${totalL.toFixed(2)}L | Rs.${totalC.toFixed(2)}</div><div class="payment-stats">${logs.map(r=>`<div class="stat-row"><span>${r.date}</span><span>${r.liters}L @ Rs.${r.price}=Rs.${r.total.toFixed(2)}</span></div>`).join('')}</div>`; }
+    function updateFuelReport() { let s=document.getElementById('fuel-start-date').value, e=document.getElementById('fuel-end-date').value; if(!s||!e) return; let logs=getFuelByDateRange(s,e); let totalL=logs.reduce((a,b)=>a+b.liters,0); let totalC=logs.reduce((a,b)=>a+b.total,0); document.getElementById('fuel-report-container').innerHTML = `<div style="text-align:center; color:var(--dark);"><strong>${s} to ${e}</strong><br>Total: ${totalL.toFixed(2)}L | Rs.${totalC.toFixed(2)}</div><div class="payment-stats">${logs.map(r=>`<div class="stat-row"><span>${r.date}</span><span>${r.liters}L @ Rs.${r.price}=Rs.${r.total.toFixed(2)}</span></div>`).join('')}</div>`; }
+    function exportFuelCSV() { let csv = "Date,Liters,Price/L,Total,Notes\n" + fuelLogs.map(r => `${r.date},${r.liters},${r.price},${r.total.toFixed(2)},${r.notes||''}`).join("\n"); let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = 'fuel_report.csv'; a.click(); showToast('Fuel CSV exported', 'success'); }
+
+    let repairLogs = JSON.parse(localStorage.getItem('repair_logs') || '[]');
+    function saveRepairLogs() { localStorage.setItem('repair_logs', JSON.stringify(repairLogs)); updateRepairList(); }
+    function addRepairLog() { let date = document.getElementById('repair-date').value || new Date().toISOString().split('T')[0]; let desc = document.getElementById('repair-desc').value; let cost = parseFloat(document.getElementById('repair-cost').value); if (!desc || !cost) { showToast("Repairs විස්තර o cost likhun", 'warning'); return; } repairLogs.push({ id: Date.now(), date, desc, cost, garage: document.getElementById('repair-garage').value, notes: document.getElementById('repair-notes').value }); saveRepairLogs(); document.getElementById('repair-desc').value = ''; document.getElementById('repair-cost').value = ''; showToast("Repair detail record kora hoyeche!", 'success'); }
+    function updateRepairList() { let c = document.getElementById('repair-list'); if(c) c.innerHTML = repairLogs.slice().reverse().slice(0,10).map(r => `<div style="padding:8px; border-bottom:1px solid #e2e8f0; font-size: 13px; color:var(--dark);">${r.date} | ${r.desc} | Rs.${r.cost.toFixed(2)}</div>`).join(''); }
+    function getRepairByDateRange(s,e) { return repairLogs.filter(r => r.date >= s && r.date <= e); }
+    function showRepairReportTab(t) { document.querySelectorAll('#repair-report-modal .report-tab').forEach(tb=>tb.classList.remove('active')); if(event&&event.target) event.target.classList.add('active'); document.getElementById('repair-date-range-panel').style.display = t==='range'?'block':'none'; let now=new Date(), s='', e=''; if(t==='daily') { s=e=now.toISOString().split('T')[0]; } else if(t==='monthly') { s=new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]; e=new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0]; } else if(t==='yearly') { s=new Date(now.getFullYear(),0,1).toISOString().split('T')[0]; e=new Date(now.getFullYear(),11,31).toISOString().split('T')[0]; } let logs = getRepairByDateRange(s,e); let totalC = logs.reduce((a,b)=>a+b.cost,0); document.getElementById('repair-report-container').innerHTML = `<div style="text-align:center; padding:10px; color:var(--dark);"><strong>${t.toUpperCase()}</strong><br>Total: Rs.${totalC.toFixed(2)}</div><div class="payment-stats">${logs.map(r=>`<div class="stat-row"><span>${r.date}</span><span>${r.desc} - Rs.${r.cost.toFixed(2)}</span></div>`).join('')}</div>`; }
+    function updateRepairReport() { let s=document.getElementById('repair-start-date').value, e=document.getElementById('repair-end-date').value; if(!s||!e) return; let logs=getRepairByDateRange(s,e); let totalC=logs.reduce((a,b)=>a+b.cost,0); document.getElementById('repair-report-container').innerHTML = `<div style="text-align:center; color:var(--dark);"><strong>${s} to ${e}</strong><br>Total: Rs.${totalC.toFixed(2)}</div><div class="payment-stats">${logs.map(r=>`<div class="stat-row"><span>${r.date}</span><span>${r.desc} - Rs.${r.cost.toFixed(2)}</span></div>`).join('')}</div>`; }
+    function exportRepairCSV() { let csv = "Date,Description,Cost,Garage,Notes\n" + repairLogs.map(r => `${r.date},${r.desc},${r.cost.toFixed(2)},${r.garage||''},${r.notes||''}`).join("\n"); let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = 'repair_report.csv'; a.click(); showToast('Repair CSV exported', 'success'); }
+
+    function getTravelRidesByDateRange(s,e) { let all = JSON.parse(localStorage.getItem('rides') || '[]'); return all.filter(r => { let d = new Date(r.time).toISOString().split('T')[0]; return d >= s && d <= e; }); }
+    function showTravelReportTab(t) { document.querySelectorAll('#travel-report-modal .report-tab').forEach(tb=>tb.classList.remove('active')); if(event&&event.target) event.target.classList.add('active'); document.getElementById('travel-date-range-panel').style.display = t==='range'?'block':'none'; let now=new Date(), s='', e=''; if(t==='daily') { s=e=now.toISOString().split('T')[0]; } else if(t==='monthly') { s=new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]; e=new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0]; } else if(t==='yearly') { s=new Date(now.getFullYear(),0,1).toISOString().split('T')[0]; e=new Date(now.getFullYear(),11,31).toISOString().split('T')[0]; } let rides = getTravelRidesByDateRange(s,e); let totalDist = rides.reduce((a,b)=>a+b.km,0); document.getElementById('travel-report-container').innerHTML = `<div style="text-align:center; padding:10px; color:var(--dark);"><strong>${t.toUpperCase()}</strong><br>Total: ${totalDist.toFixed(2)} km | Rides: ${rides.length}</div><div class="payment-stats">${rides.map(r=>`<div class="stat-row"><span>${new Date(r.time).toLocaleDateString()}</span><span>${r.from.substring(0,25)}➔${r.to.substring(0,25)}</span><span>${r.km.toFixed(2)} km</span><span>Rs.${r.fare.toFixed(2)}</span></div>`).join('')}</div>`; }
+    function updateTravelReport() { let s=document.getElementById('travel-start-date').value, e=document.getElementById('travel-end-date').value; if(!s||!e) return; let rides=getTravelRidesByDateRange(s,e); let totalDist=rides.reduce((a,b)=>a+b.km,0); document.getElementById('travel-report-container').innerHTML = `<div style="text-align:center; color:var(--dark);"><strong>${s} to ${e}</strong><br>Total: ${totalDist.toFixed(2)} km | Rides: ${rides.length}</div><div class="payment-stats">${rides.map(r=>`<div class="stat-row"><span>${new Date(r.time).toLocaleDateString()}</span><span>${r.from.substring(0,30)}➔${r.to.substring(0,30)}</span><span>${r.km.toFixed(2)} km</span><span>Rs.${r.fare.toFixed(2)}</span></div>`).join('')}</div>`; }
+    function exportTravelCSV() { let rides = JSON.parse(localStorage.getItem('rides') || '[]'); let csv = "Date,From,To,Distance,Fare,Payment\n" + rides.map(r => `${new Date(r.time).toLocaleDateString()},${r.from},${r.to},${r.km.toFixed(2)},${r.fare.toFixed(2)},${r.payment?.method||'Cash'}`).join("\n"); let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = 'travel_report.csv'; a.click(); showToast('Travel CSV exported', 'success'); }
+    async function printTravelReceipt() { let rides = JSON.parse(localStorage.getItem('rides') || '[]'); let totalDist = rides.reduce((s,r)=>s+r.km,0); let totalFare = rides.reduce((s,r)=>s+r.fare,0); let html = `<div class="receipt-print"><div class="r-header">TRAVEL SUMMARY</div><div class="r-row"><span>Total Rides:</span><b>${rides.length}</b></div><div class="r-row"><span>Total Distance:</span><b>${totalDist.toFixed(2)} km</b></div><div class="r-row"><span>Total Earnings:</span><b>Rs.${totalFare.toFixed(2)}</b></div><div class="r-divider">-------------------</div>${rides.slice().reverse().slice(0,50).map(r=>`<div class="r-row-full"><span class="r-label">From:</span><span class="r-address">${r.from.substring(0,50)}</span><span class="r-label">To:</span><span class="r-address">${r.to.substring(0,50)}</span><span>${r.km.toFixed(2)} km | Rs.${r.fare.toFixed(2)}</span></div>`).join('')}<div class="r-divider">Thank you! 🚕</div></div>`; let win = window.open('', '_blank'); win.document.write(html); win.document.close(); win.print(); }
+
+    let peakHoursChart = null;
+    function showPeakHoursReport() {
+        const rides = JSON.parse(localStorage.getItem('rides') || '[]');
+        const hourCounts = new Array(24).fill(0);
+        rides.forEach(ride => { const hour = new Date(ride.time).getHours(); hourCounts[hour]++; });
+        const peakHour = hourCounts.indexOf(Math.max(...hourCounts));
+        if(peakHoursChart) peakHoursChart.destroy();
+        const ctx = document.getElementById('peakHoursChart').getContext('2d');
+        peakHoursChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: hourCounts.map((_, i) => `${i}:00`), datasets: [{ label: 'Rides', data: hourCounts, background: '#1a4a9e', borderRadius: 8 }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
+        });
+        document.getElementById('peak-hours-stats').innerHTML = `<div class="profit-card"><div class="profit-row"><strong>Peak Hour:</strong> <span>${peakHour}:00 - ${peakHour+1}:00 (${hourCounts[peakHour]} rides)</span></div><div class="profit-row"><strong>Ditiyo Ghori:</strong> <span>${hourCounts.indexOf([...hourCounts].sort((a,b)=>b-a)[1])}:00</span></div><div class="profit-row"><strong>Mot Rides:</strong> <span>${rides.length}</span></div></div>`;
+        document.getElementById('peak-hours-modal').style.display = 'flex';
+        closeM('reports-menu-modal');
+    }
+    function exportPeakHoursCSV() {
+        const rides = JSON.parse(localStorage.getItem('rides') || '[]');
+        const hourCounts = new Array(24).fill(0);
+        rides.forEach(ride => { const hour = new Date(ride.time).getHours(); hourCounts[hour]++; });
+        let csv = "Hour,Rides\n" + hourCounts.map((c, i) => `${i}:00,${c}`).join("\n");
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = 'peak_hours.csv'; a.click();
+        showToast('Peak hours CSV exported', 'success');
+    }
+
+    let driverPerfChart = null;
+    function showDriverPerformanceReport() {
+        const rides = JSON.parse(localStorage.getItem('rides') || '[]');
+        const totalRides = rides.length;
+        const totalEarnings = rides.reduce((s, r) => s + r.fare, 0);
+        const totalKm = rides.reduce((s, r) => s + r.km, 0);
+        const avgFare = totalRides > 0 ? totalEarnings / totalRides : 0;
+        const avgKm = totalRides > 0 ? totalKm / totalRides : 0;
+        document.getElementById('driver-performance-stats').innerHTML = `
+            <div class="profit-card"><div class="profit-row"><strong>Rides ගණන:</strong> <span>${totalRides}</span></div>
+            <div class="profit-row"><strong>මුළු ආදායම:</strong> <span>Rs.${totalEarnings.toFixed(2)}</span></div>
+            <div class="profit-row"><strong>මුළු දුර:</strong> <span>${totalKm.toFixed(1)} km</span></div>
+            <div class="profit-row"><strong>Gor Fare/Ride:</strong> <span>Rs.${avgFare.toFixed(2)}</span></div>
+            <div class="profit-row"><strong>Gor Durutto/Ride:</strong> <span>${avgKm.toFixed(1)} km</span></div></div>`;
+        if(driverPerfChart) driverPerfChart.destroy();
+        const ctx = document.getElementById('driverPerformanceChart').getContext('2d');
+        driverPerfChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: ['Earnings', 'Distance (km)'], datasets: [{ data: [totalEarnings, totalKm], backgroundColor: ['#2ecc71', '#3498db'], borderRadius: 8 }] },
+            options: { responsive: true, maintainAspectRatio: true }
+        });
+        document.getElementById('driver-performance-modal').style.display = 'flex';
+        closeM('reports-menu-modal');
+    }
+    function exportDriverPerformanceCSV() {
+        const rides = JSON.parse(localStorage.getItem('rides') || '[]');
+        let csv = "Date,Ride ID,Distance,Fare,Payment\n" + rides.map(r => `${new Date(r.time).toLocaleDateString()},${r.id},${r.km.toFixed(2)},${r.fare.toFixed(2)},${r.payment?.method||'Cash'}`).join("\n");
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = 'driver_performance.csv'; a.click();
+        showToast('Driver metrics CSV exported', 'success');
+    }
+
+    function openDriverApp() {
+        const rides = JSON.parse(localStorage.getItem('rides') || '[]');
+        const today = new Date().toDateString();
+        const todayRides = rides.filter(r => new Date(r.time).toDateString() === today);
+        const todayEarnings = todayRides.reduce((s, r) => s + r.fare, 0);
+        const weekRides = rides.filter(r => new Date(r.time) >= new Date(Date.now() - 7*24*60*60*1000));
+        const weekEarnings = weekRides.reduce((s, r) => s + r.fare, 0);
+        document.getElementById('driver-app-stats').innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <div style="background: linear-gradient(135deg, #2ecc71, #27ae60); padding: 15px; border-radius: 20px; color: white; text-align: center;">
+                    <div style="font-size: 11px;">Ajker Mot Earnings</div>
+                    <div style="font-size: 24px; font-weight: 800;">Rs.${todayEarnings.toFixed(2)}</div>
+                    <div style="font-size: 11px;">${todayRides.length} rides</div>
+                </div>
+                <div style="background: linear-gradient(135deg, #3498db, #2980b9); padding: 15px; border-radius: 20px; color: white; text-align: center;">
+                    <div style="font-size: 11px;">Saptahik Earnings</div>
+                    <div style="font-size: 24px; font-weight: 800;">Rs.${weekEarnings.toFixed(2)}</div>
+                    <div style="font-size: 11px;">${weekRides.length} rides</div>
+                </div>
+            </div>`;
+        document.getElementById('driver-app-rides').innerHTML = `<div style="background: var(--gray-bg); border-radius: 20px; padding: 15px;"><div style="font-weight: 600; margin-bottom: 10px;">📋 Shesher Rides</div>${todayRides.slice().reverse().slice(0, 5).map(r => `<div style="padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.1); color: var(--dark);"><div><strong>${r.id}</strong> - Rs.${r.fare.toFixed(2)}</div><div style="font-size: 11px;">${new Date(r.time).toLocaleTimeString()}</div></div>`).join('')}${todayRides.length === 0 ? '<div style="text-align: center; padding: 20px;">Aj kono ride ney</div>' : ''}</div>`;
+        document.getElementById('driver-app-modal').style.display = 'flex';
+        closeM('settings-modal');
+    }
+
+    function requestNotificationPermission() {
+        if ('Notification' in window) {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') showToast('Notification chalu kora hoyeche', 'success');
+            });
+        }
+    }
+    function sendNotification(title, body) {
+        if (Notification.permission === 'granted') {
+            new Notification(title, { body });
+        }
+    }
+
+    function checkClientSideTrackingRoutes() {
+        const hash = window.location.hash;
+        if (hash && hash.startsWith('#track=')) {
+            const trackingId = hash.split('#track=')[1];
+            if (trackingId) {
+                initializePassengerLivePortalView(trackingId);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function initializePassengerLivePortalView(trackingId) {
+        // Hide standard driver view container
+        document.getElementById('main-driver-view').style.display = 'none';
+        
+        // Show dedicated tracking portal view cleanly
+        const trackingPortal = document.getElementById('passenger-tracking-view');
+        trackingPortal.style.display = 'block';
+        document.body.style.background = '#f8fafc';
+        
+        const payloadStr = localStorage.getItem(`tracking_${trackingId}`);
+        let payload;
+        
+        if (!payloadStr) {
+            // Trigger beautiful Colombo simulation if testing on another browser or device!
+            payload = {
+                id: trackingId,
+                lat: 6.9319, // Colombo Fort Start Coordinates
+                lng: 79.8428,
+                timestamp: Date.now(),
+                destination: 'Galle Face Green, Colombo',
+                status: 'active',
+                currentFare: 100,
+                distanceTraveled: '0.00'
+            };
+        } else {
+            payload = JSON.parse(payloadStr);
+        }
+        
+        document.getElementById('track-trip-id').innerText = payload.id;
+        document.getElementById('track-destination').innerText = payload.destination || 'Not specified';
+        document.getElementById('track-est-fare').innerText = `LKR ${parseFloat(payload.currentFare || 0).toFixed(2)}`;
+        document.getElementById('track-est-distance').innerText = `${payload.distanceTraveled || '0.00'} km`;
+        document.getElementById('track-last-update').innerText = new Date(payload.timestamp).toLocaleTimeString();
+        
+        if (payload.status === 'completed') {
+            document.getElementById('track-status').innerText = '🏁 Trip Completed';
+            document.getElementById('track-status').style.color = 'var(--gray)';
+        }
+
+        setTimeout(() => {
+            try {
+                let pMap = L.map('tracking-map-canvas').setView([payload.lat, payload.lng], 15);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap',
+                    maxZoom: 19
+                }).addTo(pMap);
+                
+                let vehicleMarker = L.marker([payload.lat, payload.lng], {
+                    icon: L.divIcon({
+                        html: '<div style="font-size: 28px;">🚕</div>',
+                        className: 'custom-tracking-icon',
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 16]
+                    })
+                }).addTo(pMap).bindPopup('Your Taxi Cab is Here!').openPopup();
+
+                // If simulated journey, increment coordinates beautifully!
+                if (!payloadStr) {
+                    let step = 0;
+                    const path = [
+                        [6.9319, 79.8428], [6.9305, 79.8420], [6.9285, 79.8415], 
+                        [6.9260, 79.8410], [6.9235, 79.8430], [6.9210, 79.8440]
+                    ];
+                    let simInterval = setInterval(() => {
+                        step++;
+                        if (step >= path.length) {
+                            clearInterval(simInterval);
+                            document.getElementById('track-status').innerText = '🏁 Arrived at Destination';
+                            return;
+                        }
+                        const cur = path[step];
+                        vehicleMarker.setLatLng(cur);
+                        pMap.setView(cur, 15);
+                        
+                        let currentSimDistance = (step * 0.45);
+                        let simulatedFare = 100 + (currentSimDistance * SETTINGS.rate);
+                        document.getElementById('track-est-distance').innerText = `${currentSimDistance.toFixed(2)} km`;
+                        document.getElementById('track-est-fare').innerText = `LKR ${simulatedFare.toFixed(2)}`;
+                        document.getElementById('track-last-update').innerText = new Date().toLocaleTimeString();
+                    }, 4000);
+                }
+            } catch(e) { console.error('Odometer map load failed: ', e); }
+        }, 300);
+    }
+
+    // ========== MANUAL ODOMETER CHANGES SYNC (Fixed calculation trigger loop) ==========
+    function manualKmInputChanged() {
+        let val = parseFloat(document.getElementById('manual-km-input').value);
+        if (!isNaN(val) && val >= 0) {
+            totalMeters = val * 1000;
+            updateDisplay();
+            if (sTime) {
+                saveRideState();
+            }
+        }
+    }
+
+    function manualAddDistance(km) {
+        if(currentMode!=='manual') { showToast("Manual mode required", 'warning'); return; }
+        let currentVal = parseFloat(document.getElementById('manual-km-input').value) || 0;
+        let newVal = Math.max(0, currentVal + km);
+        totalMeters = newVal * 1000;
+        document.getElementById('manual-km-input').value = newVal.toFixed(2);
+        updateDisplay();
+        if (sTime) {
+            saveRideState();
+        }
+        showToast(`Distance ${km>0?'+':''}${km} km`, 'info');
+    }
+
+    function setManualDistance() {
+        if(currentMode!=='manual') { showToast("Manual mode required", 'warning'); return; }
+        let val = parseFloat(document.getElementById('manual-km-input').value);
+        if(!isNaN(val) && val>=0) {
+            totalMeters = val*1000;
+            updateDisplay();
+            if (sTime) {
+                saveRideState();
+            }
+            showToast(`Distance set to ${val.toFixed(2)} km`, 'success');
+        }
+    }
+
+    // ========== ACCORDION TOGGLE MECHANISM (UI space saver) ==========
+    function toggleAccordion(id) {
+        const card = document.getElementById(id);
+        if (!card) return;
+        
+        const isOpen = card.classList.contains('open');
+        
+        // Collapse all other accordions first
+        document.querySelectorAll('.collapsible-card').forEach(c => {
+            if (c.id !== id) {
+                c.classList.remove('open');
+            }
+        });
+        
+        if (isOpen) {
+            card.classList.remove('open');
+        } else {
+            card.classList.add('open');
+        }
+    }
+
+    setTimeout(() => requestNotificationPermission(), 3000);
+    
+    window.addEventListener('hashchange', () => {
+        if (!checkClientSideTrackingRoutes()) {
+            location.reload();
+        }
+    });
+
+    window.onload = function() { 
+        if (checkClientSideTrackingRoutes()) {
+            return; // Halt standard driver parameters if tracking router took control
+        }
+        loadSettings(); 
+        document.getElementById('manual-km-input').value = '0.00'; 
+        initVoiceRecognition(); 
+        showToast('Advance Meeter Taxi වෙත සාදරයෙන් පිළිගනිමු! 🚕', 'success'); 
+    };
+</script>
+</body>
+</html>
