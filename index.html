@@ -9,21 +9,21 @@
     <meta name="theme-color" content="#0f172a">
     <title>ADVANCE MEETER TAXI - Premium</title>
     
-    <!-- Tailwind CSS for high-fidelity responsive UI components -->
+    <!-- Tailwind CSS for responsive UI components -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Free Leaflet Map Library (100% Free, No 404, No API Keys) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-    <!-- External Essential Libraries -->
+    <!-- External Essential Compilation Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <!-- Google Fonts for premium typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -82,26 +82,6 @@
             max-height: 600px;
             opacity: 1;
         }
-        .receipt-seal {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 2px dashed #e74c3c;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.95);
-            transform: rotate(-15deg);
-        }
-        .receipt-seal:before {
-            content: "✓ PAID";
-            font-size: 10px;
-            font-weight: 800;
-            color: #e74c3c;
-        }
         @media print {
             body { background: white !important; color: black !important; }
             body * { visibility: hidden !important; }
@@ -111,228 +91,227 @@
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-100 flex items-center justify-center p-3 sm:p-4">
+<body class="min-h-screen text-slate-100 flex items-center justify-center p-2 sm:p-4">
 
-<!-- Main Driver Interface Container -->
-<div id="main-driver-view" class="w-full max-w-md bg-slate-900/95 border border-slate-800/80 rounded-[32px] shadow-2xl p-5 relative transition-all duration-300">
+<div id="main-driver-view" class="w-full max-w-md bg-slate-900/95 border border-slate-800/80 rounded-[28px] sm:rounded-[32px] shadow-2xl p-4 sm:p-5 relative transition-all duration-300">
     
     <!-- Sticky Recovery Banner -->
-    <div id="restore-banner" class="hidden bg-amber-500/20 border border-amber-500/30 text-amber-300 text-center text-xs py-3 px-4 rounded-2xl mb-4 font-bold cursor-pointer transition hover:bg-amber-500/30" onclick="restorePreviousRide()">
+    <div id="restore-banner" class="hidden bg-amber-500/20 border border-amber-500/30 text-amber-300 text-center text-xs py-2.5 px-3 rounded-xl mb-3.5 font-bold cursor-pointer transition hover:bg-amber-500/30" onclick="restorePreviousRide()">
         🔄 කලින් ගිය ගමනක් හමු විය! යළි පිහිටුවන්න ක්ලික් කරන්න
     </div>
     
     <!-- Premium Header -->
-    <div class="flex justify-between items-center mb-5">
-        <div class="flex items-center gap-3">
-            <div id="main-logo-area" class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center text-2xl shadow-lg shadow-blue-900/30">
+    <div class="flex justify-between items-center mb-4 sm:mb-5">
+        <div class="flex items-center gap-2.5">
+            <div id="main-logo-area" class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-2xl shadow-lg shadow-blue-900/30">
                 🚕
             </div>
             <div>
-                <h1 class="text-sm font-extrabold tracking-wider text-blue-400 uppercase leading-none" id="display-app-name">ADVANCE<br>MEETER TAXI</h1>
+                <h1 class="text-[11px] sm:text-xs font-extrabold tracking-wider text-blue-400 uppercase leading-tight" id="display-app-name">ADVANCE<br>MEETER TAXI</h1>
             </div>
         </div>
-        <button class="w-11 h-11 bg-slate-800/60 border border-slate-700/50 rounded-2xl flex items-center justify-center text-xl transition hover:bg-slate-700/60 active:scale-95" onclick="openLogin()">
+        <button class="w-10 h-10 bg-slate-800/60 border border-slate-700/50 rounded-xl flex items-center justify-center text-lg transition hover:bg-slate-700/60 active:scale-95" onclick="openLogin()">
             ⚙️
         </button>
     </div>
 
     <!-- Quick Action Buttons -->
-    <div class="grid grid-cols-2 gap-3 mb-5">
-        <button id="nightBtn" class="py-3 px-4 bg-slate-800 border border-slate-700 rounded-2xl text-xs font-bold text-amber-400 flex items-center justify-center gap-2 transition hover:bg-slate-700 active:scale-95" onclick="toggleNightCharge()">
+    <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-5">
+        <button id="nightBtn" class="py-2.5 px-3 bg-slate-800 border border-slate-700 rounded-xl text-[10px] sm:text-xs font-bold text-amber-400 flex items-center justify-center gap-1.5 transition hover:bg-slate-700 active:scale-95" onclick="toggleNightCharge()">
             🌙 <span id="night-btn-text">NIGHT OFF</span>
         </button>
-        <button class="py-3 px-4 bg-slate-800/60 border border-slate-700/40 rounded-2xl text-xs font-bold text-slate-300 hover:text-white transition hover:bg-slate-700/50 active:scale-95" onclick="resetToNew()">
+        <button class="py-2.5 px-3 bg-slate-800/60 border border-slate-700/40 rounded-xl text-[10px] sm:text-xs font-bold text-slate-300 hover:text-white transition hover:bg-slate-700/50 active:scale-95" onclick="resetToNew()">
             🔄 නවතම RIDE (RESET)
         </button>
     </div>
 
     <!-- Navigation & Ride Mode Selectors -->
-    <div class="grid grid-cols-4 gap-1.5 p-1 bg-slate-950 rounded-2xl border border-slate-800/80 mb-5">
-        <button id="mode-auto" class="py-3 text-xs rounded-xl font-bold transition flex flex-col items-center gap-1 bg-blue-600 text-white" onclick="setMode('auto')">
-            <span class="text-sm">🎯</span> <span>Auto</span>
+    <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800/80 mb-4 sm:mb-5">
+        <button id="mode-auto" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 bg-blue-600 text-white" onclick="setMode('auto')">
+            <span class="text-xs sm:text-sm">🎯</span> <span>Auto</span>
         </button>
-        <button id="mode-gps" class="py-3 text-xs rounded-xl font-bold transition flex flex-col items-center gap-1 text-slate-400 hover:bg-slate-900" onclick="setMode('gps')">
-            <span class="text-sm">📍</span> <span>GPS Mode</span>
+        <button id="mode-gps" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 text-slate-400 hover:bg-slate-900" onclick="setMode('gps')">
+            <span class="text-xs sm:text-sm">📍</span> <span>GPS Mode</span>
         </button>
-        <button id="mode-manual" class="py-3 text-xs rounded-xl font-bold transition flex flex-col items-center gap-1 text-slate-400 hover:bg-slate-900" onclick="setMode('manual')">
-            <span class="text-sm">✏️</span> <span>Manual</span>
+        <button id="mode-manual" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 text-slate-400 hover:bg-slate-900" onclick="setMode('manual')">
+            <span class="text-xs sm:text-sm">✏️</span> <span>Manual</span>
         </button>
-        <button id="mode-delivery" class="py-3 text-xs rounded-xl font-bold transition flex flex-col items-center gap-1 text-slate-400 hover:bg-slate-900" onclick="setMode('delivery')">
-            <span class="text-sm">📦</span> <span>Delivery</span>
+        <button id="mode-delivery" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 text-slate-400 hover:bg-slate-900" onclick="setMode('delivery')">
+            <span class="text-xs sm:text-sm">📦</span> <span>Delivery</span>
         </button>
     </div>
 
     <!-- Auto Tracking Location Card -->
-    <div id="auto-location-card" class="bg-slate-950 border border-slate-800/80 rounded-2xl p-4 mb-4 flex items-center justify-between gap-3">
+    <div id="auto-location-card" class="bg-slate-950 border border-slate-800/80 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-3.5 flex items-center justify-between gap-2.5">
         <div class="flex-1 min-w-0">
-            <div class="text-[9px] text-slate-500 font-extrabold uppercase tracking-widest mb-1">📍 වත්මන් ස්ථානය (CURRENT LOCATION)</div>
-            <div id="current-location-address" class="text-xs text-slate-300 font-semibold truncate">GPS සංඥා ලැබෙන තෙක් රැඳී සිටින්න...</div>
+            <div class="text-[8px] sm:text-[9px] text-slate-500 font-extrabold uppercase tracking-widest mb-1">📍 වත්මන් ස්ථානය (CURRENT LOCATION)</div>
+            <div id="current-location-address" class="text-[10px] sm:text-xs text-slate-300 font-semibold truncate">GPS සංඥා ලැබෙන තෙක් රැඳී සිටින්න...</div>
         </div>
-        <button class="w-9 h-9 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-center text-sm text-slate-400 hover:text-white transition active:scale-90" onclick="refreshCurrentLocation()">
+        <button class="w-8 h-8 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-400 hover:text-white transition active:scale-90" onclick="refreshCurrentLocation()">
             ⟳
         </button>
     </div>
 
     <!-- GPS & Manual Coordinate Inputs -->
-    <div id="location-fields" class="hidden space-y-3 mb-4">
+    <div id="location-fields" class="hidden space-y-2.5 mb-3.5">
         <div class="grid grid-cols-2 gap-2">
             <div class="relative">
-                <input id="start-loc" type="text" placeholder="පිටත්වන ස්ථානය (Pickup)" class="w-full bg-slate-950 border border-slate-800/80 rounded-xl px-3 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition" autocomplete="off">
-                <div id="start-loc-suggestions" class="absolute left-0 right-0 mt-1 bg-slate-950 border border-slate-800 rounded-xl max-h-40 overflow-y-auto z-50 hidden text-xs custom-scrollbar"></div>
+                <input id="start-loc" type="text" placeholder="පිටත්වන ස්ථානය (Pickup)" class="w-full bg-slate-950 border border-slate-800/80 rounded-xl px-2.5 py-2.5 text-[10px] sm:text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition" autocomplete="off">
+                <div id="start-loc-suggestions" class="absolute left-0 right-0 mt-1 bg-slate-950 border border-slate-800 rounded-xl max-h-40 overflow-y-auto z-50 hidden text-[10px] sm:text-xs custom-scrollbar"></div>
             </div>
             <div class="relative">
-                <input id="end-loc" type="text" placeholder="ගමනාන්තය (Drop)" class="w-full bg-slate-950 border border-slate-800/80 rounded-xl px-3 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition" autocomplete="off">
-                <div id="end-loc-suggestions" class="absolute left-0 right-0 mt-1 bg-slate-950 border border-slate-800 rounded-xl max-h-40 overflow-y-auto z-50 hidden text-xs custom-scrollbar"></div>
+                <input id="end-loc" type="text" placeholder="ගමනාන්තය (Drop)" class="w-full bg-slate-950 border border-slate-800/80 rounded-xl px-2.5 py-2.5 text-[10px] sm:text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition" autocomplete="off">
+                <div id="end-loc-suggestions" class="absolute left-0 right-0 mt-1 bg-slate-950 border border-slate-800 rounded-xl max-h-40 overflow-y-auto z-50 hidden text-[10px] sm:text-xs custom-scrollbar"></div>
             </div>
         </div>
         <div class="grid grid-cols-2 gap-2">
-            <button class="py-2.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/50 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition active:scale-95" onclick="openMapPicker('start')">🗺️ Pickup සිතියම</button>
-            <button class="py-2.5 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/50 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition active:scale-95" onclick="openMapPicker('end')">🗺️ Drop සිතියම</button>
+            <button class="py-2 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/50 rounded-xl text-[10px] sm:text-xs font-semibold text-slate-300 hover:text-white transition active:scale-95" onclick="openMapPicker('start')">🗺️ Pickup සිතියම</button>
+            <button class="py-2 bg-slate-800/80 hover:bg-slate-800 border border-slate-700/50 rounded-xl text-[10px] sm:text-xs font-semibold text-slate-300 hover:text-white transition active:scale-95" onclick="openMapPicker('end')">🗺️ Drop සිතියම</button>
         </div>
     </div>
 
     <!-- Delivery Details Accordion -->
-    <div id="delivery-accordion" class="collapsible-card mb-4 hidden">
-        <div class="px-4 py-3 flex justify-between items-center cursor-pointer hover:bg-slate-900/50 select-none transition" onclick="toggleAccordion('delivery-accordion')">
-            <div class="text-xs font-extrabold text-blue-400 uppercase tracking-wider flex items-center gap-2">
+    <div id="delivery-accordion" class="collapsible-card mb-3.5 hidden">
+        <div class="px-3.5 py-2.5 flex justify-between items-center cursor-pointer hover:bg-slate-900/50 select-none transition" onclick="toggleAccordion('delivery-accordion')">
+            <div class="text-[10px] sm:text-xs font-extrabold text-blue-400 uppercase tracking-wider flex items-center gap-1.5">
                 <span>📦</span> <span>Delivery & Pickup Details</span>
             </div>
             <span class="text-xs text-slate-500">▼</span>
         </div>
-        <div class="collapsible-content px-4 pb-4 space-y-3 pt-1 border-t border-slate-800">
+        <div class="collapsible-content px-3.5 pb-3.5 space-y-2.5 pt-1 border-t border-slate-800">
             <div class="space-y-1">
-                <h4 class="text-[10px] text-slate-500 font-bold uppercase">📦 Pickup භාරගන්නාගේ විස්තර</h4>
+                <h4 class="text-[8px] sm:text-[9px] text-slate-500 font-bold uppercase">📦 Pickup භාරගන්නාගේ විස්තර</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="pickup-name" placeholder="නම (Name)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white placeholder-slate-600 focus:outline-none">
-                    <input type="tel" id="pickup-phone" placeholder="දුරකථන (Phone)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white placeholder-slate-600 focus:outline-none">
+                    <input type="text" id="pickup-name" placeholder="නම (Name)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-[10px] sm:text-xs text-white placeholder-slate-600 focus:outline-none">
+                    <input type="tel" id="pickup-phone" placeholder="දුරකථන (Phone)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-[10px] sm:text-xs text-white placeholder-slate-600 focus:outline-none">
                 </div>
             </div>
             <div class="space-y-1">
-                <h4 class="text-[10px] text-slate-500 font-bold uppercase">📍 Delivery භාරදෙන්නාගේ විස්තර</h4>
+                <h4 class="text-[8px] sm:text-[9px] text-slate-500 font-bold uppercase">📍 Delivery භාරදෙන්නාගේ විස්තර</h4>
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="delivery-name" placeholder="නම (Name)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white placeholder-slate-600 focus:outline-none">
-                    <input type="tel" id="delivery-phone" placeholder="දුරකථන (Phone)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white placeholder-slate-600 focus:outline-none">
+                    <input type="text" id="delivery-name" placeholder="නම (Name)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-[10px] sm:text-xs text-white placeholder-slate-600 focus:outline-none">
+                    <input type="tel" id="delivery-phone" placeholder="දුරකථන (Phone)" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-[10px] sm:text-xs text-white placeholder-slate-600 focus:outline-none">
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Real-time Dashboard Gauge -->
-    <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-slate-800/80 rounded-3xl p-5 shadow-inner mb-4 relative overflow-hidden">
-        <div class="grid grid-cols-2 gap-4 divide-x divide-slate-800/60 relative z-10 text-center">
+    <!-- Main Live Fare Counter Card -->
+    <div class="bg-gradient-to-b from-slate-950 to-slate-900 border border-slate-800/80 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-inner mb-3.5 relative overflow-hidden">
+        <div class="grid grid-cols-2 gap-3 sm:gap-4 divide-x divide-slate-800/60 relative z-10 text-center">
             <!-- Distance Indicator -->
             <div class="flex flex-col justify-center items-center py-1">
-                <span class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest mb-1">DISTANCE / දුර</span>
-                <div class="text-4xl font-extrabold tracking-tight text-white neon-glow-blue" id="disp-km">0.00</div>
-                <span class="text-[10px] text-slate-400 font-bold mt-1">KM</span>
+                <span class="text-[8px] sm:text-[9px] text-slate-500 font-extrabold uppercase tracking-widest mb-1">DISTANCE / DUROTO</span>
+                <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white neon-glow-blue" id="disp-km">0.00</div>
+                <span class="text-[9px] sm:text-[10px] text-slate-400 font-bold mt-1">KM</span>
             </div>
             <!-- Fare Indicator -->
-            <div class="flex flex-col justify-center items-center py-1 pl-4">
-                <span class="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest mb-1">TOTAL FARE / මුදල</span>
-                <span class="text-xs text-blue-500 font-extrabold mb-1">LKR</span>
-                <div class="text-4xl font-extrabold tracking-tight text-emerald-400 neon-glow-green" id="disp-fare">100.00</div>
-                <div id="night-indicator" class="hidden text-[9px] text-red-400 font-bold tracking-wider uppercase mt-2">
+            <div class="flex flex-col justify-center items-center py-1 pl-2 sm:pl-4">
+                <span class="text-[8px] sm:text-[9px] text-slate-500 font-extrabold uppercase tracking-widest mb-1">TOTAL FARE / GASTHU</span>
+                <span class="text-[10px] text-blue-500 font-extrabold mb-0.5">LKR</span>
+                <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-emerald-400 neon-glow-green" id="disp-fare">100.00</div>
+                <div id="night-indicator" class="hidden text-[8px] text-red-400 font-bold tracking-wider uppercase mt-1.5 animate-pulse">
                     🌙 රාත්‍රී ගාස්තු ක්‍රියාත්මකයි
                 </div>
             </div>
         </div>
         
         <!-- GPS Status Bar -->
-        <div id="gps-status" class="mt-4 bg-slate-950 border border-slate-800/80 rounded-xl py-2 px-3 text-[10px] font-bold text-slate-400 flex items-center justify-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-slate-700 animate-pulse"></span> 📍 GPS සම්බන්ධතාවය පරීක්ෂා කරමින්...
+        <div id="gps-status" class="mt-3.5 bg-slate-950 border border-slate-800/80 rounded-xl py-2 px-3 text-[9px] sm:text-[10px] font-bold text-slate-400 flex items-center justify-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-700 animate-pulse"></span> 📍 GPS සම්බන්ධතාවය පරීක්ෂා කරමින්...
         </div>
 
         <!-- Manual Distance Adjustments -->
-        <div id="manual-controls" class="hidden mt-4 pt-4 border-t border-slate-800/60 space-y-3">
-            <div class="flex items-center justify-between gap-1.5">
-                <button class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition active:scale-95" onclick="manualAddDistance(-1)">-1</button>
-                <button class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition active:scale-95" onclick="manualAddDistance(-0.5)">-0.5</button>
-                <input type="number" id="manual-km-input" class="w-24 bg-slate-950 border border-slate-850 text-center text-lg font-bold rounded-xl py-2 text-white focus:outline-none" value="0.00" step="0.1" oninput="manualKmInputChanged()">
-                <button class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition active:scale-95" onclick="manualAddDistance(0.5)">+0.5</button>
-                <button class="w-11 h-11 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition active:scale-95" onclick="manualAddDistance(1)">+1</button>
+        <div id="manual-controls" class="hidden mt-3.5 pt-3.5 border-t border-slate-800/60 space-y-2.5">
+            <div class="flex items-center justify-between gap-1">
+                <button class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition active:scale-95" onclick="manualAddDistance(-1)">-1</button>
+                <button class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition active:scale-95" onclick="manualAddDistance(-0.5)">-0.5</button>
+                <input type="number" id="manual-km-input" class="w-20 bg-slate-950 border border-slate-850 text-center text-base font-bold rounded-lg py-2 text-white focus:outline-none" value="0.00" step="0.1" oninput="manualKmInputChanged()">
+                <button class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition active:scale-95" onclick="manualAddDistance(0.5)">+0.5</button>
+                <button class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition active:scale-95" onclick="manualAddDistance(1)">+1</button>
             </div>
-            <button class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition active:scale-95" onclick="setManualDistance()">
+            <button class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] sm:text-xs font-bold transition active:scale-95" onclick="setManualDistance()">
                 ✓ දුර ප්‍රමාණය තහවුරු කරන්න
             </button>
         </div>
     </div>
 
     <!-- Google Map Navigation Shortcut Toggle -->
-    <div id="nav-container" class="hidden mb-4">
-        <button class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-xs font-bold transition active:scale-95 flex items-center justify-center gap-2" onclick="openPhoneNavigation()">
+    <div id="nav-container" class="hidden mb-3.5">
+        <button class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[11px] sm:text-xs font-bold transition active:scale-95 flex items-center justify-center gap-1.5" onclick="openPhoneNavigation()">
             🧭 සිතියම පෙන්වන්න (NAVIGATE)
         </button>
     </div>
 
     <!-- Billing Details & Adjustments Accordion -->
-    <div id="billing-accordion" class="collapsible-card mb-4">
-        <div class="px-4 py-3 flex justify-between items-center cursor-pointer hover:bg-slate-900/50 select-none transition" onclick="toggleAccordion('billing-accordion')">
-            <div class="text-xs font-extrabold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+    <div id="billing-accordion" class="collapsible-card mb-3.5">
+        <div class="px-3.5 py-2.5 flex justify-between items-center cursor-pointer hover:bg-slate-900/50 select-none transition" onclick="toggleAccordion('billing-accordion')">
+            <div class="text-[10px] sm:text-xs font-extrabold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                 <span>💳</span> <span>Billing Details & Adjustments</span>
             </div>
             <span class="text-xs text-slate-500">▼</span>
         </div>
-        <div class="collapsible-content px-4 pb-4 space-y-3 pt-1 border-t border-slate-800">
+        <div class="collapsible-content px-3.5 pb-3.5 space-y-2.5 pt-1 border-t border-slate-800 text-[10px] sm:text-xs">
             <div class="space-y-1">
-                <label class="text-[10px] text-slate-500 font-bold uppercase">පාරිභෝගික දුරකථන අංකය</label>
-                <input type="tel" id="mobile" placeholder="පාරිභෝගික දුරකථන අංකය (අත්‍යවශ්‍ය නොවේ)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none">
+                <label class="text-[8px] sm:text-[9px] text-slate-500 font-bold uppercase">පාරිභෝගික දුරකථන අංකය</label>
+                <input type="tel" id="mobile" placeholder="පාරිභෝගික දුරකථන අංකය (අත්‍යවශ්‍ය නොවේ)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-2 text-[10px] sm:text-xs text-white focus:outline-none">
             </div>
             <div class="grid grid-cols-2 gap-2">
                 <div class="space-y-1">
-                    <label class="text-[10px] text-slate-500 font-bold uppercase">Manual Fare (LKR)</label>
-                    <input type="number" id="manual-fare" placeholder="Manual Fare (LKR)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none" oninput="updateDisplay()">
+                    <label class="text-[8px] sm:text-[9px] text-slate-500 font-bold uppercase">Manual Fare (LKR)</label>
+                    <input type="number" id="manual-fare" placeholder="Manual Fare (LKR)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-2 text-[10px] sm:text-xs text-white focus:outline-none" oninput="updateDisplay()">
                 </div>
                 <div class="space-y-1">
-                    <label class="text-[10px] text-slate-500 font-bold uppercase">Waiting Time</label>
-                    <select id="wait-select" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-3 text-xs text-white focus:outline-none" onchange="updateDisplay()">
+                    <label class="text-[8px] sm:text-[9px] text-slate-500 font-bold uppercase">Waiting Time</label>
+                    <select id="wait-select" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-2 py-2 text-[10px] sm:text-xs text-white focus:outline-none" onchange="updateDisplay()">
                         <option value="0">⏱️ පොරොත්තු කාලය: 0 min</option>
                         <script>for(let i=1;i<=120;i++) document.write(`<option value="${i}">⏱️ පොරොත්තු කාලය: ${i} min</option>`);</script>
                     </select>
                 </div>
             </div>
             <div class="space-y-1">
-                <label class="text-[10px] text-slate-500 font-bold uppercase">වට්ටම් (Discount LKR)</label>
-                <input type="number" id="discount-input" placeholder="වට්ටම් / Discount (LKR)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none" oninput="updateDisplay()">
+                <label class="text-[8px] sm:text-[9px] text-slate-500 font-bold uppercase">වට්ටම් (Discount LKR)</label>
+                <input type="number" id="discount-input" placeholder="වට්ටම් / Discount (LKR)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-2 text-[10px] sm:text-xs text-white focus:outline-none" oninput="updateDisplay()">
             </div>
         </div>
     </div>
 
     <!-- Main Trip Control Activations -->
-    <div class="grid grid-cols-2 gap-3 mb-4">
-        <button class="py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-900/20 active:scale-95" id="startBtn" onclick="startRide()">
+    <div class="grid grid-cols-2 gap-2.5 mb-3.5">
+        <button class="py-3 sm:py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl sm:rounded-2xl font-bold text-[10px] sm:text-xs tracking-wider uppercase transition shadow-lg shadow-emerald-900/20 active:scale-95" id="startBtn" onclick="startRide()">
             ගමන අරඹන්න (START)
         </button>
-        <button class="py-4 bg-red-600 hover:bg-red-500 text-white rounded-2xl font-bold text-xs tracking-wider uppercase transition shadow-lg shadow-red-900/20 active:scale-95" onclick="endRide()">
+        <button class="py-3 sm:py-3.5 bg-red-600 hover:bg-red-500 text-white rounded-xl sm:rounded-2xl font-bold text-[10px] sm:text-xs tracking-wider uppercase transition shadow-lg shadow-red-900/20 active:scale-95" onclick="endRide()">
             ගමන අවසන් කරන්න (END)
         </button>
     </div>
 
     <!-- Interactive Voice command system -->
-    <div class="flex flex-col items-center gap-2 pt-2 border-t border-slate-800/40">
-        <button id="voiceBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold rounded-full flex items-center gap-2 transition active:scale-95" onclick="toggleVoiceCommand()">
+    <div class="flex flex-col items-center gap-1.5 pt-2 border-t border-slate-800/40">
+        <button id="voiceBtn" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-bold rounded-full flex items-center gap-1.5 transition active:scale-95" onclick="toggleVoiceCommand()">
             🎤 VOICE CONTROL (OFF)
         </button>
-        <div id="voiceStatus" class="text-[10px] text-slate-500 font-bold cursor-pointer transition hover:text-slate-300" onclick="toggleVoiceCommand()">
+        <div id="voiceStatus" class="text-[9px] text-slate-500 font-bold cursor-pointer transition hover:text-slate-300" onclick="toggleVoiceCommand()">
             සක්‍රීය කිරීමට ක්ලික් කරන්න
         </div>
-        <p class="text-[9px] text-slate-600 text-center leading-relaxed">
+        <p class="text-[8px] text-slate-600 text-center leading-relaxed max-w-[90%]">
             Commands: SR (Start) | ER (End) | NAV (Navigate) | RP (Reports) | FL (Fuel) | RPL (Repair)
         </p>
     </div>
 </div>
 
-<!-- Passenger Tracking Screen Layout -->
-<div id="passenger-tracking-view" class="hidden w-full max-w-md bg-slate-900 border border-slate-800 rounded-[32px] p-5 shadow-2xl flex flex-col gap-4">
-    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-4 text-center">
-        <h2 class="text-sm font-extrabold tracking-wider uppercase">🚕 LIVE PASSENGER PORTAL</h2>
-        <p class="text-[10px] text-blue-200 uppercase tracking-widest">Advance Meeter Taxi - Real-time Navigation Stream</p>
+<!-- Live Passenger Portal Area -->
+<div id="passenger-tracking-view" class="hidden w-full max-w-md bg-slate-900 border border-slate-800 rounded-[28px] sm:rounded-[32px] p-4 sm:p-5 shadow-2xl flex flex-col gap-3 sm:gap-4 mx-auto">
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-xl sm:rounded-2xl p-3.5 text-center">
+        <h2 class="text-xs sm:text-sm font-extrabold tracking-wider uppercase">🚕 LIVE PASSENGER PORTAL</h2>
+        <p class="text-[8px] sm:text-[10px] text-blue-200 uppercase tracking-widest">Advance Meeter Taxi - Real-time Navigation Stream</p>
     </div>
     
-    <div id="tracking-map-canvas" class="w-full h-64 bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden"></div>
+    <div id="tracking-map-canvas" class="w-full h-48 sm:h-60 bg-slate-950 border border-slate-800 rounded-xl sm:rounded-2xl overflow-hidden"></div>
     
-    <div class="space-y-3 bg-slate-950 p-4 border border-slate-800/80 rounded-2xl">
-        <h3 class="text-xs font-bold text-blue-400 uppercase tracking-wider border-b border-slate-800 pb-2">📊 සක්‍රීය ගමනේ විස්තර</h3>
-        <div class="space-y-2 text-xs">
+    <div class="space-y-3 bg-slate-950 p-3 sm:p-4 border border-slate-800/80 rounded-xl sm:rounded-2xl">
+        <h3 class="text-[11px] sm:text-xs font-bold text-blue-400 uppercase tracking-wider border-b border-slate-800 pb-2">📊 සක්‍රීය ගමනේ විස්තර</h3>
+        <div class="space-y-1.5 text-[10px] sm:text-xs">
             <div class="flex justify-between border-b border-slate-900 pb-1">
                 <span class="text-slate-500">Tracking Trip ID:</span>
                 <strong id="track-trip-id" class="text-blue-400">N/A</strong>
@@ -342,12 +321,16 @@
                 <strong id="track-status" class="text-emerald-400">🟢 Active Odometer Track</strong>
             </div>
             <div class="flex justify-between border-b border-slate-900 pb-1">
+                <span class="text-slate-500">පිටත්වන ස්ථානය:</span>
+                <strong id="track-pickup-location" class="text-slate-300 truncate max-w-[200px]">Waiting...</strong>
+            </div>
+            <div class="flex justify-between border-b border-slate-900 pb-1">
                 <span class="text-slate-500">ගමනාන්තය:</span>
-                <strong id="track-destination" class="text-slate-300">Colombo</strong>
+                <strong id="track-destination" class="text-slate-300 truncate max-w-[200px]">Colombo</strong>
             </div>
             <div class="flex justify-between items-center border-b border-slate-900 pb-1">
                 <span class="text-slate-500">වත්මන් ආසන්න ගාස්තුව:</span>
-                <strong id="track-est-fare" class="text-sm text-emerald-400">LKR 0.00</strong>
+                <strong id="track-est-fare" class="text-xs sm:text-sm text-emerald-400">LKR 0.00</strong>
             </div>
             <div class="flex justify-between border-b border-slate-900 pb-1">
                 <span class="text-slate-500">ගමන් කළ දුර ප්‍රමාණය:</span>
@@ -358,8 +341,8 @@
                 <span id="track-last-update" class="text-slate-400 font-medium">Just Now</span>
             </div>
         </div>
-        <button id="passenger-pdf-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition active:scale-95 hidden" onclick="downloadPassengerReceiptPDF()">📄 DOWNLOAD RECEIPT PDF</button>
-        <button class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition active:scale-95" onclick="location.reload()">⟳ REFRESH STREAM</button>
+        <button id="passenger-pdf-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] sm:text-xs font-bold transition active:scale-95 hidden" onclick="downloadPassengerReceiptPDF()">📄 DOWNLOAD RECEIPT PDF</button>
+        <button class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] sm:text-xs font-bold transition active:scale-95" onclick="location.reload()">⟳ REFRESH STREAM</button>
     </div>
 </div>
 
@@ -370,542 +353,537 @@
 </div>
 
 <!-- Live Tracking URL Generation Popup -->
-<div id="trackingPopupModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-4 text-center">
+<div id="trackingPopupModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3.5 text-center">
         <div class="flex justify-end">
             <button class="text-slate-500 hover:text-white" onclick="closeTrackingPopup()">✕</button>
         </div>
-        <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">📍 LIVE TRACKING STREAM</h3>
-        <p class="text-xs text-slate-400">Share this live link with your passenger to track coordinates without server-side 404 redirects</p>
-        <div class="bg-slate-950 p-2.5 rounded-xl text-[10px] font-mono text-slate-300 break-all select-all text-left" id="trackingLinkDisplay">...</div>
-        <div id="trackingQR" class="mx-auto bg-white p-3 rounded-2xl flex justify-center"></div>
+        <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">📍 LIVE TRACKING STREAM</h3>
+        <p class="text-[10px] sm:text-xs text-slate-400">Share this live link with your passenger to track coordinates without server-side 404 redirects</p>
+        <div class="bg-slate-950 p-2 rounded-xl text-[9px] sm:text-[10px] font-mono text-slate-300 break-all select-all text-left" id="trackingLinkDisplay">...</div>
+        <div id="trackingQR" class="mx-auto bg-white p-2.5 rounded-xl flex justify-center"></div>
         <div class="grid grid-cols-2 gap-2">
-            <button class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition active:scale-95" onclick="shareTrackingWhatsApp()">📱 WhatsApp</button>
-            <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition active:scale-95" onclick="copyTrackingLink()">📋 Copy Link</button>
+            <button class="py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[10px] sm:text-xs font-bold transition active:scale-95" onclick="shareTrackingWhatsApp()">📱 WhatsApp</button>
+            <button class="py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[10px] sm:text-xs font-bold transition active:scale-95" onclick="copyTrackingLink()">📋 Copy Link</button>
         </div>
-        <button class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition" onclick="closeTrackingPopup()">Close Stream Window</button>
+        <button class="py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-[10px] sm:text-xs font-bold transition" onclick="closeTrackingPopup()">Close Stream Window</button>
     </div>
 </div>
 
 <!-- Payment Processing Popup -->
-<div id="payment-popup" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">💳 TRIP PAYMENT CHANNEL</h3>
-                <button class="text-slate-500 hover:text-white font-bold" onclick="closePaymentPopup()">✕</button>
-            </div>
-            
-            <div class="flex flex-col gap-2">
-                <button class="payment-method-btn text-left p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold hover:bg-blue-600/10 text-slate-200 transition" data-method="cash" onclick="selectPaymentMethod('cash')">💰 මුදලින් ගෙවීම් (Cash)</button>
-                <button class="payment-method-btn text-left p-3 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-xs font-bold text-slate-200 transition" data-method="card" onclick="selectPaymentMethod('card')">💳 කාඩ්පත් ගෙවීම් (Card)</button>
-                <button class="payment-method-btn text-left p-3.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-xs font-bold text-slate-200 transition" data-method="mobile" onclick="selectPaymentMethod('mobile')">📱 Mobile wallet</button>
-                <button class="payment-method-btn text-left p-3.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-xs font-bold text-slate-200 transition" data-method="bank" onclick="selectPaymentMethod('bank')">🏦 බැංකු ගෙවීම්</button>
-                <button class="payment-method-btn text-left p-3.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-xs font-bold text-slate-200 transition" data-method="other" onclick="selectPaymentMethod('other')">📝 වෙනත් ක්‍රමවේද</button>
-            </div>
-            
-            <div id="payment-detail-fields" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 hidden text-xs">
-                <div id="cash-fields" class="hidden text-center text-emerald-400 font-bold">💰 මුදල් ගෙවීම තහවුරුයි! පාරිභෝගිකයාගෙන් මුදල් ලබා ගන්න.</div>
-                <div id="card-fields" class="hidden space-y-2">
-                    <input type="text" id="card-number" placeholder="Last 4 Card Digits" maxlength="4" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="card-expiry" placeholder="MM/YY" class="bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
-                        <input type="text" id="card-cvv" placeholder="CVV" class="bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
-                    </div>
-                    <input type="text" id="card-name" placeholder="Cardholder Full Name" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
-                </div>
-                <div id="mobile-fields" class="hidden space-y-2">
-                    <select id="mobile-provider" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2.5 text-white">
-                        <option>Select Mobile Wallet</option>
-                        <option>Frimi</option>
-                        <option>mCash</option>
-                        <option>Genie</option>
-                        <option>eZ Cash</option>
-                    </select>
-                    <input type="text" id="mobile-number" placeholder="Mobile Account Number" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
-                </div>
-                <div id="bank-fields" class="hidden space-y-2">
-                    <select id="bank-name" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2.5 text-white">
-                        <option>Select Core Bank</option>
-                        <option>Commercial Bank</option>
-                        <option>HNB</option>
-                        <option>Sampath Bank</option>
-                        <option>BOC</option>
-                    </select>
-                    <input type="text" id="bank-ref" placeholder="Reference Tracking Number" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
-                </div>
-                <div id="other-fields" class="hidden space-y-2">
-                    <input type="text" id="other-method" placeholder="Custom Payment Channel Name" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
-                    <input type="text" id="other-ref" placeholder="Internal Reference Notes" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
-                </div>
-            </div>
-            
-            <button class="py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-xs font-bold transition active:scale-95" id="confirmPaymentBtn" onclick="confirmPaymentAndShowReceipt()">✅ PROCESS PAYMENT & GET RECEIPT</button>
+<div id="payment-popup" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3.5">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">💳 TRIP PAYMENT CHANNEL</h3>
+            <button class="text-slate-500 hover:text-white font-bold" onclick="closePaymentPopup()">✕</button>
         </div>
+        
+        <div class="flex flex-col gap-1.5 max-h-48 overflow-y-auto custom-scrollbar">
+            <button class="payment-method-btn text-left p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-[10px] sm:text-xs font-semibold hover:bg-blue-600/10 text-slate-200 transition" data-method="cash" onclick="selectPaymentMethod('cash')">💰 මුදලින් ගෙවීම් (Cash)</button>
+            <button class="payment-method-btn text-left p-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-[10px] sm:text-xs font-semibold text-slate-200 transition" data-method="card" onclick="selectPaymentMethod('card')">💳 කාඩ්පත් ගෙවීම් (Card)</button>
+            <button class="payment-method-btn text-left p-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-[10px] sm:text-xs font-semibold text-slate-200 transition" data-method="mobile" onclick="selectPaymentMethod('mobile')">📱 Mobile wallet</button>
+            <button class="payment-method-btn text-left p-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-[10px] sm:text-xs font-semibold text-slate-200 transition" data-method="bank" onclick="selectPaymentMethod('bank')">🏦 බැංකු ගෙවීම්</button>
+            <button class="payment-method-btn text-left p-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-[10px] sm:text-xs font-semibold text-slate-200 transition" data-method="other" onclick="selectPaymentMethod('other')">📝 වෙනත් ක්‍රමවේද</button>
+        </div>
+        
+        <div id="payment-detail-fields" class="bg-slate-950 border border-slate-800 rounded-xl p-3 hidden text-[10px] sm:text-xs">
+            <div id="cash-fields" class="hidden text-center text-emerald-400 font-bold">💰 මුදල් ගෙවීම තහවුරුයි! පාරිභෝගිකයාගෙන් මුදල් ලබා ගන්න.</div>
+            <div id="card-fields" class="hidden space-y-2">
+                <input type="text" id="card-number" placeholder="Last 4 Card Digits" maxlength="4" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="card-expiry" placeholder="MM/YY" class="bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
+                    <input type="text" id="card-cvv" placeholder="CVV" class="bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
+                </div>
+                <input type="text" id="card-name" placeholder="Cardholder Full Name" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
+            </div>
+            <div id="mobile-fields" class="hidden space-y-2">
+                <select id="mobile-provider" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2.5 text-white">
+                    <option>Select Mobile Wallet</option>
+                    <option>Frimi</option>
+                    <option>mCash</option>
+                    <option>Genie</option>
+                    <option>eZ Cash</option>
+                </select>
+                <input type="text" id="mobile-number" placeholder="Mobile Account Number" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
+            </div>
+            <div id="bank-fields" class="hidden space-y-2">
+                <select id="bank-name" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2.5 text-white">
+                    <option>Select Core Bank</option>
+                    <option>Commercial Bank</option>
+                    <option>HNB</option>
+                    <option>Sampath Bank</option>
+                    <option>BOC</option>
+                </select>
+                <input type="text" id="bank-ref" placeholder="Reference Tracking Number" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
+            </div>
+            <div id="other-fields" class="hidden space-y-2">
+                <input type="text" id="other-method" placeholder="Custom Payment Channel Name" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
+                <input type="text" id="other-ref" placeholder="Internal Reference Notes" class="w-full bg-slate-900 border border-slate-850 rounded-xl p-2 px-3 text-white focus:outline-none">
+            </div>
+        </div>
+        
+        <button class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[11px] sm:text-xs font-bold transition active:scale-95" id="confirmPaymentBtn" onclick="confirmPaymentAndShowReceipt()">✅ PROCESS PAYMENT & GET RECEIPT</button>
+    </div>
 </div>
 
 <!-- Admin diagnostics systems menu modal -->
-<div id="settings-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-40">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-4">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-            <h3 class="text-xs font-extrabold text-blue-400 uppercase tracking-widest">⚙️ SYSTEM DIAGNOSTICS</h3>
+<div id="settings-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-40">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-3.5">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+            <h3 class="text-[10px] sm:text-xs font-extrabold text-blue-400 uppercase tracking-widest">⚙️ SYSTEM DIAGNOSTICS</h3>
             <button class="text-slate-500 hover:text-white" onclick="closeSettingsAndLogout()">✕</button>
         </div>
         
-        <div class="space-y-4">
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-                <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">🛠️ CORE OPERATIONS</div>
-                <button class="w-full py-2.5 bg-slate-900 border border-slate-850 rounded-xl text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openAppSettings()">📱 APPLICATION CONFIGURATION</button>
-                <button class="w-full py-2.5 bg-slate-900 border border-slate-850 rounded-xl text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openFuelLogModal()">⛽ FUEL REGISTRY LOGS</button>
-                <button class="w-full py-2.5 bg-slate-900 border border-slate-850 rounded-xl text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openRepairLogModal()">🔧 REPAIR LOG</button>
+        <div class="space-y-3.5">
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2">
+                <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">🛠️ CORE OPERATIONS</div>
+                <button class="w-full py-2 bg-slate-900 border border-slate-850 rounded-lg text-[10px] sm:text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openAppSettings()">📱 APPLICATION CONFIGURATION</button>
+                <button class="w-full py-2 bg-slate-900 border border-slate-850 rounded-lg text-[10px] sm:text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openFuelLogModal()">⛽ FUEL REGISTRY LOGS</button>
+                <button class="w-full py-2 bg-slate-900 border border-slate-850 rounded-lg text-[10px] sm:text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openRepairLogModal()">🔧 REPAIR LOG</button>
             </div>
             
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-                <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">📊 ANALYTICAL DATA ENGINE</div>
-                <button class="w-full py-2.5 bg-slate-900 border border-slate-850 rounded-xl text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openReportsMenu()">📊 ANALYSIS & REPORTS</button>
-                <button class="w-full py-2.5 bg-slate-900 border border-slate-850 rounded-xl text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openDriverApp()">👨‍✈️ DRIVER PERFORMANCE PANEL</button>
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2">
+                <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">📊 ANALYTICAL DATA ENGINE</div>
+                <button class="w-full py-2 bg-slate-900 border border-slate-850 rounded-lg text-[10px] sm:text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openReportsMenu()">📊 ANALYSIS & REPORTS</button>
+                <button class="w-full py-2 bg-slate-900 border border-slate-850 rounded-lg text-[10px] sm:text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openDriverApp()">👨‍✈️ DRIVER PERFORMANCE PANEL</button>
             </div>
             
-            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-                <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">💾 SYSTEM RECOVERY BACKUPS</div>
-                <button class="w-full py-2.5 bg-slate-900 border border-slate-850 rounded-xl text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openDatabaseBackupModal()">📤 DATA BACKUP & RESTORE</button>
-                <button class="w-full py-2.5 bg-red-950/20 border border-red-900/30 text-red-400 rounded-xl text-xs font-bold text-center transition hover:bg-red-950/40" onclick="openSystemLogModal()">📋 SYSTEM EVENT LOGS</button>
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2">
+                <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">💾 SYSTEM RECOVERY BACKUPS</div>
+                <button class="w-full py-2 bg-slate-900 border border-slate-850 rounded-lg text-[10px] sm:text-xs font-bold text-slate-300 hover:text-white text-center transition" onclick="openDatabaseBackupModal()">📤 DATA BACKUP & RESTORE</button>
+                <button class="w-full py-2 bg-red-950/20 border border-red-900/30 text-red-400 rounded-lg text-[10px] sm:text-xs font-bold text-center transition hover:bg-red-950/40" onclick="openSystemLogModal()">📋 SYSTEM EVENT LOGS</button>
             </div>
         </div>
         
-        <button class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition" onclick="closeSettingsAndLogout()">Close Settings Panel</button>
+        <button class="py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[10px] sm:text-xs font-bold transition" onclick="closeSettingsAndLogout()">Close Settings Panel</button>
     </div>
 </div>
 
 <!-- App settings parameters modal -->
-<div id="app-settings-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-4 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToSettingsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">📱 APP CONFIGURATION</h3>
+<div id="app-settings-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-3.5 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToSettingsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">📱 APP CONFIGURATION</h3>
         </div>
         
-        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3">
-            <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest">Brand Identity Settings</div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+            <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest">Brand Identity Settings</div>
             <div class="space-y-1">
                 <label class="text-slate-500 font-bold block uppercase">App Display Name:</label>
-                <input id="set-app-name" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none">
+                <input id="set-app-name" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
             </div>
             <div class="space-y-1">
                 <label class="text-slate-500 font-bold block uppercase">Receipt Header Name:</label>
-                <input id="set-receipt-header" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none">
+                <input id="set-receipt-header" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
             </div>
             <div class="space-y-1">
                 <label class="text-slate-500 font-bold block uppercase">Upload Company Logo Image:</label>
-                <input type="file" id="logo-upload" accept="image/*" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-white">
+                <input type="file" id="logo-upload" accept="image/*" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1 text-white">
             </div>
         </div>
 
-        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3">
-            <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest">Dynamic Tariff Parameters</div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+            <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest">Dynamic Tariff Parameters</div>
             <div class="grid grid-cols-2 gap-2">
                 <div class="space-y-1">
                     <label class="text-slate-500 font-bold block uppercase">Base Fare (Rs):</label>
-                    <input id="set-base" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white">
+                    <input id="set-base" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                 </div>
                 <div class="space-y-1">
                     <label class="text-slate-500 font-bold block uppercase">Rate Per KM (Rs):</label>
-                    <input id="set-rate" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white">
+                    <input id="set-rate" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                 </div>
                 <div class="space-y-1">
                     <label class="text-slate-500 font-bold block uppercase">Wait Charge/Min:</label>
-                    <input id="set-wait" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white">
+                    <input id="set-wait" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                 </div>
                 <div class="space-y-1">
                     <label class="text-slate-500 font-bold block uppercase">Night Premium (%):</label>
-                    <input id="set-night" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white">
+                    <input id="set-night" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                 </div>
             </div>
         </div>
 
-        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-2">
-            <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest">Security Settings</div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 space-y-2">
+            <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest">Security Settings</div>
             <label class="text-slate-500 font-bold block uppercase">Update Admin Passcode:</label>
-            <input id="set-pwd" type="password" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white">
+            <input id="set-pwd" type="password" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
         </div>
 
-        <button class="py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold transition active:scale-95" onclick="saveSettings()">💾 SAVE CONFIGURATIONS</button>
+        <button class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition active:scale-95 text-xs" onclick="saveSettings()">💾 SAVE CONFIGURATIONS</button>
     </div>
 </div>
 
 <!-- Database recovery backup / restore panel -->
-<div id="db-backup-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-4 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToSettingsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">📤 SYSTEM DATA BACKUPS</h3>
+<div id="db-backup-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm max-h-[85vh] overflow-y-auto custom-scrollbar flex flex-col gap-3.5 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToSettingsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">📤 SYSTEM DATA BACKUPS</h3>
         </div>
         
-        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-            <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">Manual Backups</div>
-            <p class="text-slate-500 text-[10px]">Save settings, rides registry, fuel entries and system configs to a JSON backup file</p>
-            <button class="w-full py-2 bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 hover:text-white rounded-xl text-xs font-bold transition active:scale-95" onclick="downloadSystemBackupFile()">📥 DOWNLOAD MANUAL BACKUP</button>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2">
+            <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">Manual Backups</div>
+            <p class="text-slate-500 text-[9px] sm:text-[10px]">Save settings, rides registry, fuel entries and system configs to a JSON backup file</p>
+            <button class="w-full py-2 bg-emerald-600/20 border border-emerald-500/30 text-emerald-400 hover:text-white rounded-lg font-bold transition active:scale-95" onclick="downloadSystemBackupFile()">📥 DOWNLOAD MANUAL BACKUP</button>
         </div>
 
-        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-            <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">Automatic Backup Configuration</div>
-            <p class="text-slate-500 text-[10px]">Auto downloads a timestamped JSON file after each trip ends</p>
-            <div class="flex justify-between items-center pt-2">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2">
+            <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">Automatic Backup Configuration</div>
+            <p class="text-slate-500 text-[9px] sm:text-[10px]">Auto downloads a timestamped JSON file after each trip ends</p>
+            <div class="flex justify-between items-center pt-1.5">
                 <span class="text-slate-300">Download Backup on Transaction:</span>
-                <input type="checkbox" id="auto-backup-toggle" class="w-5 h-5 rounded bg-slate-900 border-slate-800 text-blue-600" onchange="toggleAutoBackupPref()">
+                <input type="checkbox" id="auto-backup-toggle" class="w-4.5 h-4.5 rounded bg-slate-900 border-slate-800 text-blue-600 animate-pulse" onchange="toggleAutoBackupPref()">
             </div>
         </div>
 
-        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 space-y-2">
-            <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">Upload & Restore System</div>
-            <p class="text-slate-500 text-[10px] mb-2">Import a previously downloaded .json file to restore all taxi records instantly</p>
-            <input type="file" id="backup-file-picker" accept=".json" class="w-full bg-slate-900 p-2 border border-slate-800 rounded-xl text-slate-300">
-            <button class="w-full py-2.5 bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:text-white font-bold rounded-xl transition active:scale-95" onclick="restoreSystemFromFile()">🔄 IMPORT & RESTORE FILE</button>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2">
+            <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-1">Upload & Restore System</div>
+            <p class="text-slate-500 text-[9px] sm:text-[10px] mb-2">Import a previously downloaded .json file to restore all taxi records instantly</p>
+            <input type="file" id="backup-file-picker" accept=".json" class="w-full bg-slate-900 p-1.5 border border-slate-800 rounded-lg text-slate-300">
+            <button class="w-full py-2 bg-blue-600/20 border border-blue-500/30 text-blue-400 hover:text-white font-bold rounded-lg transition active:scale-95" onclick="restoreSystemFromFile()">🔄 IMPORT & RESTORE FILE</button>
         </div>
 
-        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3.5 space-y-2" id="local-backups-container">
-            <div class="text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-2">Browser Rolling Backups (History)</div>
-            <div id="local-backups-list" class="space-y-1 max-h-32 overflow-y-auto custom-scrollbar"></div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 space-y-2" id="local-backups-container">
+            <div class="text-[8px] sm:text-[9px] text-blue-500 font-extrabold uppercase tracking-widest mb-2">Browser Rolling Backups (History)</div>
+            <div id="local-backups-list" class="space-y-1.5 max-h-32 overflow-y-auto custom-scrollbar"></div>
         </div>
     </div>
 </div>
 
 <!-- Fuel Log Modal Form -->
-<div id="fuel-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-4 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToSettingsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">⛽ FUEL ENTRY LOGGER</h3>
+<div id="fuel-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3.5 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToSettingsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">⛽ FUEL ENTRY LOGGER</h3>
         </div>
         
         <div class="grid grid-cols-2 gap-2">
-            <input type="date" id="fuel-date" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-            <input type="number" id="fuel-liters" placeholder="Liters Dispensed" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+            <input type="date" id="fuel-date" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
+            <input type="number" id="fuel-liters" placeholder="Liters Dispensed" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
         </div>
         <div class="grid grid-cols-2 gap-2">
-            <input type="number" id="fuel-price" placeholder="Price/Liter (Rs)" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-            <input type="number" id="fuel-total" placeholder="Total Cost LKR" readonly class="bg-blue-900/10 border border-slate-800 rounded-xl p-2.5 text-emerald-400 font-bold focus:outline-none">
+            <input type="number" id="fuel-price" placeholder="Price/Liter (Rs)" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
+            <input type="number" id="fuel-total" placeholder="Total Cost LKR" readonly class="bg-blue-900/10 border border-slate-800 rounded-lg p-2 text-emerald-400 font-bold focus:outline-none">
         </div>
-        <input type="text" id="fuel-notes" placeholder="Optional comments/logs" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+        <input type="text" id="fuel-notes" placeholder="Optional comments/logs" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
         
-        <button class="py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl transition active:scale-95" onclick="addFuelLog()">➕ ADD ENTRY</button>
-        <button class="py-2.5 bg-slate-850 hover:bg-slate-800 border border-slate-700/50 rounded-2xl font-bold text-slate-300 transition" onclick="openFuelReport()">📊 LOG ANALYSIS</button>
+        <button class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition active:scale-95" onclick="addFuelLog()">➕ ADD ENTRY</button>
+        <button class="py-2 bg-slate-850 hover:bg-slate-800 border border-slate-700/50 rounded-xl font-bold text-slate-300 transition" onclick="openFuelReport()">📊 LOG ANALYSIS</button>
         
         <div id="fuel-list" class="max-h-24 overflow-y-auto divide-y divide-slate-800 custom-scrollbar"></div>
     </div>
 </div>
 
 <!-- Repair Log Modal Form -->
-<div id="repair-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-4 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToSettingsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">🔧 REPAIR SERVICE RECORDER</h3>
+<div id="repair-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3.5 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToSettingsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">🔧 REPAIR SERVICE RECORDER</h3>
         </div>
         
         <div class="grid grid-cols-2 gap-2">
-            <input type="date" id="repair-date" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-            <input type="text" id="repair-desc" placeholder="Repair description details" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+            <input type="date" id="repair-date" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
+            <input type="text" id="repair-desc" placeholder="Repair description details" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
         </div>
         <div class="grid grid-cols-2 gap-2">
-            <input type="number" id="repair-cost" placeholder="Repairs cost LKR" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-            <input type="text" id="repair-garage" placeholder="Garage address/name" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+            <input type="number" id="repair-cost" placeholder="Repairs cost LKR" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
+            <input type="text" id="repair-garage" placeholder="Garage address/name" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
         </div>
-        <input type="text" id="repair-notes" placeholder="Service notes" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+        <input type="text" id="repair-notes" placeholder="Service notes" class="bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none">
         
-        <button class="py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl transition active:scale-95" onclick="addRepairLog()">➕ RECORD ENTRY</button>
-        <button class="py-2.5 bg-slate-850 hover:bg-slate-800 border border-slate-700/50 rounded-2xl font-bold text-slate-300 transition" onclick="openRepairReport()">📊 REPORT SUMMARY</button>
+        <button class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition active:scale-95" onclick="addRepairLog()">➕ RECORD ENTRY</button>
+        <button class="py-2 bg-slate-850 hover:bg-slate-800 border border-slate-700/50 rounded-xl font-bold text-slate-300 transition" onclick="openRepairReport()">📊 REPORT SUMMARY</button>
         
         <div id="repair-list" class="max-h-24 overflow-y-auto divide-y divide-slate-800 custom-scrollbar"></div>
     </div>
 </div>
 
 <!-- Reports Menu Modal -->
-<div id="reports-menu-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-4 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToSettingsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">📊 REPORT CENTRE ENGINE</h3>
+<div id="reports-menu-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToSettingsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">📊 REPORT CENTRE ENGINE</h3>
         </div>
-        <div class="flex flex-col gap-2">
-            <button class="w-full py-3 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-left px-4 font-bold text-slate-300 flex justify-between items-center transition" onclick="openPanel('report-modal')"><span>📊 TRANSACTIONS & PAYMENTS REPORT</span> <span>➔</span></button>
-            <button class="w-full py-3 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-left px-4 font-bold text-slate-300 flex justify-between items-center transition" onclick="openPanel('income-modal')"><span>📈 REVENUE CHARTING</span> <span>➔</span></button>
-            <button class="w-full py-3 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-left px-4 font-bold text-slate-300 flex justify-between items-center transition" onclick="openPanel('history-modal')"><span>📜 RIDE HISTORY LOG</span> <span>➔</span></button>
-            <button class="w-full py-3 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-left px-4 font-bold text-slate-300 flex justify-between items-center transition" onclick="openTravelReport()"><span>📍 TRAVEL LOG ANALYTICS</span> <span>➔</span></button>
-            <button class="w-full py-3 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-left px-4 font-bold text-slate-300 flex justify-between items-center transition" onclick="openProfitReport()"><span>💰 PROFIT & EXPENSES REPORT</span> <span>➔</span></button>
-            <button class="w-full py-3 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-left px-4 font-bold text-slate-300 flex justify-between items-center transition" onclick="showPeakHoursReport()"><span>🕒 PEAK HOURS DENSITY</span> <span>➔</span></button>
-            <button class="w-full py-3 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-2xl text-left px-4 font-bold text-slate-300 flex justify-between items-center transition" onclick="showDriverPerformanceReport()"><span>Driver Performance</span> <span>➔</span></button>
+        <div class="flex flex-col gap-1.5 max-h-[60vh] overflow-y-auto custom-scrollbar pr-1">
+            <button class="w-full py-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-left px-3 font-bold text-slate-300 flex justify-between items-center transition" onclick="openPanel('report-modal')"><span>📊 TRANSACTIONS & PAYMENTS REPORT</span> <span>➔</span></button>
+            <button class="w-full py-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-left px-3 font-bold text-slate-300 flex justify-between items-center transition" onclick="openPanel('income-modal')"><span>📈 REVENUE CHARTING</span> <span>➔</span></button>
+            <button class="w-full py-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-left px-3 font-bold text-slate-300 flex justify-between items-center transition" onclick="openPanel('history-modal')"><span>📜 RIDE HISTORY LOG</span> <span>➔</span></button>
+            <button class="w-full py-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-left px-3 font-bold text-slate-300 flex justify-between items-center transition" onclick="openTravelReport()"><span>📍 TRAVEL LOG ANALYTICS</span> <span>➔</span></button>
+            <button class="w-full py-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-left px-3 font-bold text-slate-300 flex justify-between items-center transition" onclick="openProfitReport()"><span>💰 PROFIT & EXPENSES REPORT</span> <span>➔</span></button>
+            <button class="w-full py-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-left px-3 font-bold text-slate-300 flex justify-between items-center transition" onclick="showPeakHoursReport()"><span>🕒 PEAK HOURS DENSITY</span> <span>➔</span></button>
+            <button class="w-full py-2.5 bg-slate-950 hover:bg-blue-600/10 border border-slate-800 rounded-xl text-left px-3 font-bold text-slate-300 flex justify-between items-center transition" onclick="showDriverPerformanceReport()"><span>Driver Performance</span> <span>➔</span></button>
         </div>
     </div>
 </div>
 
-<!-- Analytical Panels Windows -->
-<div id="fuel-report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToFuelLog()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">⛽ FUEL COMPILATION GRAPH</h3>
+<div id="fuel-report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToFuelLog()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">⛽ FUEL COMPILATION GRAPH</h3>
         </div>
         <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800">
-            <button class="py-2 text-[10px] rounded-lg font-bold bg-blue-600 text-white" onclick="showFuelReportTab('daily')">Daily</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showFuelReportTab('monthly')">Monthly</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showFuelReportTab('yearly')">Yearly</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showFuelReportTab('range')">Range</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold bg-blue-600 text-white" onclick="showFuelReportTab('daily')">Daily</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showFuelReportTab('monthly')">Monthly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showFuelReportTab('yearly')">Yearly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showFuelReportTab('range')">Range</button>
         </div>
-        <div id="fuel-date-range-panel" class="hidden bg-slate-950 p-2.5 border border-slate-800 rounded-2xl space-y-2">
+        <div id="fuel-date-range-panel" class="hidden bg-slate-950 p-2 border border-slate-800 rounded-xl space-y-1.5">
             <div class="grid grid-cols-2 gap-2">
                 <input type="date" id="fuel-start-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                 <input type="date" id="fuel-end-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
             </div>
-            <button class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="updateFuelReport()">Apply Range</button>
+            <button class="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="updateFuelReport()">Apply Range</button>
         </div>
         <div id="fuel-report-container" class="max-h-48 overflow-y-auto divide-y divide-slate-800 custom-scrollbar"></div>
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition active:scale-95" onclick="exportFuelCSV()">📥 EXPORT CSV</button>
+        <button class="py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition active:scale-95" onclick="exportFuelCSV()">📥 EXPORT CSV</button>
     </div>
 </div>
 
-<div id="repair-report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToRepairLog()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">🔧 REPAIR LOG COMPILATION</h3>
+<div id="repair-report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToRepairLog()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">🔧 REPAIR LOG COMPILATION</h3>
         </div>
         <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800">
-            <button class="py-2 text-[10px] rounded-lg font-bold bg-blue-600 text-white" onclick="showRepairReportTab('daily')">Daily</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showRepairReportTab('monthly')">Monthly</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showRepairReportTab('yearly')">Yearly</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showRepairReportTab('range')">Range</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold bg-blue-600 text-white" onclick="showRepairReportTab('daily')">Daily</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showRepairReportTab('monthly')">Monthly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showRepairReportTab('yearly')">Yearly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showRepairReportTab('range')">Range</button>
         </div>
-        <div id="repair-date-range-panel" class="hidden bg-slate-950 p-2.5 border border-slate-800 rounded-2xl space-y-2">
+        <div id="repair-date-range-panel" class="hidden bg-slate-950 p-2 border border-slate-800 rounded-xl space-y-1.5">
             <div class="grid grid-cols-2 gap-2">
                 <input type="date" id="repair-start-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                 <input type="date" id="repair-end-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
             </div>
-            <button class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="updateRepairReport()">Apply Range</button>
+            <button class="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="updateRepairReport()">Apply Range</button>
         </div>
         <div id="repair-report-container" class="max-h-48 overflow-y-auto divide-y divide-slate-800 custom-scrollbar"></div>
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition active:scale-95" onclick="exportRepairCSV()">📥 EXPORT CSV</button>
+        <button class="py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition active:scale-95" onclick="exportRepairCSV()">📥 EXPORT CSV</button>
     </div>
 </div>
 
-<div id="travel-report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToReportsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">📍 MILEAGE & TRAVEL METRICS</h3>
+<div id="travel-report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToReportsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">📍 MILEAGE & TRAVEL METRICS</h3>
         </div>
         <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800">
-            <button class="py-2 text-[10px] rounded-lg font-bold bg-blue-600 text-white" onclick="showTravelReportTab('daily')">Daily</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showTravelReportTab('monthly')">Monthly</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showTravelReportTab('yearly')">Yearly</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showTravelReportTab('range')">Range</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold bg-blue-600 text-white" onclick="showTravelReportTab('daily')">Daily</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showTravelReportTab('monthly')">Monthly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showTravelReportTab('yearly')">Yearly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showTravelReportTab('range')">Range</button>
         </div>
-        <div id="travel-date-range-panel" class="hidden bg-slate-950 p-2.5 border border-slate-800 rounded-2xl space-y-2">
+        <div id="travel-date-range-panel" class="hidden bg-slate-950 p-2 border border-slate-800 rounded-xl space-y-1.5">
             <div class="grid grid-cols-2 gap-2">
                 <input type="date" id="travel-start-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                 <input type="date" id="travel-end-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
             </div>
-            <button class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="updateTravelReport()">Apply Range</button>
+            <button class="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="updateTravelReport()">Apply Range</button>
         </div>
         <div id="travel-report-container" class="max-h-48 overflow-y-auto divide-y divide-slate-800 custom-scrollbar"></div>
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition active:scale-95" onclick="exportTravelCSV()">📥 EXPORT CSV</button>
-        <button class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold transition active:scale-95" onclick="printTravelReceipt()">🖨️ PRINT SUMMARY REPORT</button>
+        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition active:scale-95" onclick="exportTravelCSV()">📥 EXPORT CSV</button>
+        <button class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-bold transition active:scale-95" onclick="printTravelReceipt()">🖨️ PRINT SUMMARY REPORT</button>
     </div>
 </div>
 
-<div id="report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToReportsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">📊 PAYMENTS PROFILE AUDIT</h3>
+<div id="report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToReportsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">📊 PAYMENTS PROFILE AUDIT</h3>
         </div>
         <div class="grid grid-cols-3 gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800">
-            <button class="py-2 text-[10px] rounded-lg font-bold bg-blue-600 text-white" onclick="showReportTab('daily')">Daily</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showReportTab('monthly')">Monthly</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showReportTab('yearly')">Yearly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold bg-blue-600 text-white" onclick="showReportTab('daily')">Daily</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showReportTab('monthly')">Monthly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showReportTab('yearly')">Yearly</button>
         </div>
         <div id="report-container" class="max-h-48 overflow-y-auto divide-y divide-slate-800 custom-scrollbar"></div>
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition active:scale-95" onclick="exportReportCSV()">📥 EXPORT CSV</button>
+        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition active:scale-95" onclick="exportReportCSV()">📥 EXPORT CSV</button>
     </div>
 </div>
 
-<div id="income-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToReportsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">📈 CUMULATIVE REVENUE DATA</h3>
+<div id="income-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToReportsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">📈 CUMULATIVE REVENUE DATA</h3>
         </div>
-        <canvas id="earningsChart" class="w-full max-h-48"></canvas>
-        <div class="grid grid-cols-2 gap-2 text-center my-2">
-            <div class="bg-slate-950 p-2.5 border border-slate-800 rounded-xl">Today:<br><b id="stat-today" class="text-emerald-400 text-sm font-bold">Rs.0.00</b></div>
-            <div class="bg-slate-950 p-2.5 border border-slate-800 rounded-xl">Cumulative:<br><b id="stat-total" class="text-blue-400 text-sm font-bold">Rs.0.00</b></div>
+        <canvas id="earningsChart" class="w-full max-h-40 sm:max-h-48"></canvas>
+        <div class="grid grid-cols-2 gap-2 text-center my-1.5">
+            <div class="bg-slate-950 p-2 border border-slate-800 rounded-xl">Today:<br><b id="stat-today" class="text-emerald-400 text-xs sm:text-sm font-bold">Rs.0.00</b></div>
+            <div class="bg-slate-950 p-2 border border-slate-800 rounded-xl">Cumulative:<br><b id="stat-total" class="text-blue-400 text-xs sm:text-sm font-bold">Rs.0.00</b></div>
         </div>
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition active:scale-95" onclick="downloadCSV()">📥 EXPORT DATA CSV</button>
+        <button class="py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition active:scale-95" onclick="downloadCSV()">📥 EXPORT DATA CSV</button>
     </div>
 </div>
 
-<div id="history-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs max-h-[85vh]">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToReportsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">📜 TRAVEL LOG HISTORY</h3>
+<div id="history-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs max-h-[85vh]">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToReportsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">📜 TRAVEL LOG HISTORY</h3>
         </div>
-        <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800 mb-2">
-            <button class="py-2 text-[9px] rounded-lg font-bold bg-blue-600 text-white date-filter-btn" onclick="filterHistory('today')">Today</button>
-            <button class="py-2 text-[9px] rounded-lg font-bold text-slate-400 date-filter-btn" onclick="filterHistory('week')">This Week</button>
-            <button class="py-2 text-[9px] rounded-lg font-bold text-slate-400 date-filter-btn" onclick="filterHistory('month')">This Month</button>
-            <button class="py-2 text-[9px] rounded-lg font-bold text-slate-400 date-filter-btn" onclick="filterHistory('custom')">Custom</button>
+        <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800 mb-1.5">
+            <button class="py-1.5 text-[9px] rounded-lg font-bold bg-blue-600 text-white date-filter-btn" onclick="filterHistory('today')">Today</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400 date-filter-btn" onclick="filterHistory('week')">Week</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400 date-filter-btn" onclick="filterHistory('month')">Month</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400 date-filter-btn" onclick="filterHistory('custom')">Custom</button>
         </div>
-        <div id="custom-date-range" class="hidden bg-slate-950 p-2.5 border border-slate-800 rounded-2xl space-y-2">
+        <div id="custom-date-range" class="hidden bg-slate-950 p-2 border border-slate-800 rounded-xl space-y-1.5">
             <div class="grid grid-cols-2 gap-2">
                 <input type="date" id="history-start-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                 <input type="date" id="history-end-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
             </div>
-            <button class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="applyCustomHistoryFilter()">Apply Filter</button>
+            <button class="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="applyCustomHistoryFilter()">Apply Filter</button>
         </div>
         <div id="history-list" class="flex-1 overflow-y-auto space-y-2 custom-scrollbar pr-1"></div>
     </div>
 </div>
 
-<div id="profit-report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs max-h-[85vh] overflow-y-auto custom-scrollbar">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToReportsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">💰 FINANCIAL BALANCE SHEET</h3>
+<div id="profit-report-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs max-h-[85vh] overflow-y-auto custom-scrollbar">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToReportsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">💰 FINANCIAL BALANCE SHEET</h3>
         </div>
-        <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800 mb-2">
-            <button class="py-2 text-[10px] rounded-lg font-bold bg-blue-600 text-white" onclick="showProfitReportTab('daily')">Daily</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showProfitReportTab('monthly')">Monthly</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showProfitReportTab('yearly')">Yearly</button>
-            <button class="py-2 text-[10px] rounded-lg font-bold text-slate-400" onclick="showProfitReportTab('range')">Range</button>
+        <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800 mb-1.5">
+            <button class="py-1.5 text-[9px] rounded-lg font-bold bg-blue-600 text-white" onclick="showProfitReportTab('daily')">Daily</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showProfitReportTab('monthly')">Monthly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showProfitReportTab('yearly')">Yearly</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showProfitReportTab('range')">Range</button>
         </div>
-        <div id="profit-date-range-panel" class="hidden bg-slate-950 p-2.5 border border-slate-800 rounded-2xl space-y-2">
+        <div id="profit-date-range-panel" class="hidden bg-slate-950 p-2 border border-slate-800 rounded-xl space-y-1.5">
             <div class="grid grid-cols-2 gap-2">
                 <input type="date" id="profit-start-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
                 <input type="date" id="profit-end-date" class="bg-slate-900 border border-slate-800 rounded-lg p-2 text-white">
             </div>
-            <button class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="updateProfitReport()">Apply Range</button>
+            <button class="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold" onclick="updateProfitReport()">Apply Range</button>
         </div>
         <div id="profit-report-container"></div>
-        <canvas id="profitChart" class="w-full max-h-40"></canvas>
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition active:scale-95" onclick="exportProfitCSV()">📥 EXPORT FINANCIALS CSV</button>
+        <canvas id="profitChart" class="w-full max-h-36 sm:max-h-40"></canvas>
+        <button class="py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition active:scale-95" onclick="exportProfitCSV()">📥 EXPORT FINANCIALS CSV</button>
     </div>
 </div>
 
-<div id="peak-hours-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToReportsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">🕒 PEAK HOURS LOG</h3>
+<div id="peak-hours-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToReportsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">🕒 PEAK HOURS LOG</h3>
         </div>
-        <canvas id="peakHoursChart" class="w-full max-h-48"></canvas>
+        <canvas id="peakHoursChart" class="w-full max-h-40 sm:max-h-48"></canvas>
         <div id="peak-hours-stats"></div>
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition active:scale-95" onclick="exportPeakHoursCSV()">📥 EXPORT CHART CSV</button>
+        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition active:scale-95" onclick="exportPeakHoursCSV()">📥 EXPORT CHART CSV</button>
     </div>
 </div>
 
-<div id="driver-performance-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToReportsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">👨‍✈️ PERFORMANCE ANALYTICS</h3>
+<div id="driver-performance-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToReportsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">👨‍✈️ PERFORMANCE ANALYTICS</h3>
         </div>
         <div id="driver-performance-stats"></div>
-        <canvas id="driverPerformanceChart" class="w-full max-h-44"></canvas>
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition active:scale-95" onclick="exportDriverPerformanceCSV()">📥 EXPORT METRICS CSV</button>
+        <canvas id="driverPerformanceChart" class="w-full max-h-36 sm:max-h-44"></canvas>
+        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition active:scale-95" onclick="exportDriverPerformanceCSV()">📥 EXPORT METRICS CSV</button>
     </div>
 </div>
 
-<div id="driver-app-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-4 text-xs">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">👨‍✈️ ACTIVE DRIVER STATUS PANEL</h3>
+<div id="driver-app-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-40">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3.5 text-[10px] sm:text-xs">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">👨‍✈️ ACTIVE DRIVER STATUS PANEL</h3>
             <button class="text-slate-500 hover:text-white" onclick="closeM('driver-app-modal')">✕</button>
         </div>
         <div id="driver-app-stats"></div>
-        <div id="driver-app-rides" class="max-h-40 overflow-y-auto divide-y divide-slate-800 custom-scrollbar bg-slate-950 p-3 rounded-2xl border border-slate-800"></div>
-        <button class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold" onclick="closeM('driver-app-modal')">CLOSE CONSOLE</button>
+        <div id="driver-app-rides" class="max-h-40 overflow-y-auto divide-y divide-slate-800 custom-scrollbar bg-slate-950 p-3 rounded-xl border border-slate-800"></div>
+        <button class="py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-bold text-[10px] sm:text-xs" onclick="closeM('driver-app-modal')">CLOSE CONSOLE</button>
     </div>
 </div>
 
-<!-- Receipt Window Overlay -->
-<div id="receiptModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50 overflow-y-auto">
-    <div class="bg-white border border-slate-300 rounded-3xl p-5 w-full max-w-xs text-black shadow-2xl flex flex-col gap-4">
+<!-- Main thermal bill receipt preview modal container (perfectly scaled and responsive) -->
+<div id="receiptModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto select-none">
+    <div class="bg-white rounded-3xl p-4 sm:p-5 w-full max-w-sm text-black shadow-2xl flex flex-col gap-4 relative">
         <div class="flex justify-end no-print">
-            <button class="text-slate-400 hover:text-black font-bold" onclick="closeM('receiptModal')">✕</button>
+            <button class="text-slate-400 hover:text-black font-bold text-lg" onclick="closeM('receiptModal')">✕</button>
         </div>
-        <div id="receipt-view" class="bg-white relative font-mono text-[9px] leading-tight">
-            <div class="text-center font-bold text-xs uppercase tracking-wider pb-2 border-b border-dashed border-slate-400" id="receipt-header">TAXI OFFICIAL RECEIPT</div>
-            <div id="receipt-body" class="py-3 space-y-1 border-b border-dashed border-slate-400"></div>
-            <div class="bg-slate-100 rounded-xl p-2.5 text-center font-extrabold text-sm border my-2">TOTAL: Rs. <span id="receipt-total">0.00</span></div>
-            <div class="text-center font-bold text-slate-700 leading-snug pb-2" id="receipt-words"></div>
-            <div id="receipt-qr" class="flex justify-center my-3"></div>
-            <div class="text-center text-[8px] font-bold border-t border-dashed border-slate-400 pt-2 text-slate-500">
-                Advance Meeter Taxi sobat pravas kelyabaddal dhanyawad! 🚕
+        
+        <!-- Render element target exactly matching meeterrrrrr.JPG layout -->
+        <div class="overflow-x-auto flex justify-center bg-white p-2 border border-slate-100 rounded-2xl">
+            <div id="receipt-view" class="bg-white text-black p-4 select-text" style="width: 300px; font-family: monospace; font-size: 11px; line-height: 1.4;">
+                <!-- Dynamically generated perfect HTML from templates will load here -->
             </div>
-            <div class="receipt-seal"></div>
         </div>
+
         <div class="grid grid-cols-2 gap-2 no-print">
-            <button class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition active:scale-95" onclick="shareWA()">📱 WHATSAPP</button>
-            <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition active:scale-95" onclick="sendEmailWithAttachment()">📧 EMAIL</button>
+            <button class="py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] sm:text-xs font-bold transition active:scale-95" onclick="shareWA()">📱 WHATSAPP</button>
+            <button class="py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] sm:text-xs font-bold transition active:scale-95" onclick="sendEmailWithAttachment()">📧 EMAIL</button>
         </div>
-        <button class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold transition no-print" onclick="downloadReceiptPDF()">📄 SAVE AS PDF</button>
-        <button class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition no-print" onclick="printReceiptDirectly()">🖨️ BLUETOOTH THERMAL PRINT</button>
+        <button class="py-2 bg-slate-850 hover:bg-slate-800 text-slate-700 rounded-lg text-[10px] sm:text-xs font-bold transition no-print" onclick="downloadReceiptPDF()">📄 SAVE AS PDF</button>
+        <button class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] sm:text-xs font-bold transition no-print" onclick="printReceiptDirectly()">🖨️ BLUETOOTH THERMAL PRINT</button>
     </div>
 </div>
 
-<div id="system-log-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs max-h-[85vh] overflow-y-auto custom-scrollbar">
-        <div class="flex items-center gap-3 border-b border-slate-800 pb-3">
-            <button class="text-slate-500 hover:text-white font-bold" onclick="goBackToSettingsMenu()">←</button>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">📋 CRITICAL SYSTEM RUNTIME LOGS</h3>
+<div id="system-log-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs max-h-[85vh] overflow-y-auto custom-scrollbar">
+        <div class="flex items-center gap-3 border-b border-slate-800 pb-2.5">
+            <button class="text-slate-500 hover:text-white font-bold text-sm" onclick="goBackToSettingsMenu()">←</button>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">📋 CRITICAL SYSTEM RUNTIME LOGS</h3>
         </div>
         <div id="system-log-list" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar"></div>
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition active:scale-95" onclick="exportSystemLogCSV()">📥 EXPORT LOG CSV</button>
-        <button class="py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl transition active:scale-95" onclick="clearSystemLog()">🗑️ PURGE EVENTS</button>
+        <button class="py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition active:scale-95" onclick="exportSystemLogCSV()">📥 EXPORT LOG CSV</button>
+        <button class="py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg transition active:scale-95" onclick="clearSystemLog()">🗑️ PURGE EVENTS</button>
     </div>
 </div>
 
 <!-- Map picker coordinates selection modal -->
-<div id="map-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-sm flex flex-col gap-3 text-xs">
+<div id="map-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-sm flex flex-col gap-3 text-[10px] sm:text-xs">
         <div class="flex justify-between items-center border-b border-slate-800 pb-2">
             <h4 id="map-title" class="text-xs font-extrabold text-blue-400 uppercase tracking-wider">Select Location</h4>
             <button class="text-slate-500 hover:text-white font-bold" onclick="closeMapModal()">✕</button>
         </div>
         
         <div class="relative">
-            <input type="text" id="map-search" placeholder="Jaga Shodha (Search)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-3 text-xs text-white focus:outline-none">
-            <div id="search-results" class="absolute left-0 right-0 mt-1 bg-slate-950 border border-slate-800 rounded-xl max-h-32 overflow-y-auto z-[9999] hidden text-xs text-slate-300 custom-scrollbar"></div>
+            <input type="text" id="map-search" placeholder="Search Location (English)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-[10px] sm:text-xs text-white focus:outline-none">
+            <div id="search-results" class="absolute left-0 right-0 mt-1 bg-slate-950 border border-slate-800 rounded-lg max-h-32 overflow-y-auto z-[9999] hidden text-[10px] sm:text-xs text-slate-300 custom-scrollbar"></div>
         </div>
 
-        <div id="map" class="w-full h-48 bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden"></div>
+        <div id="map" class="w-full h-40 bg-slate-950 border border-slate-800 rounded-xl overflow-hidden"></div>
         
-        <input id="selected-address" readonly placeholder="Nivadeli Jaga (Selected Address)" class="w-full bg-slate-950 border border-slate-800 text-slate-300 rounded-xl p-2.5 focus:outline-none">
+        <input id="selected-address" readonly placeholder="Selected Location (English Address)" class="w-full bg-slate-950 border border-slate-800 text-slate-300 rounded-lg p-2 focus:outline-none text-[10px] sm:text-xs">
         
         <div class="grid grid-cols-2 gap-2">
-            <button class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition active:scale-95" onclick="useMapLocation()">✓ Jaga nischit kara</button>
-            <button class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl transition active:scale-95" onclick="getCurrentMapLocation()">📍 Majhi Jaga</button>
+            <button class="py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg transition active:scale-95" onclick="useMapLocation()">✓ Select Location</button>
+            <button class="py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-lg transition active:scale-95" onclick="getCurrentMapLocation()">📍 My Location</button>
         </div>
     </div>
 </div>
 
 <!-- Verification Admin Pin Entrance modal -->
-<div id="login-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 w-full max-w-xs flex flex-col gap-4 text-center">
-        <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-2xl shadow-lg mx-auto">🚕</div>
+<div id="login-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 w-full max-w-xs flex flex-col gap-3.5 text-center">
+        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-xl shadow-lg mx-auto">🚕</div>
         <div>
-            <h3 class="text-sm font-extrabold text-blue-400 uppercase tracking-widest">ADMIN LOGIN PANEL</h3>
-            <p class="text-[11px] text-slate-400 mt-1">Settings sathi password taka</p>
+            <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">ADMIN LOGIN PANEL</h3>
+            <p class="text-[10px] text-slate-400 mt-1">Settings sathi password taka</p>
         </div>
         
-        <input type="password" id="admin-pass" placeholder="Password taka" class="w-full bg-slate-950 border border-slate-800 rounded-xl py-3 px-3 text-center text-white focus:outline-none focus:border-blue-500">
+        <input type="password" id="admin-pass" placeholder="Password taka" class="w-full bg-slate-950 border border-slate-800 rounded-lg py-2.5 px-3 text-center text-white focus:outline-none focus:border-blue-500 text-[10px] sm:text-xs">
         
-        <button class="py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs transition active:scale-95" onclick="checkLogin()">LOGIN</button>
-        <button class="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition" onclick="closeM('login-modal')">Cancel kara (CANCEL)</button>
+        <button class="py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-[10px] sm:text-xs transition active:scale-95" onclick="checkLogin()">LOGIN</button>
+        <button class="py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[10px] sm:text-xs font-semibold transition" onclick="closeM('login-modal')">Cancel kara (CANCEL)</button>
     </div>
 </div>
 
-<!-- Core original scripts exactly preserved but styled dynamically -->
 <script>
     // ========== SYSTEM LOG (SYSTEM LOGS) ==========
     let systemLogs = JSON.parse(localStorage.getItem('system_logs') || '[]');
@@ -968,6 +946,7 @@
         }
     }
 
+    // ========== STREAMING_CHUNK: Number translation and helper calculations... ==========
     // ========== NUMBER TO WORDS (AKSHARI COGGU) ==========
     function numberToWords(num) {
         if (num === 0) return "Zero Rupees Only";
@@ -1070,6 +1049,7 @@
         }
     }
 
+    // ========== STREAMING_CHUNK: Declaring State Variables... ==========
     let sTime = null, watchId = null, totalMeters = 0, lastLat = null, lastLon = null, currentLat = null, currentLng = null, currentRID = "", nightActive = false, gpsReady = false, currentMode = "auto", pendingRideData = null, selectedMethod = "cash", currentLocationAddress = "", currentLocationLat = null, currentLocationLon = null, startLocationAddress = "", currentDestinationAddress = "", mapObj = null, mapMarker = null, mapPickerField = null, currentTrackingId = null;
     let deliveryPickupName="", deliveryPickupPhone="", deliveryDeliveryName="", deliveryDeliveryPhone="";
     let SETTINGS = { base: 100, rate: 80, waitRate: 5, nightPercent: 10, appName: "ADVANCE MEETER TAXI", receiptName: "AMT OFFICIAL RECEIPT", password: "1234", logo: null };
@@ -1170,6 +1150,7 @@
         } catch(e){}
     }
 
+    // ========== STREAMING_CHUNK: Integrating GPS Routing & Reverse Geocoding... ==========
     // ========== GEOLOCATION LOGIC (GPS LOGIC) ==========
     function startGPS() {
         if (!navigator.geolocation) return;
@@ -1230,7 +1211,12 @@
             let data = await res.json();
             currentLocationAddress = data.display_name || `${lat.toFixed(4)},${lon.toFixed(4)}`;
             document.getElementById('current-location-address').innerHTML = currentLocationAddress.substring(0, 80);
-        } catch(e){}
+            return currentLocationAddress;
+        } catch(e){
+            currentLocationAddress = `${lat.toFixed(4)},${lon.toFixed(4)}`;
+            document.getElementById('current-location-address').innerHTML = currentLocationAddress;
+            return currentLocationAddress;
+        }
     }
 
     function refreshCurrentLocation() {
@@ -1322,6 +1308,9 @@
                             if (inputId === 'end-loc') {
                                 currentDestinationAddress = p.display_name;
                             }
+                            if (inputId === 'start-loc') {
+                                startLocationAddress = p.display_name;
+                            }
                             div.style.display = 'none';
                         };
                         div.appendChild(item);
@@ -1386,24 +1375,25 @@
         return Math.max(0, Math.round(total));
     }
 
+    // ========== STREAMING_CHUNK: Managing Active Ride Start & End Sequences... ==========
     // ========== RIDE CONTROL FLOWS (TRIP FLOWS) ==========
     async function startRide() {
         if(sTime) { showToast("Ride already active!", 'warning'); return; }
         
         if(currentMode === 'auto') { 
             if(!currentLocationAddress || currentLocationAddress === "GPS සංඥා ලැබෙන තෙක් රැඳී සිටින්න...") { 
-                showToast("Doya kore GPS er connection thik hoar opekkha korun!", 'warning'); 
+                showToast("GPS සක්‍රීය වන තෙක් රැඳී සිටින්න!", 'warning'); 
                 return; 
             } 
             startLocationAddress = currentLocationAddress;
         } 
         else if(currentMode === 'gps') { 
             if(!document.getElementById('start-loc').value.trim() || !document.getElementById('end-loc').value.trim()) { 
-                showToast("Doya kore pickup o drop coordinates thik korun!", 'warning'); 
+                showToast("කරුණාකර Pickup සහ Drop ස්ථාන ඇතුළත් කරන්න!", 'warning'); 
                 return; 
             } 
             if(!gpsReady) { 
-                showToast("GPS ready noy! Opekkha korun.", 'warning'); 
+                showToast("GPS තවම සූදානම් නැත!", 'warning'); 
                 return; 
             } 
             startLocationAddress = document.getElementById('start-loc').value;
@@ -1411,7 +1401,7 @@
         } 
         else if(currentMode === 'manual') { 
             if(!document.getElementById('start-loc').value.trim() || !document.getElementById('end-loc').value.trim()) { 
-                showToast("Doya kore pickup o drop locations likhun!", 'warning'); 
+                showToast("කරුණාකර Pickup සහ Drop ස්ථාන ලියන්න!", 'warning'); 
                 return; 
             } 
             startLocationAddress = document.getElementById('start-loc').value;
@@ -1419,7 +1409,7 @@
         } 
         else if(currentMode === 'delivery') { 
             if(!document.getElementById('start-loc').value.trim() || !document.getElementById('end-loc').value.trim()) { 
-                showToast("Doya kore details gulo likhun!", 'warning'); 
+                showToast("කරුණාකර Delivery තොරතුරු සම්පූර්ණ කරන්න!", 'warning'); 
                 return; 
             } 
             startLocationAddress = document.getElementById('start-loc').value;
@@ -1486,42 +1476,155 @@
             btn.style.opacity = '0.5';
         });
         
+        // CRITICAL BUG FIX: Every single ride generates a unique dynamic tracking ID
         currentTrackingId = generateTrackingId();
         saveRideState();
         showTrackingPopup();
         startTrackingUpdates();
-        showToast("Ride shofolbhabe shuru hoyeche! 🚕", 'success');
+        showToast("ගමන සාර්ථකව ආරම්භ විය! 🚕", 'success');
         sendNotification('Ride Started', 'Your taxi ride has started. Safe journey!');
     }
     
-    function endRide() { 
-        if(!sTime) { showToast("Kono active ride cholche na", 'warning'); return; } 
-        releaseWakeLock(); 
-        document.body.classList.remove('ride-active'); 
-        if(watchId) { navigator.geolocation.clearWatch(watchId); watchId=null; } 
-        document.getElementById('startBtn').innerHTML="ගමන අරඹන්න (START)"; 
-        document.getElementById('startBtn').disabled=false; 
-        if(currentMode==='auto' && currentDestinationAddress) document.getElementById('nav-container').classList.remove('hidden'); 
-        else if(currentMode!=='auto') document.getElementById('nav-container').classList.add('hidden'); 
-        document.querySelectorAll('.mode-btn').forEach(btn => { btn.style.pointerEvents='auto'; btn.style.opacity='1'; }); 
-        let from="", to=""; 
-        if(currentMode==='auto') { from=startLocationAddress; to=currentLocationAddress; } 
-        else { from=document.getElementById('start-loc').value; to=document.getElementById('end-loc').value; } 
-        let fare=calcFare(); 
-        currentRID=generateReceiptID(); 
-        let km=totalMeters/1000; 
-        pendingRideData = { id:currentRID, fare, km, from, to, mobile:document.getElementById('mobile').value||"N/A", wait:parseInt(document.getElementById('wait-select').value), disc:parseInt(document.getElementById('discount-input').value)||0, manualFare:parseInt(document.getElementById('manual-fare').value)||0, nightUsed:nightActive, mode:currentMode==='auto'?"Auto":(currentMode==='gps'?"GPS":(currentMode==='manual'?"Manual":"Delivery")), time:Date.now() }; 
-        if(currentMode==='delivery') { pendingRideData.pickupName=deliveryPickupName; pendingRideData.pickupPhone=deliveryPickupPhone; pendingRideData.deliveryName=deliveryDeliveryName; pendingRideData.deliveryPhone=deliveryDeliveryPhone; } 
-        localStorage.removeItem('amt_ride_state'); 
+    // CRITICAL BUG FIX: Precise Drop-off geocoding coordinates on pressing END + immediate dashboard auto-reset
+    async function endRide() { 
+        if(!sTime) { showToast("ක්‍රියාකාරී ගමනක් නොමැත", 'warning'); return; } 
+        showLoading(true);
+        
+        let finalLat = currentLat || lastLat;
+        let finalLon = currentLng || lastLon;
+        
+        // Polling exact location drop-off coordinates instantly
+        if (navigator.geolocation) {
+            try {
+                const finalPos = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 3000 });
+                });
+                finalLat = finalPos.coords.latitude;
+                finalLon = finalPos.coords.longitude;
+                currentLat = finalLat;
+                currentLng = finalLon;
+            } catch (e) {
+                console.log("Using standard navigation coordinates fallback", e);
+            }
+        }
+        
+        // Reverse geocoding drop-off coordinates cleanly in English format
+        let finalAddress = "Unknown Drop-off Location";
+        if (finalLat && finalLon) {
+            try {
+                let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${finalLat}&lon=${finalLon}&accept-language=en&countrycodes=lk`);
+                let data = await res.json();
+                finalAddress = data.display_name || `${finalLat.toFixed(5)}, ${finalLon.toFixed(5)}`;
+                currentLocationAddress = finalAddress;
+            } catch(err) {
+                finalAddress = `${finalLat.toFixed(5)}, ${finalLon.toFixed(5)}`;
+                currentLocationAddress = finalAddress;
+            }
+        }
+        
+        let fare = calcFare(); 
+        currentRID = generateReceiptID(); 
+        let km = totalMeters / 1000; 
+        let fromAddress = startLocationAddress || "Unknown Pickup Location";
+
+        pendingRideData = { 
+            id: currentRID, 
+            fare: fare, 
+            km: km, 
+            from: fromAddress, 
+            to: finalAddress, 
+            mobile: document.getElementById('mobile').value || "N/A", 
+            wait: parseInt(document.getElementById('wait-select').value) || 0, 
+            disc: parseInt(document.getElementById('discount-input').value) || 0, 
+            manualFare: parseInt(document.getElementById('manual-fare').value) || 0, 
+            nightUsed: nightActive, 
+            mode: currentMode === 'auto' ? "Auto" : (currentMode === 'gps' ? "GPS" : (currentMode === 'manual' ? "Manual" : "Delivery")), 
+            time: Date.now(),
+            trackingId: currentTrackingId
+        }; 
+        
+        if (currentMode === 'delivery') { 
+            pendingRideData.pickupName = deliveryPickupName; 
+            pendingRideData.pickupPhone = deliveryPickupPhone; 
+            pendingRideData.deliveryName = deliveryDeliveryName; 
+            pendingRideData.deliveryPhone = deliveryDeliveryPhone; 
+        } 
+        
+        // Sync final Completed state payload parameters to tracking database
+        if (currentTrackingId) { 
+            localStorage.setItem(`tracking_${currentTrackingId}`, JSON.stringify({ 
+                id: currentTrackingId, 
+                lat: finalLat, 
+                lng: finalLon, 
+                timestamp: Date.now(), 
+                destination: finalAddress, 
+                startAddress: fromAddress,
+                status: 'completed',
+                currentFare: fare,
+                distanceTraveled: km.toFixed(2)
+            })); 
+        }
+        
+        // CRITICAL BUG FIX: Immediately auto-reset the driver dashboard states for next trip, keeping billing popup open
+        resetDriverAppOnly();
         stopTrackingUpdates();
+        
+        showLoading(false);
         openPaymentPopup(); 
+    }
+
+    function resetDriverAppOnly() {
+        if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+        releaseWakeLock();
+        document.body.classList.remove('ride-active');
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.style.pointerEvents = 'auto';
+            btn.style.opacity = '1';
+        });
+        
+        // Clearing tracking parameters
+        sTime = null;
+        totalMeters = 0;
+        lastLat = null;
+        lastLon = null;
+        currentDestinationAddress = "";
+        
+        // Clear input values safely
+        document.getElementById('start-loc').value = '';
+        document.getElementById('end-loc').value = '';
+        document.getElementById('mobile').value = '';
+        document.getElementById('manual-fare').value = '';
+        document.getElementById('discount-input').value = '';
+        document.getElementById('wait-select').value = '0';
+        document.getElementById('manual-km-input').value = '0.00';
+        document.getElementById('nav-container').classList.add('hidden');
+        
+        if (document.getElementById('pickup-name')) document.getElementById('pickup-name').value = '';
+        if (document.getElementById('pickup-phone')) document.getElementById('pickup-phone').value = '';
+        if (document.getElementById('delivery-name')) document.getElementById('delivery-name').value = '';
+        if (document.getElementById('delivery-phone')) document.getElementById('delivery-phone').value = '';
+        
+        updateDisplay();
+        localStorage.removeItem('amt_ride_state');
+        
+        // Restart location tracking for next customer
+        if (currentMode === 'auto') {
+            refreshCurrentLocation();
+        }
+        if (currentMode !== 'manual') {
+            startGPS();
+        } else {
+            gpsReady = true;
+            document.getElementById('startBtn').disabled = false;
+        }
+        showToast('Driver console reset & ready for next ride!', 'info');
     }
     
     function generateReceiptID() { let n=new Date(), y=n.getFullYear(), m=n.getMonth(); let fy=(m>=3)?y:y-1; let c=parseInt(localStorage.getItem(`cnt_${fy}`)||"0")+1; localStorage.setItem(`cnt_${fy}`,c); return `${fy.toString().slice(-2)}${n.toLocaleString('en',{month:'short'}).toUpperCase()}-${c.toString().padStart(8,'0')}`; }
     
     // ========== PAYMENT FUNCTIONS (PRAYASH CHANNELS) ==========
     function openPaymentPopup() { 
-        if(!pendingRideData) { showToast("Kono ride data khunje paowa jayni.", 'error'); return; }
+        if(!pendingRideData) { showToast("No active trip parameters found.", 'error'); return; }
         selectedMethod = "cash"; 
         document.querySelectorAll('.payment-method-btn').forEach(btn => btn.classList.remove('bg-blue-600', 'border-transparent')); 
         const cashBtn = document.querySelector('.payment-method-btn[data-method="cash"]');
@@ -1566,68 +1669,157 @@
     
     function confirmPaymentAndShowReceipt() { 
         if(!pendingRideData) { 
-            showToast("Nirbachito data paowa jayni.", 'error'); 
+            showToast("Transaction data error.", 'error'); 
             return; 
         }
         
         let paymentInfo = getPaymentInfo(); 
         pendingRideData.payment = paymentInfo; 
         
-        // Save to Primary Rides Database (Travel History)
+        // Save to Local Database
         let list = JSON.parse(localStorage.getItem('rides') || '[]'); 
         list.push(pendingRideData); 
         localStorage.setItem('rides', JSON.stringify(list)); 
         
-        // Execute Odometer Rolling Auto-Backup System on Transaction
+        // Execute automatic backup sequence on transaction
         triggerRollingBackup();
         
         closePaymentPopup(); 
         showReceipt(pendingRideData, false); 
         
-        sTime = null; 
-        currentDestinationAddress = ""; 
-        if(currentMode !== 'manual') setTimeout(() => startGPS(), 1000); 
-        document.getElementById('nav-container').classList.add('hidden'); 
-        
         addSystemLog('INFO', 'Payment confirmed', `Receipt: ${pendingRideData.id}`); 
-        showToast('Payment confirmed! Rasiid toiri hoyeche', 'success');
+        showToast('ගෙවීම් තහවුරුයි! රිසිට්පත සූදානම්.', 'success');
         sendNotification('Payment Received', `Rs.${pendingRideData.fare.toFixed(2)} collected`);
         
         pendingRideData = null;
     }
+
+    // ========== STREAMING_CHUNK: Injecting HTML rendering template exactly matching meeterrrrrr.JPG... ==========
+    // Unified HTML renderer guaranteeing pixel perfect layouts
+    function getPerfectReceiptTemplateHTML(ride, isReprint, qrContainerId) {
+        let sub = (ride.manualFare > 0) ? ride.manualFare : (SETTINGS.base + (Math.max(0, ride.km - 1) * SETTINGS.rate)); 
+        let waitC = (ride.wait || 0) * SETTINGS.waitRate; 
+        let discountRow = "";
+        let waitRow = "";
+        
+        if (ride.disc > 0) {
+            discountRow = `
+            <tr>
+                <td style="font-weight: bold; color: #ef4444;">Discount:</td>
+                <td style="text-align: right; font-weight: bold; color: #ef4444;">-Rs.${ride.disc.toFixed(2)}</td>
+            </tr>`;
+        }
+        if (waitC > 0) {
+            waitRow = `
+            <tr>
+                <td style="font-weight: bold;">Waiting (${ride.wait}m):</td>
+                <td style="text-align: right; font-weight: bold;">+Rs.${waitC.toFixed(2)}</td>
+            </tr>`;
+        }
+
+        return `
+            <div style="font-family: monospace; font-size: 11px; color: #000; line-height: 1.4; background: #fff; width: 100%; box-sizing: border-box;">
+                ${isReprint ? `<div style="background: #ef4444; color: #fff; text-align: center; padding: 3px; font-weight: bold; border-radius: 6px; margin-bottom: 8px; text-transform: uppercase; font-size: 9px;">📋 REPRINT DUPLICATE</div>` : ''}
+                
+                <div style="text-align: center; font-weight: bold; font-size: 13px; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">${SETTINGS.receiptName}</div>
+                <div style="border-bottom: 1px dashed #000; margin-bottom: 8px;"></div>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px;">
+                    <tr>
+                        <td style="font-weight: bold; width: 35%;">Receipt No:</td>
+                        <td style="font-weight: bold; text-align: right; width: 65%;">${ride.id}</td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: top; font-weight: bold;">Tarikh /<br>Date:</td>
+                        <td style="text-align: right; font-weight: bold; vertical-align: top;">${new Date(ride.time).toLocaleDateString()} ${new Date(ride.time).toLocaleTimeString()}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Mobile No:</td>
+                        <td style="font-weight: bold; text-align: right;">${ride.mobile || 'N/A'}</td>
+                    </tr>
+                </table>
+                
+                <div style="margin-bottom: 8px;">
+                    <div style="font-weight: bold; text-transform: uppercase;">Pickup Location:</div>
+                    <div style="color: #334155; font-size: 9px; padding-left: 4px; word-break: break-word; line-height: 1.3;">${ride.from || 'Colombo, Sri Lanka'}</div>
+                </div>
+                
+                <div style="margin-bottom: 10px;">
+                    <div style="font-weight: bold; text-transform: uppercase;">Drop Location:</div>
+                    <div style="color: #334155; font-size: 9px; padding-left: 4px; word-break: break-word; line-height: 1.3;">${ride.to || 'Colombo, Sri Lanka'}</div>
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px;">
+                    <tr>
+                        <td style="font-weight: bold;">Durutto / Dist:</td>
+                        <td style="text-align: right; font-weight: bold;">${parseFloat(ride.km || 0).toFixed(2)} km</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Base Fare:</td>
+                        <td style="text-align: right; font-weight: bold;">Rs.${SETTINGS.base.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Fare:</td>
+                        <td style="text-align: right; font-weight: bold;">Rs.${sub.toFixed(2)}</td>
+                    </tr>
+                    ${waitRow}
+                    ${discountRow}
+                    <tr>
+                        <td style="font-weight: bold;">Mode:</td>
+                        <td style="text-align: right; font-weight: bold;">${ride.mode || 'Auto'}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Payment:</td>
+                        <td style="text-align: right; font-weight: bold;">${ride.payment ? ride.payment.method : 'Cash'}</td>
+                    </tr>
+                </table>
+                
+                <div style="border-bottom: 1px dashed #000; margin-bottom: 8px;"></div>
+                
+                <div style="border: 1px solid #94a3b8; border-radius: 12px; background: #f8fafc; padding: 8px 12px; text-align: center; font-weight: 800; font-size: 13px; margin-bottom: 8px; letter-spacing: 0.5px;">
+                    TOTAL: Rs. ${parseFloat(ride.fare || 0).toFixed(2)}
+                </div>
+                
+                <div style="text-align: center; font-weight: bold; font-size: 10px; margin-bottom: 12px; padding: 0 4px; line-height: 1.2;">
+                    ${numberToWords(ride.fare)}
+                </div>
+                
+                <div style="display: flex; justify-content: center; position: relative; margin: 15px 0 10px 0; min-height: 85px;">
+                    <!-- QR render container targeted exactly -->
+                    <div id="${qrContainerId}" style="background: #fff; padding: 4px; border: 1px solid #e2e8f0; display: inline-block;"></div>
+                    
+                    <!-- Circular paid stamp seal strictly matching meeterrrrrr.JPG layout -->
+                    <div style="position: absolute; bottom: -5px; right: 25px; width: 58px; height: 58px; border-radius: 50%; border: 2px dashed #ef4444; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.92); transform: rotate(-15deg); box-sizing: border-box; pointer-events: none; z-index: 10;">
+                        <span style="font-size: 10px; font-weight: 950; color: #ef4444; font-family: sans-serif; letter-spacing: 0.5px;">✓ PAID</span>
+                    </div>
+                </div>
+                
+                <div style="border-bottom: 1px dashed #000; margin-bottom: 8px; margin-top: 12px;"></div>
+                
+                <div style="text-align: center; font-size: 8px; font-weight: bold; color: #64748b; line-height: 1.3;">
+                    Advance Meeter Taxi sobat prevas kelyabaddal dhanyawad! 🚕
+                </div>
+            </div>
+        `;
+    }
     
     function showReceipt(ride, isDuplicate) { 
-        // Store raw object reference globally to allow stable WhatsApp/Email sharing
         window.activeReceiptRide = ride;
-
-        let sub = (ride.manualFare > 0) ? ride.manualFare : (SETTINGS.base + (Math.max(0, ride.km - 1) * SETTINGS.rate)); 
-        let waitC = ride.wait * SETTINGS.waitRate; 
-        let dupHtml = isDuplicate ? '<div class="bg-red-500 text-white text-center p-1 rounded-lg mb-2 no-print">📋 COPY / REPRINT</div>' : ''; 
-        let rows = dupHtml; 
-        rows += `<div class="flex justify-between"><span>Receipt No:</span><b>${ride.id}</b></div><div class="flex justify-between"><span>Tarikh / Date:</span><b>${new Date(ride.time).toLocaleString()}</b></div><div class="flex justify-between"><span>Mobile No:</span><b>${ride.mobile || 'N/A'}</b></div>`; 
-        if(ride.mode === 'Delivery') { 
-            rows += `<div class="pt-1"><span class="font-bold">Pickup Recipient:</span><span class="block text-slate-700">${ride.pickupName || ''} ${ride.pickupPhone || ''}</span></div><div class="pt-1"><span class="font-bold">Delivery Recipient:</span><span class="block text-slate-700">${ride.deliveryName || ''} ${ride.deliveryPhone || ''}</span></div>`; 
-        } 
-        rows += `<div class="pt-1"><span class="font-bold">Pickup Location:</span><span class="block text-slate-700 break-words">${ride.from}</span></div><div class="pt-1"><span class="font-bold">Drop Location:</span><span class="block text-slate-700 break-words">${ride.to}</span></div><div class="flex justify-between"><span>Durutto / Dist:</span><b>${ride.km.toFixed(2)} km</b></div><div class="flex justify-between"><span>Base Fare:</span><b>Rs.${SETTINGS.base.toFixed(2)}</b></div><div class="flex justify-between"><span>Fare:</span><b>Rs.${sub.toFixed(2)}</b></div>`; 
-        if(waitC > 0) rows += `<div class="flex justify-between"><span>Opekkha (${ride.wait}m):</span><b>+Rs.${waitC.toFixed(2)}</b></div>`; 
-        if(ride.nightUsed && ride.manualFare === 0) rows += `<div class="flex justify-between text-amber-600"><span>Night Rate (${SETTINGS.nightPercent}%):</span><b>+${Math.round(ride.fare - (sub + waitC - ride.disc))}</b></div>`; 
-        if(ride.disc > 0) rows += `<div class="flex justify-between text-red-500"><span>Char / Discount:</span><b>-Rs.${ride.disc}</b></div>`; 
-        rows += `<div class="flex justify-between"><span>Mode:</span><b>${ride.mode}</b></div><div class="flex justify-between"><span>Payment:</span><b>${ride.payment.method} ${ride.payment.detail || ''}</b></div>`; 
         
-        document.getElementById('receipt-body').innerHTML = rows; 
-        document.getElementById('receipt-total').innerHTML = ride.fare.toFixed(2); 
-        document.getElementById('receipt-header').innerText = SETTINGS.receiptName; 
+        // Render perfect pixel configuration inside active modal
+        const viewContainer = document.getElementById('receipt-view');
+        viewContainer.innerHTML = getPerfectReceiptTemplateHTML(ride, isDuplicate, 'modal-qr-container');
         
-        let wordsEl = document.getElementById('receipt-words');
-        if(wordsEl) wordsEl.innerHTML = numberToWords(ride.fare);
-        
-        let qr = document.getElementById('receipt-qr'); 
-        if(qr) {
-            qr.innerHTML = ""; 
-            try {
-                new QRCode(qr, { text: `${ride.id}|Rs.${ride.fare.toFixed(2)}|${ride.payment.method}`, width: 85, height: 85 });
-            } catch(e) { console.error('QR error:', e); }
-        }
+        // Populate QR values inside matching placeholder ID
+        setTimeout(() => {
+            let qr = document.getElementById('modal-qr-container'); 
+            if(qr) {
+                qr.innerHTML = ""; 
+                try {
+                    new QRCode(qr, { text: `${ride.id}|Rs.${ride.fare.toFixed(2)}|${ride.payment ? ride.payment.method : 'Cash'}`, width: 85, height: 85 });
+                } catch(e) { console.error('QR element sync issues:', e); }
+            }
+        }, 80);
         
         document.getElementById('receiptModal').style.display = "flex"; 
     }
@@ -1637,7 +1829,7 @@
         if (!ride) { showToast("Receipt data not found for sharing!", "error"); return; }
         
         let sub = (ride.manualFare > 0) ? ride.manualFare : (SETTINGS.base + (Math.max(0, ride.km - 1) * SETTINGS.rate));
-        let waitC = ride.wait * SETTINGS.waitRate;
+        let waitC = (ride.wait || 0) * SETTINGS.waitRate;
         let rTotal = ride.fare.toFixed(2);
         let rWords = numberToWords(ride.fare);
         
@@ -1655,7 +1847,7 @@
         if (ride.nightUsed && ride.manualFare === 0) textTemplate += `• *Night Surcharge:* Active\n`;
         if (ride.disc > 0) textTemplate += `• *Discount:* -Rs.${ride.disc}\n`;
         textTemplate += `• *Mode:* ${ride.mode}\n` +
-                        `• *Payment Method:* ${ride.payment.method} ${ride.payment.detail || ''}\n` +
+                        `• *Payment Method:* ${ride.payment ? ride.payment.method : 'Cash'} ${ride.payment && ride.payment.detail ? ride.payment.detail : ''}\n` +
                         `===============================\n` +
                         `*TOTAL PAYABLE: Rs. ${rTotal}*\n` +
                         `_In Words: ${rWords}_\n` +
@@ -1685,7 +1877,7 @@
                           `From: ${ride.from}\n` +
                           `To: ${ride.to}\n` +
                           `Distance: ${ride.km.toFixed(2)} km\n` +
-                          `Payment Method: ${ride.payment.method} ${ride.payment.detail || ''}\n` +
+                          `Payment Method: ${ride.payment ? ride.payment.method : 'Cash'} ${ride.payment && ride.payment.detail ? ride.payment.detail : ''}\n` +
                           `===============================\n` +
                           `TOTAL PAYABLE: Rs. ${ride.fare.toFixed(2)}\n\n` +
                           `Thank you for traveling with us!`;
@@ -1695,11 +1887,12 @@
         showToast('Email draft generated!', 'success');
     }
     
+    // ========== STREAMING_CHUNK: Processing image conversions for thermal exports... ==========
     async function downloadReceiptPDF() { 
-        let canvas = await html2canvas(document.getElementById('receipt-view'),{scale:2}); 
+        let canvas = await html2canvas(document.getElementById('receipt-view'),{scale:2.5, useCORS: true}); 
         let {jsPDF} = window.jspdf; 
         let pdf = new jsPDF({unit:'mm', format:'a6'}); 
-        pdf.addImage(canvas.toDataURL(),'PNG',2.5,5,100,(canvas.height*100)/canvas.width); 
+        pdf.addImage(canvas.toDataURL('image/png'),'PNG',2.5,5,100,(canvas.height*100)/canvas.width); 
         pdf.save(`${currentRID}.pdf`); 
         showToast('PDF downloaded successfully', 'success'); 
     }
@@ -1710,7 +1903,7 @@
     
     function toggleNightCharge() { nightActive=!nightActive; let btn=document.getElementById('nightBtn'); if(nightActive) { btn.innerHTML='🌙 NIGHT ON'; showToast('Night charge enabled', 'info'); } else { btn.innerHTML='🌙 NIGHT OFF'; showToast('Night charge disabled', 'info'); } updateDisplay(); if(sTime) saveRideState(); }
     
-    function resetToNew() { if(sTime && !confirm("Reset ride?")) return; if(watchId) navigator.geolocation.clearWatch(watchId); releaseWakeLock(); document.body.classList.remove('ride-active'); document.querySelectorAll('.mode-btn').forEach(btn => { btn.style.pointerEvents='auto'; btn.style.opacity='1'; }); sTime=null; totalMeters=0; lastLat=null; lastLon=null; currentDestinationAddress=""; currentTrackingId=null; deliveryPickupName=""; deliveryPickupPhone=""; deliveryDeliveryName=""; deliveryDeliveryPhone=""; document.getElementById('startBtn').innerHTML="ගමන අරඹන්න (START)"; document.getElementById('startBtn').disabled=false; document.getElementById('start-loc').value=''; document.getElementById('end-loc').value=''; document.getElementById('mobile').value=''; document.getElementById('manual-fare').value=''; document.getElementById('discount-input').value=''; document.getElementById('wait-select').value='0'; document.getElementById('manual-km-input').value='0'; document.getElementById('nav-container').classList.add('hidden'); document.getElementById('pickup-name').value=''; document.getElementById('pickup-phone').value=''; document.getElementById('delivery-name').value=''; document.getElementById('delivery-phone').value=''; updateDisplay(); localStorage.removeItem('amt_ride_state'); if(currentMode==='auto') refreshCurrentLocation(); if(currentMode!=='manual') startGPS(); else { gpsReady=true; document.getElementById('startBtn').disabled=false; } showToast('Reset complete', 'info'); stopTrackingUpdates(); }
+    function resetToNew() { if(sTime && !confirm("Reset ride?")) return; if(watchId) navigator.geolocation.clearWatch(watchId); releaseWakeLock(); document.body.classList.remove('ride-active'); document.querySelectorAll('.mode-btn').forEach(btn => { btn.style.pointerEvents='auto'; btn.style.opacity='1'; }); sTime=null; totalMeters=0; lastLat=null; lastLon=null; currentDestinationAddress=""; currentTrackingId=null; deliveryPickupName=""; deliveryPickupPhone=""; deliveryDeliveryName=""; deliveryDeliveryPhone=""; document.getElementById('startBtn').innerHTML="ගමන අරඹන්න (START)"; document.getElementById('startBtn').disabled=false; document.getElementById('start-loc').value=''; document.getElementById('end-loc').value=''; document.getElementById('mobile').value=''; document.getElementById('manual-fare').value=''; document.getElementById('discount-input').value=''; document.getElementById('wait-select').value='0'; document.getElementById('manual-km-input').value='0.00'; document.getElementById('nav-container').classList.add('hidden'); document.getElementById('pickup-name').value=''; document.getElementById('pickup-phone').value=''; document.getElementById('delivery-name').value=''; document.getElementById('delivery-phone').value=''; updateDisplay(); localStorage.removeItem('amt_ride_state'); if(currentMode==='auto') refreshCurrentLocation(); if(currentMode!=='manual') startGPS(); else { gpsReady=true; document.getElementById('startBtn').disabled=false; } showToast('Reset complete', 'info'); stopTrackingUpdates(); }
     
     function filterHistory(type) {
         let now = new Date(), start = '', end = '';
@@ -2035,7 +2228,8 @@
                 lat: currentLat, 
                 lng: currentLng, 
                 timestamp: Date.now(), 
-                destination: currentDestinationAddress || 'Not set', 
+                destination: currentDestinationAddress || 'Colombo, Sri Lanka', 
+                startAddress: startLocationAddress || 'Colombo, Sri Lanka',
                 status: 'active',
                 currentFare: calcFare(),
                 distanceTraveled: (totalMeters/1000).toFixed(2)
@@ -2077,13 +2271,14 @@
                     lat: currentLat, 
                     lng: currentLng, 
                     timestamp: Date.now(), 
-                    destination: currentDestinationAddress || 'Not set', 
+                    destination: currentDestinationAddress || 'Colombo, Sri Lanka', 
+                    startAddress: startLocationAddress || 'Colombo, Sri Lanka',
                     status: 'active',
                     currentFare: calcFare(),
                     distanceTraveled: (totalMeters/1000).toFixed(2)
                 }));
             }
-        }, 5000);
+        }, 3000);
     }
     
     function stopTrackingUpdates() {
@@ -2121,33 +2316,28 @@
                 }
                 const searchInput = document.getElementById('map-search');
                 const fontContainer = document.getElementById('search-results');
-                
-                let mapSearchTimeout;
-                searchInput.oninput = function() {
+                searchInput.oninput = async function() {
                     const query = this.value.trim();
                     if (query.length < 2) { fontContainer.style.display = 'none'; return; }
-                    clearTimeout(mapSearchTimeout);
-                    mapSearchTimeout = setTimeout(async () => {
-                        const data = await searchSriLankaLocations(query);
-                        fontContainer.innerHTML = '';
-                        if (data.length === 0) { fontContainer.innerHTML = '<div style="padding:12px;">No results found</div>'; }
-                        else {
-                            data.forEach(place => {
-                                const div = document.createElement('div');
-                                div.className = 'p-2.5 border-b border-slate-800 hover:bg-slate-900 cursor-pointer text-xs truncate';
-                                div.textContent = place.display_name.substring(0, 60);
-                                div.onclick = () => {
-                                    mapObj.setView([place.lat, place.lon], 14);
-                                    mapMarker.setLatLng([place.lat, place.lon]);
-                                    reverseMapGeocode(place.lat, place.lon);
-                                    fontContainer.style.display = 'none';
-                                    searchInput.value = place.display_name;
-                                };
-                                fontContainer.appendChild(div);
-                            });
-                        }
-                        fontContainer.style.display = 'block';
-                    }, 350);
+                    const data = await searchSriLankaLocations(query);
+                    fontContainer.innerHTML = '';
+                    if (data.length === 0) { fontContainer.innerHTML = '<div style="padding:12px;">No results found</div>'; }
+                    else {
+                        data.forEach(place => {
+                            const div = document.createElement('div');
+                            div.className = 'p-2.5 border-b border-slate-800 hover:bg-slate-900 cursor-pointer text-xs truncate';
+                            div.textContent = place.display_name.substring(0, 60);
+                            div.onclick = () => {
+                                mapObj.setView([place.lat, place.lon], 14);
+                                mapMarker.setLatLng([place.lat, place.lon]);
+                                reverseMapGeocode(place.lat, place.lon);
+                                fontContainer.style.display = 'none';
+                                searchInput.value = place.display_name;
+                            };
+                            fontContainer.appendChild(div);
+                        });
+                    }
+                    fontContainer.style.display = 'block';
                 };
             } catch(e) { console.error('Map error:', e); showToast('Map load kora sombhob hoyni', 'error'); }
         }, 150);
@@ -2185,7 +2375,7 @@
     async function searchSriLankaLocations(q) {
         if (!q || q.length < 2) return [];
         try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=10&countrycodes=lk&accept-language=en`);
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=8&countrycodes=lk&accept-language=en`);
             return await res.json();
         } catch(e) { return []; }
     }
@@ -2224,7 +2414,7 @@
     function updateProfitDisplay(start, end, type) {
         let data = getProfitData(start, end);
         let html = `
-            <div class="bg-slate-950 p-4 border border-slate-800 rounded-2xl space-y-2">
+            <div class="bg-slate-950 p-4 border border-slate-800 rounded-xl space-y-2 text-[10px] sm:text-xs">
                 <div class="flex justify-between"><strong>දිනය / කාල සීමාව:</strong> <span>${start} to ${end}</span></div>
                 <div class="flex justify-between"><strong>Rides ගණන:</strong> <span>${data.rides}</span></div>
                 <div class="flex justify-between"><strong>💰 Total Earnings:</strong> <span class="text-emerald-400 font-bold">Rs. ${data.totalEarnings.toFixed(2)}</span></div>
@@ -2247,7 +2437,7 @@
     let fuelLogs = JSON.parse(localStorage.getItem('fuel_logs') || '[]');
     function saveFuelLogs() { localStorage.setItem('fuel_logs', JSON.stringify(fuelLogs)); updateFuelList(); }
     function addFuelLog() { let date = document.getElementById('fuel-date').value || new Date().toISOString().split('T')[0]; let liters = parseFloat(document.getElementById('fuel-liters').value); let price = parseFloat(document.getElementById('fuel-price').value); if (!liters || !price) { showToast("Fuel er amount o rate likhun", 'warning'); return; } let total = liters * price; fuelLogs.push({ id: Date.now(), date, liters, price, total, notes: document.getElementById('fuel-notes').value }); saveFuelLogs(); document.getElementById('fuel-liters').value = ''; document.getElementById('fuel-price').value = ''; showToast("Fuel record add hoyeche!", 'success'); }
-    function updateFuelList() { let c = document.getElementById('fuel-list'); if(c) c.innerHTML = fuelLogs.slice().reverse().slice(0,10).map(l => `<div class="py-2 flex justify-between text-xs text-slate-300 border-b border-slate-800"><span>${l.date} | ${l.liters}L @ Rs.${l.price}</span><b>Rs.${l.total.toFixed(2)}</b></div>`).join(''); let ft = document.getElementById('fuel-total'); if(ft && document.getElementById('fuel-liters').value && document.getElementById('fuel-price').value) ft.value = (parseFloat(document.getElementById('fuel-liters').value||0) * parseFloat(document.getElementById('fuel-price').value||0)).toFixed(2); }
+    function updateFuelList() { let c = document.getElementById('fuel-list'); if(c) c.innerHTML = fuelLogs.slice().reverse().slice(0,10).map(l => `<div class="py-2 flex justify-between text-[10px] sm:text-xs text-slate-300 border-b border-slate-800"><span>${l.date} | ${l.liters}L @ Rs.${l.price}</span><b>Rs.${l.total.toFixed(2)}</b></div>`).join(''); let ft = document.getElementById('fuel-total'); if(ft && document.getElementById('fuel-liters').value && document.getElementById('fuel-price').value) ft.value = (parseFloat(document.getElementById('fuel-liters').value||0) * parseFloat(document.getElementById('fuel-price').value||0)).toFixed(2); }
     function getFuelByDateRange(s,e) { return fuelLogs.filter(l => l.date >= s && l.date <= e); }
     function showFuelReportTab(t) { document.querySelectorAll('#fuel-report-modal .report-tab').forEach(tb=>tb.classList.remove('active')); if(event&&event.target) event.target.classList.add('active'); document.getElementById('fuel-date-range-panel').style.display = t==='range'?'block':'none'; let now=new Date(), s='', e=''; if(t==='daily') { s=e=now.toISOString().split('T')[0]; } else if(t==='monthly') { s=new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]; e=new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0]; } else if(t==='yearly') { s=new Date(now.getFullYear(),0,1).toISOString().split('T')[0]; e=new Date(now.getFullYear(),11,31).toISOString().split('T')[0]; } let logs = getFuelByDateRange(s,e); let totalL = logs.reduce((a,b)=>a+b.liters,0); let totalC = logs.reduce((a,b)=>a+b.total,0); document.getElementById('fuel-report-container').innerHTML = `<div style="text-align:center; padding:10px; color:white;"><strong>${t.toUpperCase()}</strong><br>Total: ${totalL.toFixed(2)}L | Rs.${totalC.toFixed(2)}</div><div class="payment-stats space-y-1">${logs.map(r=>`<div class="flex justify-between border-b border-slate-800 pb-1"><span>${r.date}</span><span>${r.liters}L @ Rs.${r.price}=Rs.${r.total.toFixed(2)}</span></div>`).join('')}</div>`; }
     function updateFuelReport() { let s=document.getElementById('fuel-start-date').value, e=document.getElementById('fuel-end-date').value; if(!s||!e) return; let logs=getFuelByDateRange(s,e); let totalL=logs.reduce((a,b)=>a+b.liters,0); let totalC=logs.reduce((a,b)=>a+b.total,0); document.getElementById('fuel-report-container').innerHTML = `<div style="text-align:center; color:white;"><strong>${s} to ${e}</strong><br>Total: ${totalL.toFixed(2)}L | Rs.${totalC.toFixed(2)}</div><div class="payment-stats space-y-1">${logs.map(r=>`<div class="flex justify-between border-b border-slate-800 pb-1"><span>${r.date}</span><span>${r.liters}L @ Rs.${r.price}=Rs.${r.total.toFixed(2)}</span></div>`).join('')}</div>`; }
@@ -2256,7 +2446,7 @@
     let repairLogs = JSON.parse(localStorage.getItem('repair_logs') || '[]');
     function saveRepairLogs() { localStorage.setItem('repair_logs', JSON.stringify(repairLogs)); updateRepairList(); }
     function addRepairLog() { let date = document.getElementById('repair-date').value || new Date().toISOString().split('T')[0]; let desc = document.getElementById('repair-desc').value; let cost = parseFloat(document.getElementById('repair-cost').value); if (!desc || !cost) { showToast("Repairs විස්තර o cost likhun", 'warning'); return; } repairLogs.push({ id: Date.now(), date, desc, cost, garage: document.getElementById('repair-garage').value, notes: document.getElementById('repair-notes').value }); saveRepairLogs(); document.getElementById('repair-desc').value = ''; document.getElementById('repair-cost').value = ''; showToast("Repair detail record kora hoyeche!", 'success'); }
-    function updateRepairList() { let c = document.getElementById('repair-list'); if(c) c.innerHTML = repairLogs.slice().reverse().slice(0,10).map(r => `<div class="py-2 flex justify-between text-xs text-slate-300 border-b border-slate-800"><span>${r.date} | ${r.desc}</span><b>Rs.${r.cost.toFixed(2)}</b></div>`).join(''); }
+    function updateRepairList() { let c = document.getElementById('repair-list'); if(c) c.innerHTML = repairLogs.slice().reverse().slice(0,10).map(r => `<div class="py-2 flex justify-between text-[10px] sm:text-xs text-slate-300 border-b border-slate-800"><span>${r.date} | ${r.desc}</span><b>Rs.${r.cost.toFixed(2)}</b></div>`).join(''); }
     function getRepairByDateRange(s,e) { return repairLogs.filter(r => r.date >= s && r.date <= e); }
     function showRepairReportTab(t) { document.querySelectorAll('#repair-report-modal .report-tab').forEach(tb=>tb.classList.remove('active')); if(event&&event.target) event.target.classList.add('active'); document.getElementById('repair-date-range-panel').style.display = t==='range'?'block':'none'; let now=new Date(), s='', e=''; if(t==='daily') { s=e=now.toISOString().split('T')[0]; } else if(t==='monthly') { s=new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]; e=new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0]; } else if(t==='yearly') { s=new Date(now.getFullYear(),0,1).toISOString().split('T')[0]; e=new Date(now.getFullYear(),11,31).toISOString().split('T')[0]; } let logs = getRepairByDateRange(s,e); let totalC = logs.reduce((a,b)=>a+b.cost,0); document.getElementById('repair-report-container').innerHTML = `<div style="text-align:center; padding:10px; color:white;"><strong>${t.toUpperCase()}</strong><br>Total: Rs.${totalC.toFixed(2)}</div><div class="payment-stats space-y-1">${logs.map(r=>`<div class="flex justify-between border-b border-slate-800 pb-1"><span>${r.date}</span><span>${r.desc} - Rs.${r.cost.toFixed(2)}</span></div>`).join('')}</div>`; }
     function updateRepairReport() { let s=document.getElementById('repair-start-date').value, e=document.getElementById('repair-end-date').value; if(!s||!e) return; let logs=getRepairByDateRange(s,e); let totalC=logs.reduce((a,b)=>a+b.cost,0); document.getElementById('repair-report-container').innerHTML = `<div style="text-align:center; color:white;"><strong>${s} to ${e}</strong><br>Total: Rs.${totalC.toFixed(2)}</div><div class="payment-stats space-y-1">${logs.map(r=>`<div class="flex justify-between border-b border-slate-800 pb-1"><span>${r.date}</span><span>${r.desc} - Rs.${r.cost.toFixed(2)}</span></div>`).join('')}</div>`; }
@@ -2282,7 +2472,7 @@
             options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'bottom' } } }
         });
         document.getElementById('peak-hours-stats').innerHTML = `
-            <div class="bg-slate-950 p-4 border border-slate-800 rounded-2xl space-y-1">
+            <div class="bg-slate-950 p-4 border border-slate-800 rounded-xl space-y-1 text-[10px] sm:text-xs">
                 <div class="flex justify-between"><strong>Peak Hour:</strong> <span>${peakHour}:00 - ${peakHour+1}:00 (${hourCounts[peakHour]} rides)</span></div>
                 <div class="flex justify-between"><strong>Ditiyo Ghori:</strong> <span>${hourCounts.indexOf([...hourCounts].sort((a,b)=>b-a)[1])}:00</span></div>
                 <div class="flex justify-between"><strong>Mot Rides:</strong> <span>${rides.length}</span></div>
@@ -2308,7 +2498,7 @@
         const avgFare = totalRides > 0 ? totalEarnings / totalRides : 0;
         const avgKm = totalRides > 0 ? totalKm / totalRides : 0;
         document.getElementById('driver-performance-stats').innerHTML = `
-            <div class="bg-slate-950 p-4 border border-slate-800 rounded-2xl space-y-1">
+            <div class="bg-slate-950 p-4 border border-slate-800 rounded-xl space-y-1 text-[10px] sm:text-xs">
                 <div class="flex justify-between"><strong>Rides ගණන:</strong> <span>${totalRides}</span></div>
                 <div class="flex justify-between"><strong>මුළු ආදායම:</strong> <span>Rs.${totalEarnings.toFixed(2)}</span></div>
                 <div class="flex justify-between"><strong>මුළු <span class="no-print">දුර</span>:</strong> <span>${totalKm.toFixed(1)} km</span></div>
@@ -2340,19 +2530,19 @@
         const weekRides = rides.filter(r => new Date(r.time) >= new Date(Date.now() - 7*24*60*60*1000));
         const weekEarnings = weekRides.reduce((s, r) => s + r.fare, 0);
         document.getElementById('driver-app-stats').innerHTML = `
-            <div class="grid grid-cols-2 gap-3 mb-2">
-                <div class="bg-gradient-to-br from-emerald-600 to-teal-700 p-4 rounded-2xl text-center shadow-lg">
-                    <div class="text-[9px] uppercase font-bold text-emerald-100">Ajker Mot Earnings</div>
-                    <div class="text-lg font-extrabold mt-1">Rs.${todayEarnings.toFixed(2)}</div>
-                    <div class="text-[9px] text-emerald-200 font-bold">${todayRides.length} rides</div>
+            <div class="grid grid-cols-2 gap-2 mb-2">
+                <div class="bg-gradient-to-br from-emerald-600 to-teal-700 p-3 rounded-xl text-center shadow-lg">
+                    <div class="text-[8px] uppercase font-bold text-emerald-100">Ajker Mot Earnings</div>
+                    <div class="text-base font-extrabold mt-1">Rs.${todayEarnings.toFixed(2)}</div>
+                    <div class="text-[8px] text-emerald-200 font-bold">${todayRides.length} rides</div>
                 </div>
-                <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-4 rounded-2xl text-center shadow-lg">
-                    <div class="text-[9px] uppercase font-bold text-blue-100">Saptahik Earnings</div>
-                    <div class="text-lg font-extrabold mt-1">Rs.${weekEarnings.toFixed(2)}</div>
-                    <div class="text-[9px] text-blue-200 font-bold">${weekRides.length} rides</div>
+                <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-3 rounded-xl text-center shadow-lg">
+                    <div class="text-[8px] uppercase font-bold text-blue-100">Saptahik Earnings</div>
+                    <div class="text-base font-extrabold mt-1">Rs.${weekEarnings.toFixed(2)}</div>
+                    <div class="text-[8px] text-blue-200 font-bold">${weekRides.length} rides</div>
                 </div>
             </div>`;
-        document.getElementById('driver-app-rides').innerHTML = `<div class="p-1"><div class="font-extrabold text-[10px] text-slate-400 mb-2 uppercase tracking-wider">📋 Shesher Rides</div>${todayRides.slice().reverse().slice(0, 5).map(r => `<div class="py-2 border-b border-slate-900 text-xs flex justify-between items-center"><div><strong class="text-blue-400 block">${r.id}</strong><span class="text-slate-500 text-[9px]">${new Date(r.time).toLocaleTimeString()}</span></div><strong class="text-emerald-400">Rs.${r.fare.toFixed(2)}</strong></div>`).join('')}${todayRides.length === 0 ? '<div class="text-center py-4 text-slate-500 text-xs">Aj kono ride ney</div>' : ''}</div>`;
+        document.getElementById('driver-app-rides').innerHTML = `<div class="p-1"><div class="font-extrabold text-[9px] text-slate-400 mb-2 uppercase tracking-wider">📋 Shesher Rides</div>${todayRides.slice().reverse().slice(0, 5).map(r => `<div class="py-1.5 border-b border-slate-900 text-[10px] sm:text-xs flex justify-between items-center"><div><strong class="text-blue-400 block">${r.id}</strong><span class="text-slate-500 text-[8px]">${new Date(r.time).toLocaleTimeString()}</span></div><strong class="text-emerald-400">Rs.${r.fare.toFixed(2)}</strong></div>`).join('')}${todayRides.length === 0 ? '<div class="text-center py-4 text-slate-500 text-[10px] sm:text-xs">Aj kono ride ney</div>' : ''}</div>`;
         document.getElementById('driver-app-modal').style.display = 'flex';
         closeM('settings-modal');
     }
@@ -2382,123 +2572,133 @@
         return false;
     }
 
+    let passengerMap = null;
+    let passengerMarker = null;
+
+    // ========== STREAMING_CHUNK: Integrating Passenger Portal views & tracking engines... ==========
     function initializePassengerLivePortalView(trackingId) {
         // Hide standard driver view container
-        document.getElementById('main-driver-view').style.display = 'none';
+        document.getElementById('main-driver-view').style.style = 'none';
+        document.getElementById('main-driver-view').classList.add('hidden');
         
         // Show dedicated tracking portal view cleanly
         const trackingPortal = document.getElementById('passenger-tracking-view');
         trackingPortal.classList.remove('hidden');
         document.body.style.background = '#090d16';
         
-        const payloadStr = localStorage.getItem(`tracking_${trackingId}`);
-        let payload;
-        
-        if (!payloadStr) {
-            // Trigger beautiful Colombo simulation if testing on another browser or device!
-            payload = {
-                id: trackingId,
-                lat: 6.9319, // Colombo Fort Start Coordinates
-                lng: 79.8428,
-                timestamp: Date.now(),
-                destination: 'Galle Face Green, Colombo',
-                status: 'active',
-                currentFare: 100,
-                distanceTraveled: '0.00'
-            };
-        } else {
-            payload = JSON.parse(payloadStr);
-        }
-        
-        document.getElementById('track-trip-id').innerText = payload.id;
-        document.getElementById('track-destination').innerText = payload.destination || 'Not specified';
-        document.getElementById('track-est-fare').innerText = `LKR ${parseFloat(payload.currentFare || 0).toFixed(2)}`;
-        document.getElementById('track-est-distance').innerText = `${payload.distanceTraveled || '0.00'} km`;
-        document.getElementById('track-last-update').innerText = new Date(payload.timestamp).toLocaleTimeString();
-        
-        if (payload.status === 'completed') {
-            document.getElementById('track-status').innerText = '🏁 Trip Completed';
-            const pdfBtn = document.getElementById('passenger-pdf-btn');
-            if (pdfBtn) pdfBtn.classList.remove('hidden');
-        }
+        function updatePortalData() {
+            const payloadStr = localStorage.getItem(`tracking_${trackingId}`);
+            let payload;
+            
+            if (!payloadStr) {
+                // Polling Colombo simulation fallback tracking variables if driver has not logged tracking payload
+                payload = {
+                    id: trackingId,
+                    lat: 6.9319, 
+                    lng: 79.8428,
+                    timestamp: Date.now(),
+                    startAddress: 'Colombo Fort, Sri Lanka',
+                    destination: 'Galle Face Green, Colombo, Sri Lanka',
+                    status: 'active',
+                    currentFare: 100,
+                    distanceTraveled: '0.00'
+                };
+            } else {
+                payload = JSON.parse(payloadStr);
+            }
+            
+            document.getElementById('track-trip-id').innerText = payload.id;
+            document.getElementById('track-pickup-location').innerText = payload.startAddress || 'Colombo Fort, Sri Lanka';
+            document.getElementById('track-destination').innerText = payload.destination || 'Galle Face Green, Colombo, Sri Lanka';
+            document.getElementById('track-est-fare').innerText = `LKR ${parseFloat(payload.currentFare || 0).toFixed(2)}`;
+            document.getElementById('track-est-distance').innerText = `${payload.distanceTraveled || '0.00'} km`;
+            document.getElementById('track-last-update').innerText = new Date(payload.timestamp).toLocaleTimeString();
+            
+            if (payload.status === 'completed') {
+                document.getElementById('track-status').innerText = '🏁 Trip Completed';
+                const pdfBtn = document.getElementById('passenger-pdf-btn');
+                if (pdfBtn) pdfBtn.classList.remove('hidden');
+            } else {
+                document.getElementById('track-status').innerText = '🟢 Active Odometer Track';
+            }
 
-        setTimeout(() => {
-            try {
-                let pMap = L.map('tracking-map-canvas', { zoomControl: false }).setView([payload.lat, payload.lng], 15);
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                    attribution: '&copy; OpenStreetMap',
-                    maxZoom: 19
-                }).addTo(pMap);
-                
-                let vehicleMarker = L.marker([payload.lat, payload.lng], {
-                    icon: L.divIcon({
-                        html: '<div style="font-size: 28px;">🚕</div>',
-                        className: 'custom-tracking-icon',
-                        iconSize: [32, 32],
-                        iconAnchor: [16, 16]
-                    })
-                }).addTo(pMap).bindPopup('Your Taxi Cab is Here!').openPopup();
+            // Map placement
+            if (!passengerMap) {
+                try {
+                    passengerMap = L.map('tracking-map-canvas', { zoomControl: false }).setView([payload.lat, payload.lng], 15);
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                        attribution: '&copy; OpenStreetMap',
+                        maxZoom: 19
+                    }).addTo(passengerMap);
+                    
+                    passengerMarker = L.marker([payload.lat, payload.lng], {
+                        icon: L.divIcon({
+                            html: '<div style="font-size: 28px;">🚕</div>',
+                            className: 'custom-tracking-icon',
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 16]
+                        })
+                    }).addTo(passengerMap).bindPopup('Your Taxi Cab is Here!').openPopup();
 
-                // If simulated journey, increment coordinates beautifully!
-                if (!payloadStr) {
-                    let step = 0;
-                    const path = [
-                        [6.9319, 79.8428], [6.9305, 79.8420], [6.9285, 79.8415], 
-                        [6.9260, 79.8410], [6.9235, 79.8430], [6.9210, 79.8440]
-                    ];
-                    let simInterval = setInterval(() => {
-                        step++;
-                        if (step >= path.length) {
-                            clearInterval(simInterval);
-                            document.getElementById('track-status').innerText = '🏁 Arrived at Destination';
-                            const pdfBtn = document.getElementById('passenger-pdf-btn');
-                            if (pdfBtn) pdfBtn.classList.remove('hidden');
+                    if (!payloadStr) {
+                        let step = 0;
+                        const path = [
+                            [6.9319, 79.8428], [6.9305, 79.8420], [6.9285, 79.8415], 
+                            [6.9260, 79.8410], [6.9235, 79.8430], [6.9210, 79.8440]
+                        ];
+                        let simInterval = setInterval(() => {
+                            step++;
+                            if (step >= path.length) {
+                                clearInterval(simInterval);
+                                document.getElementById('track-status').innerText = '🏁 Arrived at Destination';
+                                const pdfBtn = document.getElementById('passenger-pdf-btn');
+                                if (pdfBtn) pdfBtn.classList.remove('hidden');
+                                
+                                localStorage.setItem(`tracking_${trackingId}`, JSON.stringify({ 
+                                    id: trackingId, 
+                                    lat: path[path.length - 1][0], 
+                                    lng: path[path.length - 1][1], 
+                                    timestamp: Date.now(), 
+                                    startAddress: 'Colombo Fort, Sri Lanka',
+                                    destination: 'Galle Face Green, Colombo, Sri Lanka', 
+                                    status: 'completed',
+                                    currentFare: 100 + (step * 0.45 * SETTINGS.rate),
+                                    distanceTraveled: (step * 0.45).toFixed(2)
+                                }));
+                                return;
+                            }
+                            const cur = path[step];
+                            passengerMarker.setLatLng(cur);
+                            passengerMap.setView(cur, 15);
                             
-                            // Update simulation storage so downloadPassengerReceiptPDF matches the simulated values
-                            localStorage.setItem(`tracking_${trackingId}`, JSON.stringify({ 
-                                id: trackingId, 
-                                lat: path[path.length - 1][0], 
-                                lng: path[path.length - 1][1], 
-                                timestamp: Date.now(), 
-                                destination: 'Galle Face Green, Colombo', 
-                                status: 'completed',
-                                currentFare: 100 + (step * 0.45 * SETTINGS.rate),
-                                distanceTraveled: (step * 0.45).toFixed(2)
-                            }));
-                            return;
-                        }
-                        const cur = path[step];
-                        vehicleMarker.setLatLng(cur);
-                        pMap.setView(cur, 15);
-                        
-                        let currentSimDistance = (step * 0.45);
-                        let simulatedFare = 100 + (currentSimDistance * SETTINGS.rate);
-                        document.getElementById('track-est-distance').innerText = `${currentSimDistance.toFixed(2)} km`;
-                        document.getElementById('track-est-fare').innerText = `LKR ${simulatedFare.toFixed(2)}`;
-                        document.getElementById('track-last-update').innerText = new Date().toLocaleTimeString();
-                    }, 4000);
+                            let currentSimDistance = (step * 0.45);
+                            let simulatedFare = 100 + (currentSimDistance * SETTINGS.rate);
+                            document.getElementById('track-est-distance').innerText = `${currentSimDistance.toFixed(2)} km`;
+                            document.getElementById('track-est-fare').innerText = `LKR ${simulatedFare.toFixed(2)}`;
+                            document.getElementById('track-last-update').innerText = new Date().toLocaleTimeString();
+                        }, 4000);
+                    }
+                } catch(e) { console.error('Odometer map load failed: ', e); }
+            } else {
+                if (passengerMarker && payloadStr) {
+                    passengerMarker.setLatLng([payload.lat, payload.lng]);
+                    passengerMap.setView([payload.lat, payload.lng]);
                 }
-            } catch(e) { console.error('Odometer map load failed: ', e); }
-        }, 300);
+            }
+        }
+
+        updatePortalData();
+        setInterval(updatePortalData, 3000);
     }
 
+    // ========== STREAMING_CHUNK: Processing Passenger Client-side Thermal PDF compilation... ==========
+    // CRITICAL BUG FIX: Monospace HTML2Canvas offscreen receipt element generator to compile precise receipts matching meeterrrrrr.JPG
     async function downloadPassengerReceiptPDF() {
         showLoading(true);
-        const tempDiv = document.createElement('div');
-        tempDiv.style.position = 'absolute';
-        tempDiv.style.left = '-9999px';
-        tempDiv.style.top = '-9999px';
-        tempDiv.style.width = '320px';
-        tempDiv.style.background = '#ffffff';
-        tempDiv.style.color = '#000000';
-        tempDiv.style.padding = '24px';
-        tempDiv.style.fontFamily = 'monospace';
-        tempDiv.style.fontSize = '10px';
-        tempDiv.style.lineHeight = '1.4';
-
         const trackingId = window.location.hash.split('#track=')[1] || "TRK-TEMP";
         const payloadStr = localStorage.getItem(`tracking_${trackingId}`);
         let payload = {};
+        
         if (payloadStr) {
             payload = JSON.parse(payloadStr);
         } else {
@@ -2506,63 +2706,66 @@
                 id: trackingId,
                 distanceTraveled: document.getElementById('track-est-distance').innerText.replace(' km', ''),
                 currentFare: document.getElementById('track-est-fare').innerText.replace('LKR ', ''),
+                startAddress: document.getElementById('track-pickup-location').innerText,
                 destination: document.getElementById('track-destination').innerText,
                 timestamp: Date.now()
             };
         }
 
-        const fareVal = parseFloat(payload.currentFare || 0);
-        const fareWords = numberToWords(fareVal);
-        const dateTimeStr = new Date(payload.timestamp || Date.now()).toLocaleString();
+        // Render precise offline mock ride payload structure to feed perfect layout compiler
+        let mockRidePayload = {
+            id: payload.id,
+            time: payload.timestamp || Date.now(),
+            mobile: 'N/A',
+            from: payload.startAddress || 'Colombo, Sri Lanka',
+            to: payload.destination || 'Colombo, Sri Lanka',
+            km: parseFloat(payload.distanceTraveled || 0),
+            fare: parseFloat(payload.currentFare || 0),
+            mode: 'Auto',
+            payment: { method: 'Cash', detail: '' }
+        };
 
-        tempDiv.innerHTML = `
-            <div style="text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 4px; text-transform: uppercase; font-family: sans-serif;">${SETTINGS.receiptName}</div>
-            <div style="text-align: center; font-size: 9px; margin-bottom: 15px; border-bottom: 2px dashed #000; padding-bottom: 10px; color: #4b5563;">PASSENGER TAXI RECEIPT</div>
-            
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Trip Tracking ID:</span><b>${payload.id}</b></div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Date / Time:</span><b>${dateTimeStr}</b></div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;"><span>Journey Status:</span><b>COMPLETED</b></div>
-            
-            <div style="margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px;">
-                <b>Drop Destination:</b>
-                <div style="color: #374151; margin-top: 4px; font-family: sans-serif; font-size: 9px;">${payload.destination || 'Colombo'}</div>
-            </div>
-            
-            <div style="display: flex; justify-content: space-between; margin-top: 10px; border-top: 1px dashed #ccc; padding-top: 10px; margin-bottom: 6px;">
-                <span>Total Distance:</span><b>${payload.distanceTraveled || '0.00'} km</b>
-            </div>
-            
-            <div style="background: #f3f4f6; border-radius: 8px; padding: 12px; text-align: center; font-size: 15px; font-weight: bold; margin-top: 14px; margin-bottom: 14px; border: 1px solid #d1d5db; font-family: sans-serif;">
-                TOTAL: LKR ${fareVal.toFixed(2)}
-            </div>
-            
-            <div style="text-align: center; font-weight: bold; color: #4b5563; font-size: 9px; margin-bottom: 15px; font-family: sans-serif; padding: 0 4px;">
-                ${fareWords}
-            </div>
-            
-            <div style="text-align: center; font-size: 8px; border-top: 2px dashed #000; padding-top: 10px; color: #6b7280;">
-                Advance Meeter Taxi sobat pravas kelyabaddal dhanyawad! 🚕
-            </div>
-        `;
-
+        // Construct high-resolution offscreen elements matching meeterrrrrr.JPG
+        const tempDiv = document.createElement('div');
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.left = '-9999px';
+        tempDiv.style.top = '-9999px';
+        tempDiv.style.width = '300px';
+        tempDiv.style.background = '#ffffff';
+        tempDiv.style.padding = '15px';
+        tempDiv.style.boxSizing = 'border-box';
+        
+        tempDiv.innerHTML = getPerfectReceiptTemplateHTML(mockRidePayload, false, 'offline-temp-qr');
         document.body.appendChild(tempDiv);
-        try {
-            const canvas = await html2canvas(tempDiv, { scale: 2 });
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF({ unit: 'mm', format: 'a6' });
-            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 2.5, 5, 100, (canvas.height * 100) / canvas.width);
-            pdf.save(`AMT_Receipt_${payload.id}.pdf`);
-            showToast('Receipt PDF downloaded successfully!', 'success');
-        } catch (err) {
-            console.error("PDF download failed", err);
-            showToast('Failed to compile PDF Receipt', 'error');
-        } finally {
-            document.body.removeChild(tempDiv);
-            showLoading(false);
+
+        // Populate offline QR placeholder
+        const tempQr = document.getElementById('offline-temp-qr');
+        if (tempQr) {
+            try {
+                new QRCode(tempQr, { text: `${mockRidePayload.id}|Rs.${mockRidePayload.fare.toFixed(2)}|Cash`, width: 85, height: 85 });
+            } catch(err) { console.error(err); }
         }
+
+        // Trigger dynamic high contrast image translation
+        setTimeout(async () => {
+            try {
+                const canvas = await html2canvas(tempDiv, { scale: 2.5, useCORS: true });
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ unit: 'mm', format: 'a6' });
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 2.5, 5, 100, (canvas.height * 100) / canvas.width);
+                pdf.save(`AMT_Receipt_${mockRidePayload.id}.pdf`);
+                showToast('Receipt PDF downloaded successfully!', 'success');
+            } catch (err) {
+                console.error("PDF compiling failed", err);
+                showToast('Failed to compile PDF Receipt', 'error');
+            } finally {
+                document.body.removeChild(tempDiv);
+                showLoading(false);
+            }
+        }, 150);
     }
 
-    // ========== MANUAL ODOMETER CHANGES SYNC (Fixed calculation trigger loop) ==========
+    // ========== MANUAL ODOMETER CHANGES SYNC ==========
     function manualKmInputChanged() {
         let val = parseFloat(document.getElementById('manual-km-input').value);
         if (!isNaN(val) && val >= 0) {
@@ -2629,9 +2832,10 @@
         }
     });
 
+    // ========== STREAMING_CHUNK: Bootstrapping application sequence on load... ==========
     window.onload = function() { 
         if (checkClientSideTrackingRoutes()) {
-            return; // Halt standard driver parameters if tracking router took control
+            return; // Halt standard driver parameters if passenger portal tracking router took control
         }
         loadSettings(); 
         document.getElementById('manual-km-input').value = '0.00'; 
