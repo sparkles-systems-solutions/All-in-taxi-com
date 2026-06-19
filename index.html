@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Advance Meeter Taxi">
     <meta name="theme-color" content="#0f172a">
-    <title>ADVANCE MEETER TAXI - Premium</title>
+    <title>ADVANCE MEETER TAXI - Premium Live</title>
     
     <!-- Tailwind CSS for responsive UI components -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -127,16 +127,16 @@
 
     <!-- Navigation & Ride Mode Selectors -->
     <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800/80 mb-4 sm:mb-5">
-        <button id="mode-auto" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 bg-blue-600 text-white" onclick="setMode('auto')">
+        <button id="mode-auto" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 bg-blue-600 text-white mode-btn" onclick="setMode('auto')">
             <span class="text-xs sm:text-sm">🎯</span> <span>Auto</span>
         </button>
-        <button id="mode-gps" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 text-slate-400 hover:bg-slate-900" onclick="setMode('gps')">
+        <button id="mode-gps" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 text-slate-400 hover:bg-slate-900 mode-btn" onclick="setMode('gps')">
             <span class="text-xs sm:text-sm">📍</span> <span>GPS Mode</span>
         </button>
-        <button id="mode-manual" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 text-slate-400 hover:bg-slate-900" onclick="setMode('manual')">
+        <button id="mode-manual" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 text-slate-400 hover:bg-slate-900 mode-btn" onclick="setMode('manual')">
             <span class="text-xs sm:text-sm">✏️</span> <span>Manual</span>
         </button>
-        <button id="mode-delivery" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 text-slate-400 hover:bg-slate-900" onclick="setMode('delivery')">
+        <button id="mode-delivery" class="py-2 text-[10px] sm:text-xs rounded-lg sm:rounded-xl font-bold transition flex flex-col items-center gap-0.5 text-slate-400 hover:bg-slate-900 mode-btn" onclick="setMode('delivery')">
             <span class="text-xs sm:text-sm">📦</span> <span>Delivery</span>
         </button>
     </div>
@@ -236,6 +236,14 @@
         </div>
     </div>
 
+    <div id="driver-live-map-card" class="hidden bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden mb-3.5 p-2 transition-all">
+        <div class="flex justify-between items-center px-1.5 pb-2">
+            <span class="text-[9px] font-bold text-blue-400 uppercase tracking-wider">🗺️ සක්‍රීය ධාවන සිතියම (LIVE TRACKING MAP)</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+        </div>
+        <div id="driver-live-map" class="w-full h-36 bg-slate-900 rounded-xl overflow-hidden"></div>
+    </div>
+
     <!-- Google Map Navigation Shortcut Toggle -->
     <div id="nav-container" class="hidden mb-3.5">
         <button class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[11px] sm:text-xs font-bold transition active:scale-95 flex items-center justify-center gap-1.5" onclick="openPhoneNavigation()">
@@ -300,7 +308,6 @@
     </div>
 </div>
 
-<!-- Live Passenger Portal Area -->
 <div id="passenger-tracking-view" class="hidden w-full max-w-md bg-slate-900 border border-slate-800 rounded-[28px] sm:rounded-[32px] p-4 sm:p-5 shadow-2xl flex flex-col gap-3 sm:gap-4 mx-auto">
     <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-xl sm:rounded-2xl p-3.5 text-center">
         <h2 class="text-xs sm:text-sm font-extrabold tracking-wider uppercase">🚕 LIVE PASSENGER PORTAL</h2>
@@ -755,7 +762,7 @@
             <h3 class="text-xs sm:text-sm font-extrabold text-blue-400 uppercase tracking-widest">💰 FINANCIAL BALANCE SHEET</h3>
         </div>
         <div class="grid grid-cols-4 gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800 mb-1.5">
-            <button class="py-1.5 text-[9px] rounded-lg font-bold bg-blue-600 text-white animate-pulse" onclick="showProfitReportTab('daily')">Daily</button>
+            <button class="py-1.5 text-[9px] rounded-lg font-bold bg-blue-600 text-white" onclick="showProfitReportTab('daily')">Daily</button>
             <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showProfitReportTab('monthly')">Monthly</button>
             <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showProfitReportTab('yearly')">Yearly</button>
             <button class="py-1.5 text-[9px] rounded-lg font-bold text-slate-400" onclick="showProfitReportTab('range')">Range</button>
@@ -810,7 +817,7 @@
 </div>
 
 <!-- Main thermal bill receipt preview modal container (perfectly scaled and responsive) -->
-<div id="receiptModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto select-none">
+<div id="receiptModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto select-none font-sans">
     <div class="bg-white rounded-3xl p-4 sm:p-5 w-full max-w-sm text-black shadow-2xl flex flex-col gap-4 relative">
         <div class="flex justify-end no-print">
             <button class="text-slate-400 hover:text-black font-bold text-lg" onclick="closeM('receiptModal')">✕</button>
@@ -956,7 +963,7 @@
             if (n < 100) return tens[Math.floor(n/10)] + (n%10 ? " " + ones[n%10] : "");
             if (n < 1000) return ones[Math.floor(n/100)] + " Hundred" + (n%100 ? " " + convert(n%100) : "");
             if (n < 100000) return convert(Math.floor(n/1000)) + " Thousand" + (n%1000 ? " " + convert(n%1000) : "");
-            return convert(Math.floor(n/100000)) + " Lakh" + (n%100000 ? " " + convert(n%100000) : "");
+            return convert(Math.floor(num/100000)) + " Lakh" + (num%100000 ? " " + convert(num%100000) : "");
         }
         return convert(Math.floor(num)) + " Rupees Only";
     }
@@ -1048,11 +1055,13 @@
         }
     }
 
-    // ========== STREAMING_CHUNK: Initializing State Variables... ==========
+    // ========== STREAMING_CHUNK: Initializing State Variables & Real-time Pub-Sub Configs ==========
     let sTime = null, watchId = null, totalMeters = 0, lastLat = null, lastLon = null, currentLat = null, currentLng = null, currentRID = "", nightActive = false, gpsReady = false, currentMode = "auto", pendingRideData = null, selectedMethod = "cash", currentLocationAddress = "", currentLocationLat = null, currentLocationLon = null, startLocationAddress = "", currentDestinationAddress = "", mapObj = null, mapMarker = null, mapPickerField = null, currentTrackingId = null;
     let deliveryPickupName="", deliveryPickupPhone="", deliveryDeliveryName="", deliveryDeliveryPhone="";
     let SETTINGS = { base: 100, rate: 80, waitRate: 5, nightPercent: 10, appName: "ADVANCE MEETER TAXI", receiptName: "AMT OFFICIAL RECEIPT", password: "1234", logo: null };
     let currentReportType = "daily";
+    let passengerMap = null, passengerMarker = null;
+    let driverLiveMap = null, driverLiveMarker = null;
 
     // Modals Navigation Management
     function goBackToSettingsMenu() {
@@ -1072,11 +1081,45 @@
                 isRideActive: true, startTime: sTime, totalMeters, lastLat, lastLon, currentMode, nightActive, startLocationAddress, currentLocationAddress, gpsReady: true, destinationAddress: currentDestinationAddress, trackingId: currentTrackingId,
                 deliveryPickupName, deliveryPickupPhone, deliveryDeliveryName, deliveryDeliveryPhone
             }));
+            // Trigger active peer-to-peer telemetry sync broadcast
+            broadcastOdometerTelemetry();
         } else {
             localStorage.removeItem('amt_ride_state');
         }
     }
     
+    // ========== STREAMING_CHUNK: Peer-to-Peer Telemetry Broadcast Engine (No Backend Needed) ==========
+    async function broadcastOdometerTelemetry(forceStatus = 'active') {
+        if (!currentTrackingId) return;
+        const payload = {
+            id: currentTrackingId,
+            lat: currentLat || lastLat || 6.9271,
+            lng: currentLng || lastLon || 79.8612,
+            timestamp: Date.now(),
+            startAddress: startLocationAddress || 'Colombo, Sri Lanka',
+            destination: currentDestinationAddress || 'Colombo, Sri Lanka',
+            status: forceStatus,
+            currentFare: calcFare(),
+            distanceTraveled: (totalMeters/1000).toFixed(2),
+            mobile: document.getElementById('mobile').value || "N/A",
+            wait: parseInt(document.getElementById('wait-select').value) || 0,
+            disc: parseInt(document.getElementById('discount-input').value) || 0,
+            manualFare: parseInt(document.getElementById('manual-fare').value) || 0,
+            nightUsed: nightActive,
+            mode: currentMode === 'auto' ? "Auto" : (currentMode === 'gps' ? "GPS" : (currentMode === 'manual' ? "Manual" : "Delivery"))
+        };
+
+        // Stream JSON telemetry frame via public, secure, free SSE serverless relay (ntfy.sh)
+        try {
+            await fetch(`https://ntfy.sh/amt_tracking_${currentTrackingId}`, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+        } catch(e) {
+            console.error("Telemetry failed to reach peer relay: ", e);
+        }
+    }
+
     function loadRideState() {
         let saved = localStorage.getItem('amt_ride_state');
         if (saved) {
@@ -1141,6 +1184,7 @@
                 trackRide();
                 if (currentMode !== 'auto') document.getElementById('nav-container').classList.remove('hidden');
                 startTrackingUpdates();
+                initDriverLiveMap();
             }
             
             document.getElementById('restore-banner').classList.add('hidden');
@@ -1149,8 +1193,7 @@
         } catch(e){}
     }
 
-    // ========== STREAMING_CHUNK: Integrating Geolocation Decoder Logic... ==========
-    // PRECISE SRI LANKAN COZY ADDRESS DECODER FALLBACK
+    // ========== STREAMING_CHUNK: Integrating Precise Geolocation Decoder Logic ==========
     function getSriLankaFallbackAddress(lat, lon) {
         const hubs = [
             { name: "Kirimandala Mawatha, Narahenpita, Colombo District, Western Province, 00500, Sri Lanka", lat: 6.9044, lon: 79.8813 },
@@ -1225,6 +1268,7 @@
                     totalMeters += d;
                     updateDisplay();
                     saveRideState();
+                    updateDriverLiveMarker(lat, lon);
                 }
             }
             lastLat = lat; lastLon = lon;
@@ -1404,7 +1448,7 @@
         return Math.max(0, Math.round(total));
     }
 
-    // ========== STREAMING_CHUNK: Managing Active Ride Start & End Sequences... ==========
+    // ========== STREAMING_CHUNK: Managing Active Ride Start & End Sequences ==========
     async function startRide() {
         if(sTime) { showToast("Ride already active!", 'warning'); return; }
         
@@ -1415,7 +1459,7 @@
             } 
             startLocationAddress = currentLocationAddress;
         } 
-        else if(currentMode === 'gps') { 
+        else if(currentMode === 'gps' || currentMode === 'manual' || currentMode === 'delivery') { 
             if(!document.getElementById('start-loc').value.trim() || !document.getElementById('end-loc').value.trim()) { 
                 showToast("කරුණාකර Pickup සහ Drop ස්ථාන ඇතුළත් කරන්න!", 'warning'); 
                 return; 
@@ -1426,37 +1470,13 @@
             } 
             startLocationAddress = document.getElementById('start-loc').value;
             currentDestinationAddress = document.getElementById('end-loc').value;
-        } 
-        else if(currentMode === 'manual') { 
-            if(!document.getElementById('start-loc').value.trim() || !document.getElementById('end-loc').value.trim()) { 
-                showToast("කරුණාකර Pickup සහ Drop ස්ථාන ලියන්න!", 'warning'); 
-                return; 
-            } 
-            startLocationAddress = document.getElementById('start-loc').value;
-            currentDestinationAddress = document.getElementById('end-loc').value;
-        } 
-        else if(currentMode === 'delivery') { 
-            if(!document.getElementById('start-loc').value.trim() || !document.getElementById('end-loc').value.trim()) { 
-                showToast("කරුණාකර Delivery තොරතුරු සම්පූර්ණ කරන්න!", 'warning'); 
-                return; 
-            } 
-            startLocationAddress = document.getElementById('start-loc').value;
-            currentDestinationAddress = document.getElementById('end-loc').value;
-            deliveryPickupName = document.getElementById('pickup-name').value || "";
-            deliveryPickupPhone = document.getElementById('pickup-phone').value || "";
-            deliveryDeliveryName = document.getElementById('delivery-name').value || "";
-            deliveryDeliveryPhone = document.getElementById('delivery-phone').value || "";
         }
         
         sTime = new Date();
         await requestWakeLock();
         document.body.classList.add('ride-active');
         
-        if(currentMode === 'auto') {
-            totalMeters = 0;
-            trackRide();
-        } 
-        else if(currentMode === 'gps') {
+        if(currentMode === 'auto' || currentMode === 'gps' || currentMode === 'delivery') {
             totalMeters = 0;
             lastLat = null; 
             lastLon = null;
@@ -1467,33 +1487,17 @@
                         lastLon = pos.coords.longitude;
                         currentLat = pos.coords.latitude;
                         currentLng = pos.coords.longitude;
+                        initDriverLiveMap();
                     });
                 }
             }, 100);
             trackRide();
-            document.getElementById('nav-container').classList.remove('hidden');
+            if (currentMode !== 'auto') document.getElementById('nav-container').classList.remove('hidden');
         } 
         else if(currentMode === 'manual') {
             totalMeters = (parseFloat(document.getElementById('manual-km-input').value) || 0) * 1000;
             document.getElementById('nav-container').classList.remove('hidden');
         } 
-        else if(currentMode === 'delivery') {
-            totalMeters = 0;
-            lastLat = null; 
-            lastLon = null;
-            setTimeout(() => {
-                if(navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(pos) {
-                        lastLat = pos.coords.latitude;
-                        lastLon = pos.coords.longitude;
-                        currentLat = pos.coords.latitude;
-                        currentLng = pos.coords.longitude;
-                    });
-                }
-            }, 100);
-            trackRide();
-            document.getElementById('nav-container').classList.remove('hidden');
-        }
         
         document.getElementById('startBtn').innerHTML = "⏵ ACTIVE";
         document.getElementById('startBtn').disabled = true;
@@ -1512,6 +1516,38 @@
         sendNotification('Ride Started', 'Your taxi ride has started. Safe journey!');
     }
     
+    function initDriverLiveMap() {
+        document.getElementById('driver-live-map-card').classList.remove('hidden');
+        const defaultLat = currentLat || lastLat || 6.9271;
+        const defaultLng = currentLng || lastLon || 79.8612;
+        
+        try {
+            if (driverLiveMap) { driverLiveMap.remove(); }
+            driverLiveMap = L.map('driver-live-map', { zoomControl: false }).setView([defaultLat, defaultLng], 15);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(driverLiveMap);
+            
+            driverLiveMarker = L.marker([defaultLat, defaultLng], {
+                icon: L.divIcon({
+                    html: '<div style="font-size: 24px;">🚕</div>',
+                    className: 'driver-live-icon',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
+                })
+            }).addTo(driverLiveMap);
+        } catch(e) {
+            console.error("Driver tracking map configuration aborted:", e);
+        }
+    }
+
+    function updateDriverLiveMarker(lat, lon) {
+        if (driverLiveMarker && driverLiveMap) {
+            driverLiveMarker.setLatLng([lat, lon]);
+            driverLiveMap.setView([lat, lon]);
+        }
+    }
+
     // CRITICAL FIX: Direct Fallback geocoding ensures coordinates NEVER show as "location codes" on ending
     async function endRide() { 
         if(!sTime) { showToast("ක්‍රියාකාරී ගමනක් නොමැත", 'warning'); return; } 
@@ -1534,7 +1570,6 @@
             }
         }
         
-        // Dynamic Nominatim check with safe fallback address
         let finalAddress = getSriLankaFallbackAddress(finalLat, finalLon);
         if (finalLat && finalLon) {
             try {
@@ -1578,25 +1613,8 @@
             pendingRideData.deliveryPhone = deliveryDeliveryPhone; 
         } 
         
-        if (currentTrackingId) { 
-            localStorage.setItem(`tracking_${currentTrackingId}`, JSON.stringify({ 
-                id: currentTrackingId, 
-                lat: finalLat, 
-                lng: finalLon, 
-                timestamp: Date.now(), 
-                destination: finalAddress, 
-                startAddress: fromAddress,
-                status: 'completed',
-                currentFare: fare,
-                distanceTraveled: km.toFixed(2),
-                mobile: pendingRideData.mobile,
-                wait: pendingRideData.wait,
-                disc: pendingRideData.disc,
-                manualFare: pendingRideData.manualFare,
-                nightUsed: pendingRideData.nightUsed,
-                mode: pendingRideData.mode
-            })); 
-        }
+        // Final broadcast payload to completed state
+        await broadcastOdometerTelemetry('completed');
         
         resetDriverAppOnly();
         stopTrackingUpdates();
@@ -1628,6 +1646,7 @@
         document.getElementById('wait-select').value = '0';
         document.getElementById('manual-km-input').value = '0.00';
         document.getElementById('nav-container').classList.add('hidden');
+        document.getElementById('driver-live-map-card').classList.add('hidden');
         
         if (document.getElementById('pickup-name')) document.getElementById('pickup-name').value = '';
         if (document.getElementById('pickup-phone')) document.getElementById('pickup-phone').value = '';
@@ -1651,7 +1670,7 @@
     
     function generateReceiptID() { let n=new Date(), y=n.getFullYear(), m=n.getMonth(); let fy=(m>=3)?y:y-1; let c=parseInt(localStorage.getItem(`cnt_${fy}`)||"0")+1; localStorage.setItem(`cnt_${fy}`,c); return `${fy.toString().slice(-2)}${n.toLocaleString('en',{month:'short'}).toUpperCase()}-${c.toString().padStart(8,'0')}`; }
     
-    // ========== STREAMING_CHUNK: Managing payment and currency configurations... ==========
+    // ========== STREAMING_CHUNK: Managing payment and currency configurations ==========
     function openPaymentPopup() { 
         if(!pendingRideData) { showToast("No active trip parameters found.", 'error'); return; }
         selectedMethod = "cash"; 
@@ -1721,8 +1740,7 @@
         pendingRideData = null;
     }
 
-    // ========== STREAMING_CHUNK: Structuring receipt layout with 100% meeterrrrrr.JPG parity... ==========
-    // Structuring perfect receipt layout template matching meeterrrrrr.JPG
+    // ========== STREAMING_CHUNK: Structuring receipt layout with 100% meeterrrrrr.JPG parity ==========
     function getPerfectReceiptTemplateHTML(ride, isReprint, qrContainerId) {
         let sub = (ride.manualFare > 0) ? ride.manualFare : (SETTINGS.base + (Math.max(0, ride.km - 1) * SETTINGS.rate)); 
         let waitC = (ride.wait || 0) * SETTINGS.waitRate; 
@@ -1812,10 +1830,8 @@
                 </div>
                 
                 <div style="display: flex; justify-content: center; position: relative; margin: 15px 0 10px 0; min-height: 85px;">
-                    <!-- Centered QR element -->
                     <div id="${qrContainerId}" style="background: #fff; padding: 4px; border: 1px solid #000; display: inline-block;"></div>
                     
-                    <!-- Circular paid stamp seal strictly matching meeterrrrrr.JPG layout -->
                     <div style="position: absolute; bottom: -5px; right: 25px; width: 58px; height: 58px; border-radius: 50%; border: 2px dashed #ef4444; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.92); transform: rotate(-15deg); box-sizing: border-box; pointer-events: none; z-index: 10;">
                         <span style="font-size: 10px; font-weight: 900; color: #ef4444; font-family: sans-serif; letter-spacing: 0.5px;">✓ PAID</span>
                     </div>
@@ -1912,7 +1928,7 @@
         showToast('Email draft generated!', 'success');
     }
     
-    // ========== STREAMING_CHUNK: Processing high-contrast canvas transformations... ==========
+    // ========== STREAMING_CHUNK: Processing high-contrast canvas transformations ==========
     async function downloadReceiptPDF() { 
         let canvas = await html2canvas(document.getElementById('receipt-view'),{scale:2.5, useCORS: true}); 
         let {jsPDF} = window.jspdf; 
@@ -1928,7 +1944,7 @@
     
     function toggleNightCharge() { nightActive=!nightActive; let btn=document.getElementById('nightBtn'); if(nightActive) { btn.innerHTML='🌙 NIGHT ON'; showToast('Night charge enabled', 'info'); } else { btn.innerHTML='🌙 NIGHT OFF'; showToast('Night charge disabled', 'info'); } updateDisplay(); if(sTime) saveRideState(); }
     
-    function resetToNew() { if(sTime && !confirm("Reset ride?")) return; if(watchId) navigator.geolocation.clearWatch(watchId); releaseWakeLock(); document.body.classList.remove('ride-active'); document.querySelectorAll('.mode-btn').forEach(btn => { btn.style.pointerEvents='auto'; btn.style.opacity='1'; }); sTime=null; totalMeters=0; lastLat=null; lastLon=null; currentDestinationAddress=""; currentTrackingId=null; deliveryPickupName=""; deliveryPickupPhone=""; deliveryDeliveryName=""; deliveryDeliveryPhone=""; document.getElementById('startBtn').innerHTML="ගමන අරඹන්න (START)"; document.getElementById('startBtn').disabled=false; document.getElementById('start-loc').value=''; document.getElementById('end-loc').value=''; document.getElementById('mobile').value=''; document.getElementById('manual-fare').value=''; document.getElementById('discount-input').value=''; document.getElementById('wait-select').value='0'; document.getElementById('manual-km-input').value='0.00'; document.getElementById('nav-container').classList.add('hidden'); document.getElementById('pickup-name').value=''; document.getElementById('pickup-phone').value=''; document.getElementById('delivery-name').value=''; document.getElementById('delivery-phone').value=''; updateDisplay(); localStorage.removeItem('amt_ride_state'); if(currentMode==='auto') refreshCurrentLocation(); if(currentMode!=='manual') startGPS(); else { gpsReady=true; document.getElementById('startBtn').disabled=false; } showToast('Reset complete', 'info'); stopTrackingUpdates(); }
+    function resetToNew() { if(sTime && !confirm("Reset ride?")) return; if(watchId) navigator.geolocation.clearWatch(watchId); releaseWakeLock(); document.body.classList.remove('ride-active'); document.querySelectorAll('.mode-btn').forEach(btn => { btn.style.pointerEvents='auto'; btn.style.opacity='1'; }); sTime=null; totalMeters=0; lastLat=null; lastLon=null; currentDestinationAddress=""; currentTrackingId=null; deliveryPickupName=""; deliveryPickupPhone=""; deliveryDeliveryName=""; deliveryDeliveryPhone=""; document.getElementById('startBtn').innerHTML="ගමන අරඹන්න (START)"; document.getElementById('startBtn').disabled=false; document.getElementById('start-loc').value=''; document.getElementById('end-loc').value=''; document.getElementById('mobile').value=''; document.getElementById('manual-fare').value=''; document.getElementById('discount-input').value=''; document.getElementById('wait-select').value='0'; document.getElementById('manual-km-input').value='0.00'; document.getElementById('nav-container').classList.add('hidden'); document.getElementById('driver-live-map-card').classList.add('hidden'); document.getElementById('pickup-name').value=''; document.getElementById('pickup-phone').value=''; document.getElementById('delivery-name').value=''; document.getElementById('delivery-phone').value=''; updateDisplay(); localStorage.removeItem('amt_ride_state'); if(currentMode==='auto') refreshCurrentLocation(); if(currentMode!=='manual') startGPS(); else { gpsReady=true; document.getElementById('startBtn').disabled=false; } showToast('Reset complete', 'info'); stopTrackingUpdates(); }
     
     function filterHistory(type) {
         let now = new Date(), start = '', end = '';
@@ -1998,7 +2014,7 @@
         }
     }
     
-    // ========== STREAMING_CHUNK: Setting up chart rendering engine... ==========
+    // ========== STREAMING_CHUNK: Setting up chart rendering engine ==========
     function updateEarningsChart() { let rides = JSON.parse(localStorage.getItem('rides')||'[]'); let d=[0,0,0,0,0,0,0]; rides.forEach(r=>d[new Date(r.time).getDay()]+=r.fare); if(window.mChart) window.mChart.destroy(); window.mChart=new Chart(document.getElementById('earningsChart'),{ type:'bar', data:{ labels:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], datasets:[{ data:d, backgroundColor:'#667eea' }] } }); let today=rides.filter(r=>new Date(r.time).toDateString()===new Date().toDateString()).reduce((a,b)=>a+b.fare,0); let total=rides.reduce((a,b)=>a+b.fare,0); document.getElementById('stat-today').innerHTML="Rs."+today.toFixed(2); document.getElementById('stat-total').innerHTML="Rs."+total.toFixed(2); }
     function downloadCSV() { let rides=localStorage.getItem('rides') ? JSON.parse(localStorage.getItem('rides')) : []; let csv="Date,ID,From,To,Distance,Fare,Payment\n"+rides.map(r=>`${new Date(r.time).toLocaleDateString()},${r.id},${r.from},${r.to},${r.km.toFixed(2)},${r.fare.toFixed(2)},${r.payment?.method||'Cash'}`).join("\n"); let a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv], {type:'text/csv'})); a.download='rides.csv'; a.click(); showToast('CSV exported', 'success'); }
     
@@ -2230,30 +2246,12 @@
         }
     }
 
-    // ========== STREAMING_CHUNK: Processing Passenger Portal synchronization... ==========
+    // ========== STREAMING_CHUNK: Processing Passenger Portal Real-time Telemetry Synchronization ==========
     function generateTrackingId() { return 'TRK' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 6).toUpperCase(); }
     
     function showTrackingPopup() {
         if (!currentTrackingId) { currentTrackingId = generateTrackingId(); }
-        if (currentLat && currentLng) {
-            localStorage.setItem(`tracking_${currentTrackingId}`, JSON.stringify({ 
-                id: currentTrackingId, 
-                lat: currentLat, 
-                lng: currentLng, 
-                timestamp: Date.now(), 
-                destination: currentDestinationAddress || 'Colombo, Sri Lanka', 
-                startAddress: startLocationAddress || 'Colombo, Sri Lanka',
-                status: 'active',
-                currentFare: calcFare(),
-                distanceTraveled: (totalMeters/1000).toFixed(2),
-                mobile: document.getElementById('mobile').value || "N/A",
-                wait: parseInt(document.getElementById('wait-select').value) || 0,
-                disc: parseInt(document.getElementById('discount-input').value) || 0,
-                manualFare: parseInt(document.getElementById('manual-fare').value) || 0,
-                nightUsed: nightActive,
-                mode: currentMode === 'auto' ? "Auto" : (currentMode === 'gps' ? "GPS" : (currentMode === 'manual' ? "Manual" : "Delivery"))
-            }));
-        }
+        broadcastOdometerTelemetry();
         
         const currentCleanUrl = window.location.origin + window.location.pathname;
         const trackingUrl = `${currentCleanUrl}#track=${currentTrackingId}`;
@@ -2284,36 +2282,14 @@
     function startTrackingUpdates() {
         if (trackingInterval) clearInterval(trackingInterval);
         trackingInterval = setInterval(() => {
-            if (currentTrackingId && currentLat && currentLng && sTime) {
-                localStorage.setItem(`tracking_${currentTrackingId}`, JSON.stringify({ 
-                    id: currentTrackingId, 
-                    lat: currentLat, 
-                    lng: currentLng, 
-                    timestamp: Date.now(), 
-                    destination: currentDestinationAddress || 'Colombo, Sri Lanka', 
-                    startAddress: startLocationAddress || 'Colombo, Sri Lanka',
-                    status: 'active',
-                    currentFare: calcFare(),
-                    distanceTraveled: (totalMeters/1000).toFixed(2),
-                    mobile: document.getElementById('mobile').value || "N/A",
-                    wait: parseInt(document.getElementById('wait-select').value) || 0,
-                    disc: parseInt(document.getElementById('discount-input').value) || 0,
-                    manualFare: parseInt(document.getElementById('manual-fare').value) || 0,
-                    nightUsed: nightActive,
-                    mode: currentMode === 'auto' ? "Auto" : (currentMode === 'gps' ? "GPS" : (currentMode === 'manual' ? "Manual" : "Delivery"))
-                }));
+            if (sTime) {
+                broadcastOdometerTelemetry('active');
             }
         }, 3000);
     }
     
     function stopTrackingUpdates() {
         if (trackingInterval) { clearInterval(trackingInterval); trackingInterval = null; }
-        if (currentTrackingId) { 
-            let existing = JSON.parse(localStorage.getItem(`tracking_${currentTrackingId}`) || '{}');
-            existing.status = 'completed';
-            existing.timestamp = Date.now();
-            localStorage.setItem(`tracking_${currentTrackingId}`, JSON.stringify(existing)); 
-        }
     }
 
     function openMapPicker(field) {
@@ -2333,7 +2309,7 @@
                 mapMarker.on('dragend', function() { reverseMapGeocode(mapMarker.getLatLng().lat, mapMarker.getLatLng().lng); });
                 mapObj.on('click', function(e) { mapMarker.setLatLng(e.latlng); reverseMapGeocode(e.latlng.lat, e.latlng.lng); });
                 if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(pos) {
+                    navigator.geolocation.getCurrentPosition(pos => {
                         mapObj.setView([pos.coords.latitude, pos.coords.longitude], 14);
                         mapMarker.setLatLng([pos.coords.latitude, pos.coords.longitude]);
                         reverseMapGeocode(pos.coords.latitude, pos.coords.longitude);
@@ -2410,7 +2386,7 @@
         } catch(e) { return []; }
     }
     
-    // ========== STREAMING_CHUNK: Handling financial database calculations... ==========
+    // ========== STREAMING_CHUNK: Handling financial database calculations ==========
     let profitChart = null;
     function getProfitData(startDate, endDate) {
         let rides = JSON.parse(localStorage.getItem('rides') || '[]');
@@ -2603,10 +2579,10 @@
         return false;
     }
 
-    let passengerMap = null;
-    let passengerMarker = null;
+    // ========== STREAMING_CHUNK: Setting up Live Passenger Portal View Sync Logic ==========
+    let passengerEventSource = null;
+    let passengerMockTelemetryInterval = null;
 
-    // ========== STREAMING_CHUNK: Setting up Live Passenger portal view logic... ==========
     function initializePassengerLivePortalView(trackingId) {
         document.getElementById('main-driver-view').style.display = 'none';
         document.getElementById('main-driver-view').classList.add('hidden');
@@ -2615,144 +2591,166 @@
         trackingPortal.classList.remove('hidden');
         document.body.style.background = '#090d16';
         
-        function updatePortalData() {
-            const payloadStr = localStorage.getItem(`tracking_${trackingId}`);
-            let payload;
-            
-            if (!payloadStr) {
-                payload = {
-                    id: trackingId,
-                    lat: 6.9319, 
-                    lng: 79.8428,
-                    timestamp: Date.now(),
-                    startAddress: 'Colombo Fort, Sri Lanka',
-                    destination: 'Galle Face Green, Colombo, Sri Lanka',
-                    status: 'active',
-                    currentFare: 100,
-                    distanceTraveled: '0.00'
-                };
-            } else {
-                payload = JSON.parse(payloadStr);
-            }
-            
-            document.getElementById('track-trip-id').innerText = payload.id;
-            document.getElementById('track-pickup-location').innerText = payload.startAddress || 'Colombo Fort, Sri Lanka';
-            document.getElementById('track-destination').innerText = payload.destination || 'Galle Face Green, Colombo, Sri Lanka';
-            document.getElementById('track-est-fare').innerText = `LKR ${parseFloat(payload.currentFare || 0).toFixed(2)}`;
-            document.getElementById('track-est-distance').innerText = `${payload.distanceTraveled || '0.00'} km`;
-            document.getElementById('track-last-update').innerText = new Date(payload.timestamp).toLocaleTimeString();
-            
-            if (payload.status === 'completed') {
-                document.getElementById('track-status').innerText = '🏁 Trip Completed';
-                const pdfBtn = document.getElementById('passenger-pdf-btn');
-                if (pdfBtn) pdfBtn.classList.remove('hidden');
-            } else {
-                document.getElementById('track-status').innerText = '🟢 Active Odometer Track';
-            }
-
-            if (!passengerMap) {
-                try {
-                    passengerMap = L.map('tracking-map-canvas', { zoomControl: false }).setView([payload.lat, payload.lng], 15);
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                        attribution: '&copy; OpenStreetMap',
-                        maxZoom: 19
-                    }).addTo(passengerMap);
-                    
-                    passengerMarker = L.marker([payload.lat, payload.lng], {
-                        icon: L.divIcon({
-                            html: '<div style="font-size: 28px;">🚕</div>',
-                            className: 'custom-tracking-icon',
-                            iconSize: [32, 32],
-                            iconAnchor: [16, 16]
-                        })
-                    }).addTo(passengerMap).bindPopup('Your Taxi Cab is Here!').openPopup();
-
-                    if (!payloadStr) {
-                        let step = 0;
-                        const path = [
-                            [6.9319, 79.8428], [6.9305, 79.8420], [6.9285, 79.8415], 
-                            [6.9260, 79.8410], [6.9235, 79.8430], [6.9210, 79.8440]
-                        ];
-                        let simInterval = setInterval(() => {
-                            step++;
-                            if (step >= path.length) {
-                                clearInterval(simInterval);
-                                document.getElementById('track-status').innerText = '🏁 Arrived at Destination';
-                                const pdfBtn = document.getElementById('passenger-pdf-btn');
-                                if (pdfBtn) pdfBtn.classList.remove('hidden');
-                                
-                                localStorage.setItem(`tracking_${trackingId}`, JSON.stringify({ 
-                                    id: trackingId, 
-                                    lat: path[path.length - 1][0], 
-                                    lng: path[path.length - 1][1], 
-                                    timestamp: Date.now(), 
-                                    startAddress: 'Colombo Fort, Sri Lanka',
-                                    destination: 'Galle Face Green, Colombo, Sri Lanka', 
-                                    status: 'completed',
-                                    currentFare: 100 + (step * 0.45 * SETTINGS.rate),
-                                    distanceTraveled: (step * 0.45).toFixed(2)
-                                }));
-                                return;
-                            }
-                            const cur = path[step];
-                            passengerMarker.setLatLng(cur);
-                            passengerMap.setView(cur, 15);
-                            
-                            let currentSimDistance = (step * 0.45);
-                            let simulatedFare = 100 + (currentSimDistance * SETTINGS.rate);
-                            document.getElementById('track-est-distance').innerText = `${currentSimDistance.toFixed(2)} km`;
-                            document.getElementById('track-est-fare').innerText = `LKR ${simulatedFare.toFixed(2)}`;
-                            document.getElementById('track-last-update').innerText = new Date().toLocaleTimeString();
-                        }, 4000);
-                    }
-                } catch(e) { console.error('Odometer map load failed: ', e); }
-            } else {
-                if (passengerMarker && payloadStr) {
-                    passengerMarker.setLatLng([payload.lat, payload.lng]);
-                    passengerMap.setView([payload.lat, payload.lng]);
-                }
-            }
-        }
-
-        updatePortalData();
-        setInterval(updatePortalData, 3000);
+        // Connect to Serverless Peer-to-Peer Relay via SSE (ntfy.sh)
+        connectToLivePassengerRelay(trackingId);
     }
 
-    // ========== STREAMING_CHUNK: Processing Passenger Client-side Thermal PDF compilation... ==========
-    // Passenger PDF receipt download which perfectly matches meeterrrrrr.JPG format
-    async function downloadPassengerReceiptPDF() {
-        showLoading(true);
-        const trackingId = window.location.hash.split('#track=')[1] || "TRK-TEMP";
-        const payloadStr = localStorage.getItem(`tracking_${trackingId}`);
-        let payload = {};
+    function connectToLivePassengerRelay(trackingId) {
+        if (passengerEventSource) {
+            passengerEventSource.close();
+        }
         
-        if (payloadStr) {
-            payload = JSON.parse(payloadStr);
-        } else {
-            payload = {
-                id: trackingId,
-                distanceTraveled: document.getElementById('track-est-distance').innerText.replace(' km', ''),
-                currentFare: document.getElementById('track-est-fare').innerText.replace('LKR ', ''),
-                startAddress: document.getElementById('track-pickup-location').innerText,
-                destination: document.getElementById('track-destination').innerText,
-                timestamp: Date.now()
-            };
+        // Listen to live published telemetry events from Driver
+        passengerEventSource = new EventSource(`https://ntfy.sh/amt_tracking_${trackingId}/sse`);
+        
+        passengerEventSource.onmessage = function(event) {
+            try {
+                const sseData = JSON.parse(event.data);
+                if (sseData && sseData.message) {
+                    const payload = JSON.parse(sseData.message);
+                    updatePassengerUIWithPayload(payload);
+                }
+            } catch(e) {
+                console.error("SSE stream telemetry parsing error: ", e);
+            }
+        };
+
+        passengerEventSource.onerror = function() {
+            setTimeout(() => connectToLivePassengerRelay(trackingId), 4000);
+        };
+
+        // Fallback simulation if no active driver broadcast is heard yet
+        setTimeout(() => {
+            if (!window.hasReceivedLiveTelemetry) {
+                initFallbackMockPassengerSimulation(trackingId);
+            }
+        }, 3000);
+    }
+
+    function updatePassengerUIWithPayload(payload) {
+        window.hasReceivedLiveTelemetry = true;
+        if (passengerMockTelemetryInterval) {
+            clearInterval(passengerMockTelemetryInterval);
+            passengerMockTelemetryInterval = null;
         }
 
-        // Mapping mock ride values accurately matching active driver parameters
+        window.lastPassengerPayload = payload; // Store payload for PDF rendering
+
+        document.getElementById('track-trip-id').innerText = payload.id;
+        document.getElementById('track-pickup-location').innerText = payload.startAddress || 'Colombo, Sri Lanka';
+        document.getElementById('track-destination').innerText = payload.destination || 'Colombo, Sri Lanka';
+        document.getElementById('track-est-fare').innerText = `LKR ${parseFloat(payload.currentFare || 0).toFixed(2)}`;
+        document.getElementById('track-est-distance').innerText = `${payload.distanceTraveled || '0.00'} km`;
+        document.getElementById('track-last-update').innerText = new Date(payload.timestamp).toLocaleTimeString();
+        
+        if (payload.status === 'completed') {
+            document.getElementById('track-status').innerText = '🏁 Trip Completed';
+            const pdfBtn = document.getElementById('passenger-pdf-btn');
+            if (pdfBtn) pdfBtn.classList.remove('hidden');
+        } else {
+            document.getElementById('track-status').innerText = '🟢 Active Odometer Track';
+        }
+
+        const lat = parseFloat(payload.lat);
+        const lng = parseFloat(payload.lng);
+
+        if (!passengerMap) {
+            try {
+                passengerMap = L.map('tracking-map-canvas', { zoomControl: false }).setView([lat, lng], 15);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 19
+                }).addTo(passengerMap);
+                
+                passengerMarker = L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        html: '<div style="font-size: 28px;">🚕</div>',
+                        className: 'custom-tracking-icon',
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 16]
+                    })
+                }).addTo(passengerMap).bindPopup('Your Taxi Cab is Here!').openPopup();
+            } catch(e) {
+                console.error("Passenger Leaflet initialization aborted: ", e);
+            }
+        } else {
+            if (passengerMarker) {
+                passengerMarker.setLatLng([lat, lng]);
+                passengerMap.setView([lat, lng]);
+            }
+        }
+    }
+
+    // fallback simulation system is used if driver has not started transmitting yet
+    function initFallbackMockPassengerSimulation(trackingId) {
+        let step = 0;
+        const path = [
+            [6.9319, 79.8428], [6.9305, 79.8420], [6.9285, 79.8415], 
+            [6.9260, 79.8410], [6.9235, 79.8430], [6.9210, 79.8440]
+        ];
+
+        function playSimulation() {
+            if (window.hasReceivedLiveTelemetry) return;
+            
+            const currentCoords = path[step];
+            const payload = {
+                id: trackingId,
+                lat: currentCoords[0],
+                lng: currentCoords[1],
+                timestamp: Date.now(),
+                startAddress: 'Colombo Fort, Sri Lanka',
+                destination: 'Galle Face Green, Colombo',
+                status: (step === path.length - 1) ? 'completed' : 'active',
+                currentFare: 100 + (step * 0.45 * SETTINGS.rate),
+                distanceTraveled: (step * 0.45).toFixed(2),
+                mobile: "N/A",
+                wait: 0,
+                disc: 0,
+                manualFare: 0,
+                mode: "Auto"
+            };
+
+            updatePassengerUIWithPayload(payload);
+            step++;
+            if (step >= path.length) {
+                clearInterval(passengerMockTelemetryInterval);
+            }
+        }
+
+        playSimulation();
+        passengerMockTelemetryInterval = setInterval(() => {
+            step++;
+            if (step < path.length) {
+                playSimulation();
+            } else {
+                clearInterval(passengerMockTelemetryInterval);
+            }
+        }, 4000);
+    }
+
+    // ========== STREAMING_CHUNK: Processing Passenger Client-side Thermal PDF Compilation ==========
+    async function downloadPassengerReceiptPDF() {
+        showLoading(true);
+        const payload = window.lastPassengerPayload;
+        if (!payload) {
+            showToast("Telemetry billing state unresolved", 'error');
+            showLoading(false);
+            return;
+        }
+
+        // Map telemetry payload into structured billing template
         let mockRidePayload = {
-            id: payload.id || trackingId,
+            id: payload.id,
             time: payload.timestamp || Date.now(),
             mobile: payload.mobile || 'N/A',
             from: payload.startAddress || 'Unknown Pickup Location',
             to: payload.destination || 'Unknown Drop-off Location',
-            km: parseFloat(payload.distanceTraveled || payload.km || 0),
-            fare: parseFloat(payload.currentFare || payload.fare || 0),
+            km: parseFloat(payload.distanceTraveled || 0),
+            fare: parseFloat(payload.currentFare || 0),
             mode: payload.mode || 'Auto',
             payment: payload.payment || { method: 'Cash', detail: '' },
-            wait: payload.wait || 0,
-            disc: payload.disc || 0,
-            manualFare: payload.manualFare || 0
+            wait: parseInt(payload.wait || 0),
+            disc: parseInt(payload.disc || 0),
+            manualFare: parseInt(payload.manualFare || 0)
         };
 
         const tempDiv = document.createElement('div');
@@ -2764,7 +2762,7 @@
         tempDiv.style.padding = '15px';
         tempDiv.style.boxSizing = 'border-box';
         
-        // Render identical structural design exactly as seen in meeterrrrrr.JPG
+        // Render exact visual format specified in meeterrrrrr.JPG
         tempDiv.innerHTML = getPerfectReceiptTemplateHTML(mockRidePayload, false, 'passenger-offline-qr');
         document.body.appendChild(tempDiv);
 
@@ -2790,7 +2788,7 @@
                 document.body.removeChild(tempDiv);
                 showLoading(false);
             }
-        }, 150);
+        }, 200);
     }
 
     // ========== MANUAL ODOMETER CHANGES SYNC ==========
