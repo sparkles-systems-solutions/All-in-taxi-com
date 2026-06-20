@@ -356,6 +356,31 @@
                 <span class="text-slate-500 font-bold">ගමන් කළ දුර ප්‍රමාණය:</span>
                 <strong id="track-est-distance" class="text-slate-300 font-extrabold text-blue-400" id="track-km-val">0.00 km</strong>
             </div>
+            <div class="flex justify-between border-b border-slate-900 pb-1">
+                <span class="text-slate-500 font-bold">ගිණුම් ප්‍රකාරය (Mode):</span>
+                <strong id="track-ride-mode" class="text-amber-400 font-bold">🎯 Auto Mode</strong>
+            </div>
+            <div id="delivery-mode-details" class="hidden pt-2 border-t border-slate-800 mt-2">
+                <h4 class="text-[9px] font-bold text-amber-400 uppercase tracking-wider mb-2">📦 ඩෙලිවරි විස්තර (DELIVERY DETAILS)</h4>
+                <div class="space-y-1 text-[9px]">
+                    <div class="flex justify-between pb-1">
+                        <span class="text-slate-500 font-bold">पাठකર්තා නම (Sender):</span>
+                        <strong id="delivery-sender-name" class="text-slate-300">N/A</strong>
+                    </div>
+                    <div class="flex justify-between pb-1">
+                        <span class="text-slate-500 font-bold">Sender දුරකථන:</span>
+                        <strong id="delivery-sender-phone" class="text-slate-300 font-mono">N/A</strong>
+                    </div>
+                    <div class="flex justify-between pb-1">
+                        <span class="text-slate-500 font-bold">ලබන්නා නම (Recipient):</span>
+                        <strong id="delivery-recipient-name" class="text-slate-300">N/A</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500 font-bold">Recipient දුරකථන:</span>
+                        <strong id="delivery-recipient-phone" class="text-slate-300 font-mono">N/A</strong>
+                    </div>
+                </div>
+            </div>
             <div class="flex justify-between">
                 <span class="text-slate-500 font-bold">අවසන් වරට යාවත්කාලීන වූයේ:</span>
                 <span id="track-last-update" class="text-slate-400 font-semibold">Just Now</span>
@@ -1155,8 +1180,18 @@
             disc: parseInt(document.getElementById('discount-input').value) || 0,
             manualFare: parseInt(document.getElementById('manual-fare').value) || 0,
             nightUsed: nightActive,
-            mode: currentMode === 'auto' ? "Auto" : (currentMode === 'gps' ? "GPS" : (currentMode === 'manual' ? "Manual" : "Delivery"))
+            mode: currentMode === 'auto' ? "auto" : (currentMode === 'gps' ? "gps" : (currentMode === 'manual' ? "manual" : "delivery"))
         };
+        
+        // Include delivery details if in delivery mode
+        if (currentMode === 'delivery') {
+            payload.deliveryDetails = {
+                senderName: deliveryPickupName || 'N/A',
+                senderPhone: deliveryPickupPhone || 'N/A',
+                recipientName: deliveryDeliveryName || 'N/A',
+                recipientPhone: deliveryDeliveryPhone || 'N/A'
+            };
+        }
 
         // Stream JSON telemetry frame via public, secure, free SSE serverless relay (ntfy.sh)
         try {
@@ -2755,6 +2790,28 @@
         document.getElementById('track-est-distance').innerText = `${payload.distanceTraveled || '0.00'} km`;
         document.getElementById('track-last-update').innerText = new Date(payload.timestamp).toLocaleTimeString();
         
+        // Display current ride mode
+        const modeEmoji = {
+            'auto': '🎯 Auto Mode',
+            'gps': '📍 GPS Mode',
+            'manual': '✏️ Manual Mode',
+            'delivery': '📦 Delivery Mode'
+        };
+        const displayMode = modeEmoji[payload.mode] || `🎯 ${payload.mode || 'Auto Mode'}`;
+        document.getElementById('track-ride-mode').innerText = displayMode;
+        
+        // Display delivery mode details if applicable
+        const deliveryDetailsDiv = document.getElementById('delivery-mode-details');
+        if (payload.mode === 'delivery' && payload.deliveryDetails) {
+            deliveryDetailsDiv.classList.remove('hidden');
+            document.getElementById('delivery-sender-name').innerText = payload.deliveryDetails.senderName || 'N/A';
+            document.getElementById('delivery-sender-phone').innerText = payload.deliveryDetails.senderPhone || 'N/A';
+            document.getElementById('delivery-recipient-name').innerText = payload.deliveryDetails.recipientName || 'N/A';
+            document.getElementById('delivery-recipient-phone').innerText = payload.deliveryDetails.recipientPhone || 'N/A';
+        } else {
+            deliveryDetailsDiv.classList.add('hidden');
+        }
+        
         if (payload.status === 'completed') {
             document.getElementById('track-status').innerText = '🏁 Trip Completed';
             const pdfBtn = document.getElementById('passenger-pdf-btn');
@@ -2804,6 +2861,18 @@
             [6.9319, 79.8428], [6.9305, 79.8420], [6.9285, 79.8415], 
             [6.9260, 79.8410], [6.9235, 79.8430], [6.9210, 79.8440]
         ];
+        
+        // Randomly select a mode for demo purposes
+        const modes = ['auto', 'gps', 'manual', 'delivery'];
+        const selectedMode = modes[Math.floor(Math.random() * modes.length)];
+        
+        // Mock delivery details if delivery mode is selected
+        const deliveryDetails = selectedMode === 'delivery' ? {
+            senderName: 'අ. ස. ජයසිංහ',
+            senderPhone: '+94 71 234 5678',
+            recipientName: 'මර්යම් ෆතිමා',
+            recipientPhone: '+94 76 876 5432'
+        } : null;
 
         function playSimulation() {
             if (window.hasReceivedLiveTelemetry) return;
@@ -2823,7 +2892,8 @@
                 wait: 0,
                 disc: 0,
                 manualFare: 0,
-                mode: "Auto"
+                mode: selectedMode,
+                deliveryDetails: deliveryDetails
             };
 
             updatePassengerUIWithPayload(payload);
@@ -2975,9 +3045,15 @@
 
     // ========== BOOTSTRAP INITIALIZATION SEQUENCE ==========
     window.onload = function() { 
+        // Critical: Check for passenger tracking mode FIRST before driver initialization
         if (checkClientSideTrackingRoutes()) {
+            // If we're in passenger tracking mode, don't load driver settings
+            // This prevents passenger device GPS from being loaded as driver coordinates
+            showToast('🚕 Passenger Live Portal Initialized', 'success');
             return; 
         }
+        
+        // Only load driver-specific settings and initialization
         loadSettings(); 
         document.getElementById('manual-km-input').value = '0.00'; 
         initVoiceRecognition(); 
@@ -2986,5 +3062,3 @@
 </script>
 </body>
 </html>
-```
- eof
