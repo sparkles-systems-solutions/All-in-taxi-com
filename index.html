@@ -83,11 +83,44 @@
             opacity: 1;
         }
         @media print {
-            body { background: white !important; color: black !important; }
+            * { margin: 0 !important; padding: 0 !important; }
+            body { 
+                background: white !important; 
+                color: black !important;
+                width: 80mm !important;
+                height: 297mm !important;
+                page-break-after: always;
+            }
             body * { visibility: hidden !important; }
-            #receiptModal, #receiptModal * { visibility: visible !important; }
-            #receiptModal { display: flex !important; position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; background: white !important; }
+            #receiptModal, #receiptModal * { 
+                visibility: visible !important;
+                page-break-inside: avoid !important;
+            }
+            #receiptModal { 
+                display: flex !important; 
+                position: static !important; 
+                width: 80mm !important;
+                height: 297mm !important;
+                background: white !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            #receipt-view {
+                width: 80mm !important;
+                font-family: monospace !important;
+                font-size: 11px !important;
+                line-height: 1.3 !important;
+                page-break-inside: avoid !important;
+                margin: 0 !important;
+                padding: 2mm !important;
+            }
             .no-print { display: none !important; }
+            
+            /* Thermal paper optimization */
+            @page {
+                size: 80mm 297mm;
+                margin: 0;
+            }
         }
     </style>
 </head>
@@ -292,6 +325,31 @@
             <div class="space-y-1">
                 <label class="text-[8px] sm:text-[9px] text-slate-500 font-bold uppercase">වට්ටම් (Discount LKR)</label>
                 <input type="number" id="discount-input" placeholder="වට්ටම් / Discount (LKR)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-2 text-[10px] sm:text-xs text-white focus:outline-none" oninput="updateDisplay()">
+            </div>
+        </div>
+    </div>
+
+    <!-- Ride Status Indicator Panel -->
+    <div id="ride-status-panel" class="hidden bg-slate-950 border border-slate-800/80 rounded-xl sm:rounded-2xl p-3 mb-3.5 space-y-2">
+        <div class="flex items-center justify-between">
+            <span class="text-[9px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">🚗 ගමනේ තත්ත්වය (RIDE STATUS)</span>
+            <div id="ride-status-badge" class="animate-pulse px-2 py-1 rounded-full bg-emerald-600/30 text-emerald-400 text-[8px] sm:text-[9px] font-bold">
+                🟢 සක්‍රීය (ACTIVE)
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-2 text-center text-[10px] sm:text-xs">
+            <div class="bg-slate-900/50 rounded-lg p-2">
+                <div class="text-slate-500 font-bold mb-1">⏱️ කාලය</div>
+                <div id="ride-elapsed-time" class="text-blue-400 font-extrabold">00:00</div>
+            </div>
+            <div class="bg-slate-900/50 rounded-lg p-2">
+                <div class="text-slate-500 font-bold mb-1">📍 නිරවද්යතා</div>
+                <div id="ride-gps-accuracy" class="text-amber-400 font-extrabold">--m</div>
+            </div>
+            <div class="bg-slate-900/50 rounded-lg p-2">
+                <div class="text-slate-500 font-bold mb-1">🔋 බැටරි</div>
+                <div id="ride-battery-level" class="text-green-400 font-extrabold">--</div>
             </div>
         </div>
     </div>
@@ -1010,21 +1068,82 @@
     }
     
     // ========== WAKE LOCK MANAGEMENTS ==========
+    // ========== ENHANCED SCREEN WAKE LOCK MANAGEMENT ==========
     let wakeLock = null;
+    let screenStateIndicator = null;
+    
     async function requestWakeLock() {
         if ('wakeLock' in navigator) {
             try {
                 wakeLock = await navigator.wakeLock.request('screen');
+                
+                // Visual feedback
+                showScreenStateIndicator('🟢 SCREEN LOCKED (ON)', 'success');
+                showToast('📱 ස්ක්‍රීන ගිණුම ON - ගමන සක්‍රීය වී ඇත', 'success');
+                
+                // Re-acquire lock if page visibility changes
+                document.addEventListener('visibilitychange', async () => {
+                    if (document.hidden || !wakeLock) {
+                        if (sTime) { // If ride still active
+                            try {
+                                wakeLock = await navigator.wakeLock.request('screen');
+                                showScreenStateIndicator('🟢 SCREEN LOCKED (RESTORED)', 'success');
+                            } catch(err) {
+                                console.log('Failed to restore wake lock');
+                            }
+                        }
+                    }
+                });
+                
                 return true;
-            } catch(e) { return false; }
+            } catch(e) { 
+                console.warn('Wake Lock API not supported or denied', e);
+                showScreenStateIndicator('⚠️ SCREEN LOCK FAILED', 'warning');
+                return false;
+            }
+        }
+        
+        // Fallback for browsers without Wake Lock API
+        if (sTime) {
+            showScreenStateIndicator('📱 Screen Manual Mode (No Wake Lock API)', 'info');
         }
         return false;
     }
+    
     function releaseWakeLock() {
         if (wakeLock) {
             wakeLock.release();
             wakeLock = null;
+            showScreenStateIndicator('⚫ SCREEN UNLOCKED (OFF)', 'danger');
+            showToast('📱 ස්ක්‍රීන ගිණුම OFF - සාධාරණ ස්ක්‍රීන කාලසීමා යෙදෙයි', 'info');
         }
+    }
+    
+    function showScreenStateIndicator(text, type) {
+        // Remove old indicator if exists
+        const oldIndicator = document.querySelector('[id="screen-state-indicator"]');
+        if (oldIndicator) oldIndicator.remove();
+        
+        // Only show indicator during ride
+        if (!sTime) return;
+        
+        const colors = {
+            'success': 'bg-emerald-600 text-white',
+            'danger': 'bg-rose-600 text-white',
+            'warning': 'bg-amber-600 text-white',
+            'info': 'bg-blue-600 text-white'
+        };
+        
+        const indicator = document.createElement('div');
+        indicator.id = 'screen-state-indicator';
+        indicator.className = `fixed top-4 right-4 px-3 py-2 rounded-lg text-[10px] sm:text-xs font-bold text-center z-50 ${colors[type] || colors.info} transition-all`;
+        indicator.innerHTML = text;
+        document.body.appendChild(indicator);
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            if (indicator.parentElement) indicator.remove();
+        }, 5000);
     }
 
     // ========== NUMBER TO WORDS (SINHALA/ENGLISH ADAPTER) ==========
@@ -1136,6 +1255,70 @@
     let currentReportType = "daily";
     let passengerMap = null, passengerMarker = null;
     let driverPopupMap = null, driverPopupMarker = null;
+    
+    // ========== RIDE STATUS MONITORING ==========
+    let rideStatusInterval = null;
+    let currentGPSAccuracy = 0;
+    
+    function startRideStatusMonitoring() {
+        const statusPanel = document.getElementById('ride-status-panel');
+        if (statusPanel) statusPanel.classList.remove('hidden');
+        
+        if (rideStatusInterval) clearInterval(rideStatusInterval);
+        
+        rideStatusInterval = setInterval(() => {
+            if (!sTime) {
+                stopRideStatusMonitoring();
+                return;
+            }
+            
+            // Update elapsed time
+            const elapsed = Math.floor((Date.now() - sTime.getTime()) / 1000);
+            const hours = Math.floor(elapsed / 3600);
+            const minutes = Math.floor((elapsed % 3600) / 60);
+            const seconds = elapsed % 60;
+            const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            
+            const timeEl = document.getElementById('ride-elapsed-time');
+            if (timeEl) timeEl.innerText = timeStr;
+            
+            // Update GPS accuracy
+            const avgAccuracy = getAverageGPSAccuracy();
+            const accuracyEl = document.getElementById('ride-gps-accuracy');
+            if (accuracyEl) {
+                const color = avgAccuracy < 20 ? 'text-emerald-400' : avgAccuracy < 50 ? 'text-amber-400' : 'text-rose-400';
+                accuracyEl.className = `${color} font-extrabold`;
+                accuracyEl.innerText = Math.round(avgAccuracy) + 'm';
+            }
+            
+            // Update battery level
+            if (navigator.getBattery || navigator.battery) {
+                const battery = navigator.getBattery?.() || navigator.battery;
+                battery?.then(bat => {
+                    const batteryEl = document.getElementById('ride-battery-level');
+                    if (batteryEl) {
+                        const percent = Math.round(bat.level * 100);
+                        const batColor = percent > 50 ? 'text-green-400' : percent > 20 ? 'text-amber-400' : 'text-rose-400';
+                        batteryEl.className = `${batColor} font-extrabold`;
+                        batteryEl.innerText = percent + '%' + (bat.charging ? ' ⚡' : '');
+                    }
+                }).catch(e => {
+                    // Battery API not available
+                    const batteryEl = document.getElementById('ride-battery-level');
+                    if (batteryEl) batteryEl.innerText = 'N/A';
+                });
+            }
+        }, 1000);
+    }
+    
+    function stopRideStatusMonitoring() {
+        if (rideStatusInterval) {
+            clearInterval(rideStatusInterval);
+            rideStatusInterval = null;
+        }
+        const statusPanel = document.getElementById('ride-status-panel');
+        if (statusPanel) statusPanel.classList.add('hidden');
+    }
 
     // Modals Navigation Management
     function goBackToSettingsMenu() {
@@ -1342,22 +1525,63 @@
     function trackRide() {
         if (watchId) navigator.geolocation.clearWatch(watchId);
         watchId = navigator.geolocation.watchPosition(pos => {
-            if (!sTime) return;
-            let lat = pos.coords.latitude, lon = pos.coords.longitude, acc = pos.coords.accuracy;
+            if (!sTime) return; // Ride not active
+            
+            let lat = pos.coords.latitude, 
+                lon = pos.coords.longitude, 
+                acc = pos.coords.accuracy;
+            
+            // Store current position
             currentLat = lat;
             currentLng = lon;
-            if (acc < 200 && currentMode === 'auto') reverseGeocode(lat, lon);
-            if (lastLat !== null && lastLon !== null && acc < 200) {
-                let d = calculateDistanceMeters(lastLat, lastLon, lat, lon);
-                if (d > 3 && d < 200) {
-                    totalMeters += d;
-                    updateDisplay();
-                    saveRideState();
-                    updateDriverPopupMarker(lat, lon);
-                }
+            
+            // Add to accuracy history
+            addGPSUpdate(lat, lon, acc);
+            
+            // For AUTO mode, do reverse geocoding (less frequent)
+            if (acc < 200 && currentMode === 'auto') {
+                reverseGeocode(lat, lon);
             }
-            lastLat = lat; lastLon = lon;
-        }, null, { enableHighAccuracy: true, timeout: 5000 });
+            
+            // Validate GPS for distance calculation
+            if (lastLat !== null && lastLon !== null) {
+                const validation = isValidGPSUpdate(lat, lon, acc, lastLat, lastLon);
+                
+                if (validation.valid) {
+                    // Valid GPS update - calculate distance
+                    const distance = calculateDistanceMeters(lastLat, lastLon, lat, lon);
+                    
+                    // Safety check - distance should be reasonable
+                    if (distance >= MIN_DISTANCE && distance <= MAX_DISTANCE) {
+                        totalMeters += distance;
+                        lastUpdateTime = Date.now();
+                        updateDisplay();
+                        saveRideState();
+                        updateDriverPopupMarker(lat, lon);
+                        
+                        // Rare events - show GPS quality indicator
+                        const avgAccuracy = getAverageGPSAccuracy();
+                        if (acc > 40) {
+                            showToast(`📍 GPS නිරවද්යතා: ${acc.toFixed(0)}m (සාමාන්ය: ${avgAccuracy}m)`, 'info');
+                        }
+                    }
+                } else {
+                    // Invalid GPS update - show reason
+                    console.warn('GPS validation failed: ' + validation.reason);
+                }
+            } else {
+                // First position - set it as valid
+                lastLat = lat;
+                lastLon = lon;
+                lastUpdateTime = Date.now();
+            }
+            
+            // Always update current position for map
+            if (mapMarker && mapObj) {
+                updateDriverPopupMarker(lat, lon);
+            }
+            
+        }, null, { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 });
     }
 
     async function reverseGeocode(lat, lon) {
@@ -1480,12 +1704,70 @@
         document.addEventListener('click', e => { if (e.target !== input) div.style.display = 'none'; });
     }
 
+    // ========== ENHANCED GPS DISTANCE CALCULATION ENGINE ==========
+    
+    // GPS accuracy tracking
+    let gpsAccuracyHistory = [];
+    let lastValidLat = null, lastValidLon = null;
+    const MAX_ACCURACY = 50; // meters - only accept GPS with <50m accuracy
+    const MIN_DISTANCE = 2; // meters - ignore jumps less than 2m
+    const MAX_DISTANCE = 500; // meters - reject jumps greater than 500m (probably bad GPS)
+    const MIN_TIME_BETWEEN_UPDATES = 2000; // 2 seconds minimum between valid updates
+    let lastUpdateTime = 0;
+    
     function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
-        const R = 6371000;
+        const R = 6371000; // Earth's radius in meters (more precise than 6371000)
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + 
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const distance = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return distance;
+    }
+    
+    function isValidGPSUpdate(lat, lon, accuracy, prevLat, prevLon) {
+        // 1. Check accuracy threshold
+        if (accuracy > MAX_ACCURACY) {
+            return { valid: false, reason: '📍 GPS නිරවද්යතා දුර්বල (accuracy > ' + MAX_ACCURACY + 'm)' };
+        }
+        
+        // 2. First coordinate is always valid
+        if (prevLat === null || prevLon === null) {
+            return { valid: true, reason: 'මුල් GPS ස්ථානය' };
+        }
+        
+        // 3. Check time between updates
+        const now = Date.now();
+        if (now - lastUpdateTime < MIN_TIME_BETWEEN_UPDATES) {
+            return { valid: false, reason: '⏱️ GPS යාවත්කාලීනතා වඩා ඉක්මනි (too frequent)' };
+        }
+        
+        // 4. Calculate distance from last valid position
+        const distance = calculateDistanceMeters(prevLat, prevLon, lat, lon);
+        
+        if (distance < MIN_DISTANCE) {
+            return { valid: false, reason: '🟡 දුරක්ෂණ අතුරුපුර පර (distance < ' + MIN_DISTANCE + 'm)' };
+        }
+        
+        if (distance > MAX_DISTANCE) {
+            return { valid: false, reason: '⚠️ GPS jumping far (' + Math.round(distance) + 'm) - spurious data' };
+        }
+        
+        return { valid: true, reason: '✅ හරි GPS ස්ථානය' };
+    }
+    
+    function addGPSUpdate(lat, lon, accuracy) {
+        gpsAccuracyHistory.push({ accuracy, timestamp: Date.now() });
+        if (gpsAccuracyHistory.length > 20) {
+            gpsAccuracyHistory.shift();
+        }
+    }
+    
+    function getAverageGPSAccuracy() {
+        if (gpsAccuracyHistory.length === 0) return 100;
+        const sum = gpsAccuracyHistory.reduce((a, b) => a + b.accuracy, 0);
+        return (sum / gpsAccuracyHistory.length).toFixed(1);
     }
 
     let lastKmValue = 0, lastFareValue = 0;
@@ -1610,6 +1892,7 @@
         saveRideState();
         showTrackingPopup();
         startTrackingUpdates();
+        startRideStatusMonitoring();  // ← NEW: Start monitoring ride status
         showToast("ගමන සාර්ථකව ආරම්භ විය! 🚕", 'success');
         sendNotification('Ride Started', 'Your taxi ride has started. Safe journey!');
     }
@@ -1700,6 +1983,14 @@
         let km = totalMeters / 1000; 
         let fromAddress = startLocationAddress || "Unknown Pickup Location";
 
+        // READ delivery details from input fields if in delivery mode
+        if (currentMode === 'delivery') {
+            deliveryPickupName = document.getElementById('pickup-name')?.value || '';
+            deliveryPickupPhone = document.getElementById('pickup-phone')?.value || '';
+            deliveryDeliveryName = document.getElementById('delivery-name')?.value || '';
+            deliveryDeliveryPhone = document.getElementById('delivery-phone')?.value || '';
+        }
+
         pendingRideData = { 
             id: currentRID, 
             fare: fare, 
@@ -1736,6 +2027,7 @@
     function resetDriverAppOnly() {
         if(watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
         releaseWakeLock();
+        stopRideStatusMonitoring();  // ← NEW: Stop monitoring ride status
         document.body.classList.remove('ride-active');
         document.getElementById('showMapPopupBtn').classList.add('hidden');
         document.getElementById('active-ride-banner').classList.add('hidden');
@@ -1914,6 +2206,30 @@
                     <div style="color: #000; font-size: 10px; word-break: break-word; line-height: 1.3;">${ride.to || 'Colombo, Sri Lanka'}</div>
                 </div>
                 
+                ${ride.mode === 'Delivery' ? `
+                <div style="border: 1px solid #000; border-radius: 6px; padding: 6px; margin-bottom: 8px; background: #f9f9f9;">
+                    <div style="font-weight: bold; text-transform: uppercase; font-size: 10px; margin-bottom: 4px;">📦 DELIVERY & PICKUP DETAILS:</div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 9px;">
+                        <tr>
+                            <td style="font-weight: bold; width: 45%; padding-bottom: 2px;">Pickup Name:</td>
+                            <td style="padding-bottom: 2px; word-break: break-word;">${ride.pickupName || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; width: 45%; padding-bottom: 2px;">Pickup Phone:</td>
+                            <td style="padding-bottom: 2px; word-break: break-word;">${ride.pickupPhone || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; width: 45%; padding-bottom: 2px;">Delivery Name:</td>
+                            <td style="padding-bottom: 2px; word-break: break-word;">${ride.deliveryName || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold; width: 45%;">Delivery Phone:</td>
+                            <td style="word-break: break-word;">${ride.deliveryPhone || 'N/A'}</td>
+                        </tr>
+                    </table>
+                </div>
+                ` : ''}
+                
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px;">
                     <tr>
                         <td style="font-weight: bold; padding-bottom: 2px;">Durutto / Dist:</td>
@@ -2050,12 +2366,40 @@
     
     // ========== STREAMING_CHUNK: Processing high-contrast canvas transformations ==========
     async function downloadReceiptPDF() { 
-        let canvas = await html2canvas(document.getElementById('receipt-view'),{scale:2.5, useCORS: true}); 
-        let {jsPDF} = window.jspdf; 
-        let pdf = new jsPDF({unit:'mm', format:'a6'}); 
-        pdf.addImage(canvas.toDataURL('image/png'),'PNG',2.5,5,100,(canvas.height*100)/canvas.width); 
-        pdf.save(`${currentRID}.pdf`); 
-        showToast('PDF downloaded successfully', 'success'); 
+        showLoading(true);
+        try {
+            let canvas = await html2canvas(document.getElementById('receipt-view'),{scale:2.5, useCORS: true}); 
+            let {jsPDF} = window.jspdf; 
+            
+            // 80x297mm thermal paper format
+            let pdf = new jsPDF({
+                unit: 'mm',
+                format: [80, 297],
+                compress: true
+            }); 
+            
+            // Calculate dimensions for 80mm width
+            const pageWidth = 80;
+            const margin = 2;
+            const contentWidth = pageWidth - (margin * 2);
+            const imgHeight = (canvas.height * contentWidth) / canvas.width;
+            
+            // Add image with margins
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', margin, margin, contentWidth, imgHeight);
+            
+            // Add footer
+            pdf.setFontSize(8);
+            pdf.text(`Receipt: ${currentRID}`, margin, imgHeight + margin + 5);
+            pdf.text(`Printed: ${new Date().toLocaleString()}`, margin, imgHeight + margin + 10);
+            
+            pdf.save(`${currentRID}_Driver_Receipt.pdf`); 
+            showToast('✅ Driver Receipt PDF downloaded! (80x297mm Thermal Paper)', 'success'); 
+        } catch(err) {
+            console.error('PDF generation failed', err);
+            showToast('Failed to generate PDF', 'error');
+        } finally {
+            showLoading(false);
+        }
     }
     
     function printReceiptDirectly() {
@@ -2924,9 +3268,13 @@
             return;
         }
 
+        // Get driver receipt number if available (from pending/saved ride)
+        let driverReceiptNo = payload.receiptId || localStorage.getItem('lastReceiptId') || 'N/A';
+
         // Map telemetry payload into structured billing template
         let mockRidePayload = {
             id: payload.id,
+            driverReceiptNo: driverReceiptNo,  // ← ADD DRIVER RECEIPT NO
             time: payload.timestamp || Date.now(),
             mobile: payload.mobile || 'N/A',
             from: payload.startAddress || 'Unknown Pickup Location',
@@ -2940,23 +3288,41 @@
             manualFare: parseInt(payload.manualFare || 0)
         };
 
+        // Create container optimized for 80x297mm thermal paper
         const tempDiv = document.createElement('div');
         tempDiv.style.position = 'absolute';
         tempDiv.style.left = '-9999px';
         tempDiv.style.top = '-9999px';
-        tempDiv.style.width = '300px';
+        tempDiv.style.width = '80mm';
         tempDiv.style.background = '#ffffff';
-        tempDiv.style.padding = '15px';
+        tempDiv.style.padding = '2mm';
         tempDiv.style.boxSizing = 'border-box';
+        tempDiv.style.fontFamily = 'monospace';
+        tempDiv.style.fontSize = '11px';
+        tempDiv.style.lineHeight = '1.3';
+        tempDiv.style.color = '#000';
         
-        // Render exact visual format specified in meeterrrrrr.JPG
-        tempDiv.innerHTML = getPerfectReceiptTemplateHTML(mockRidePayload, false, 'passenger-offline-qr');
+        // Add driver receipt number to the output
+        let htmlContent = getPerfectReceiptTemplateHTML(mockRidePayload, false, 'passenger-offline-qr');
+        
+        // Insert driver receipt number at the top
+        if (driverReceiptNo !== 'N/A') {
+            htmlContent = `
+            <div style="text-align: center; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                <div style="font-size: 10px; color: #666;">DRIVER RECEIPT NO:</div>
+                <div style="font-size: 12px; font-weight: bold; color: #000;">${driverReceiptNo}</div>
+            </div>
+            ${htmlContent}
+            `;
+        }
+        
+        tempDiv.innerHTML = htmlContent;
         document.body.appendChild(tempDiv);
 
         const tempQr = document.getElementById('passenger-offline-qr');
         if (tempQr) {
             try {
-                new QRCode(tempQr, { text: `${mockRidePayload.id}|Rs.${mockRidePayload.fare.toFixed(2)}|${mockRidePayload.payment.method}`, width: 85, height: 85 });
+                new QRCode(tempQr, { text: `${mockRidePayload.id}|Rs.${mockRidePayload.fare.toFixed(2)}|${mockRidePayload.payment.method}|Driver:${driverReceiptNo}`, width: 85, height: 85 });
             } catch(err) { console.error(err); }
         }
 
@@ -2964,10 +3330,31 @@
             try {
                 const canvas = await html2canvas(tempDiv, { scale: 2.5, useCORS: true });
                 const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ unit: 'mm', format: 'a6' });
-                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 2.5, 5, 100, (canvas.height * 100) / canvas.width);
+                
+                // 80x297mm thermal paper format (standard receipt paper)
+                const pdf = new jsPDF({ 
+                    unit: 'mm', 
+                    format: [80, 297],
+                    compress: true
+                });
+                
+                // Calculate dimensions to fit 80mm width with proper margins
+                const pageWidth = 80;
+                const margin = 2;
+                const contentWidth = pageWidth - (margin * 2);
+                const imgHeight = (canvas.height * contentWidth) / canvas.width;
+                
+                // Add image with margins
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', margin, margin, contentWidth, imgHeight);
+                
+                // Add footer with receipt info
+                pdf.setFontSize(8);
+                pdf.text(`Passenger Receipt: ${mockRidePayload.id}`, margin, imgHeight + margin + 5);
+                pdf.text(`Driver Receipt: ${driverReceiptNo}`, margin, imgHeight + margin + 10);
+                pdf.text(`Printed: ${new Date().toLocaleString()}`, margin, imgHeight + margin + 15);
+                
                 pdf.save(`AMT_Receipt_${mockRidePayload.id}.pdf`);
-                showToast('Receipt PDF downloaded successfully!', 'success');
+                showToast('✅ Passenger PDF downloaded! (Driver Receipt No: ' + driverReceiptNo + ')', 'success');
             } catch (err) {
                 console.error("Passenger PDF compilation failed", err);
                 showToast('Failed to compile PDF Receipt', 'error');
